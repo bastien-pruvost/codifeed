@@ -1,0 +1,6 @@
+flask-openapi3 ~= 4.1.0
+flask-openapi3-swagger ~= 5.21.0
+pyright ~= 1.1.399
+python-dotenv ~= 1.1.0
+ruff ~= 0.11.5
+sqlmodel ~= 0.0.24
