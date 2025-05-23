@@ -1,3 +1,5 @@
+from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from flask_openapi3.models.info import Info
 from flask_openapi3.models.security_scheme import SecurityScheme
 from flask_openapi3.openapi import OpenAPI
@@ -11,7 +13,7 @@ def create_app(env: str = "development"):
     from app.config import get_config
     from app.models import init_db
     from app.routes import register_routes
-    # from app.utils.errors import register_error_handlers
+    from app.utils.errors import register_error_handlers
 
     load_dotenv()
     config = get_config(env)
@@ -34,11 +36,13 @@ def create_app(env: str = "development"):
         info=app_info,
         security_schemes=app_security_schemes,
     )
-
     app.config.from_object(config)
 
+    CORS(app)
+    JWTManager(app)
+
     register_routes(app)
-    # register_error_handlers(app)
+    register_error_handlers(app)
 
     init_db()
 

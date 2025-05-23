@@ -1,3 +1,6 @@
+import os
+
+
 class Config:
     APP_NAME = "Codifeed - REST API"
     APP_VERSION = "1.0.0"
@@ -5,11 +8,11 @@ class Config:
 
     API_PREFIX = "/api"
 
-    SQLITE_DB_FILE_PATH = "../database/database.db"
-    SQLITE_DB_URI = f"sqlite:///{SQLITE_DB_FILE_PATH}"
+    SQLITE_DB_FILE_PATH = os.getenv("SQLITE_DB_FILE_PATH")
+    SQLITE_DB_URI = os.getenv("SQLITE_DB_URI")
 
     # JWT = [{"jwt": []}]
-    # JWT_SECRET_KEY = "hard to guess"
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     # JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)  # 过期时间
     # JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
 

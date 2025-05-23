@@ -1,8 +1,6 @@
-from typing import Any, Generic, List, Optional, TypeVar
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, Field
-
-T = TypeVar("T")
 
 
 class ErrorDetail(BaseModel):
@@ -12,27 +10,17 @@ class ErrorDetail(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    status_code: int = Field(description="HTTP status code")
-    detail: List[ErrorDetail] = Field(description="Error details")
+    status_code: int = Field(description="Status code")
     message: str = Field(description="Error message")
-
-
-class SuccessResponse(BaseModel, Generic[T]):
-    status_code: int = Field(description="HTTP status code")
-    data: Optional[T] = Field(default=None, description="Response data")
-    message: str = Field(description="Success message")
+    detail: List[ErrorDetail] = Field(description="Error details")
 
 
 def success_response(
-    data: Optional[Any] = None, message: str = "Success", status_code: int = 200
+    data: Any,
+    status_code: int = 200,
 ) -> tuple[dict, int]:
     """Create a standardized success response"""
-    response = SuccessResponse(
-        status_code=status_code,
-        data=data,
-        message=message,
-    )
-    return response.model_dump(), status_code
+    return data, status_code
 
 
 def error_response(
