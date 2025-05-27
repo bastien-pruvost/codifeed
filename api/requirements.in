@@ -1,3 +1,4 @@
+bcrypt ~= 4.3.0
 flask-cors ~= 6.0.0
 flask-jwt-extended ~= 4.7.1
 flask-openapi3 ~= 4.1.0
