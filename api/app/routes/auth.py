@@ -9,8 +9,8 @@ from app.models.auth import AuthLogin, AuthToken
 from app.models.user import User, UserCreate, UserRead
 from app.utils.responses import error_response, success_response
 
-tag = Tag(name="Auth", description="Authentication routes")
-auth_router = APIBlueprint("auth", __name__, url_prefix="/auth", abp_tags=[tag])
+auth_tag = Tag(name="Auth", description="Authentication routes")
+auth_router = APIBlueprint("auth", __name__, url_prefix="/auth", abp_tags=[auth_tag])
 
 
 @auth_router.post("/register", responses={201: UserRead})

@@ -1,11 +1,9 @@
-import uuid
-
 from sqlmodel import Field
 
-from app.models import CamelModel
+from app.models import BaseModel, SQLModelWithId
 
 
-class UserBase(CamelModel):
+class UserBase(BaseModel):
     email: str = Field(unique=True, index=True, max_length=255)
     firstname: str = Field(max_length=255)
     lastname: str = Field(max_length=255)
@@ -24,6 +22,5 @@ class UserRead(UserBase):
     id: int
 
 
-class User(UserBase, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+class User(UserBase, SQLModelWithId, table=True):
     hashed_password: str = Field(max_length=255)

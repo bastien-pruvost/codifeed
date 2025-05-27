@@ -1,5 +1,7 @@
+import uuid
+
 from humps import camelize
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Field, Session, SQLModel, create_engine
 
 sqlite_file_path = "../database/database.db"
 sqlite_url = f"sqlite:///{sqlite_file_path}"
@@ -21,7 +23,11 @@ def to_camel(string):
     return camelize(string)
 
 
-class CamelModel(SQLModel):
+class BaseModel(SQLModel):
     class Config:
         alias_generator = to_camel
         validate_by_name = True
+
+
+class SQLModelWithId(BaseModel):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
