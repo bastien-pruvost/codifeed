@@ -1,11 +1,11 @@
-from sqlmodel import SQLModel
+from app.models import CamelModel
 
 
-class AuthLogin(SQLModel):
+class AuthLogin(CamelModel):
     email: str
     password: str
 
 
-class AuthToken(SQLModel):
+class AuthToken(CamelModel):
     access_token: str
     refresh_token: str

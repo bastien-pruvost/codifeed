@@ -1,10 +1,12 @@
 from flask_openapi3.blueprint import APIBlueprint
+from flask_openapi3.models.tag import Tag
 from pydantic import BaseModel
 
 from app.models import get_session
 from app.models.user import User, UserRead
 from app.utils.responses import error_response, success_response
 
+tag = Tag(name="User", description="User routes")
 user_router = APIBlueprint("user", __name__, url_prefix="/users")
 
 

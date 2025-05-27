@@ -1,3 +1,4 @@
+from humps import camelize
 from sqlmodel import Session, SQLModel, create_engine
 
 sqlite_file_path = "../database/database.db"
@@ -14,3 +15,13 @@ def get_session():
     """Get a session for the database"""
     with Session(engine) as session:
         yield session
+
+
+def to_camel(string):
+    return camelize(string)
+
+
+class CamelModel(SQLModel):
+    class Config:
+        alias_generator = to_camel
+        validate_by_name = True

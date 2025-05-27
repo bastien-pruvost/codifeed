@@ -1,7 +1,11 @@
-from sqlmodel import Field, SQLModel
+import uuid
+
+from sqlmodel import Field
+
+from app.models import CamelModel
 
 
-class UserBase(SQLModel):
+class UserBase(CamelModel):
     email: str = Field(unique=True, index=True, max_length=255)
     firstname: str = Field(max_length=255)
     lastname: str = Field(max_length=255)
@@ -21,5 +25,5 @@ class UserRead(UserBase):
 
 
 class User(UserBase, table=True):
-    id: int | None = Field(default=None, primary_key=True, unique=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str = Field(max_length=255)
