@@ -5,7 +5,7 @@ from passlib.hash import bcrypt
 from sqlmodel import select
 
 from app.models import get_session
-from app.models.auth import AuthLogin, AuthToken
+from app.models.auth import LoginCredentials, LoginTokens
 from app.models.user import User, UserCreate, UserRead
 from app.utils.responses import error_response, success_response
 
@@ -13,7 +13,12 @@ auth_tag = Tag(name="Auth", description="Authentication routes")
 auth_router = APIBlueprint("auth", __name__, url_prefix="/auth", abp_tags=[auth_tag])
 
 
-@auth_router.post("/register", responses={201: UserRead})
+@auth_router.post(
+    "/register",
+    responses={201: UserRead},
+    # operation_id="register",
+    description="Register a new user",
+)
 def register(body: UserCreate):
     user = User.model_validate(
         body,
@@ -30,8 +35,13 @@ def register(body: UserCreate):
     return success_response(user.model_dump(exclude={"hashed_password"}), 201)
 
 
-@auth_router.post("/login", responses={200: AuthToken})
-def login(body: AuthLogin):
+@auth_router.post(
+    "/login",
+    responses={200: LoginTokens},
+    # operation_id="login",
+    description="Login a user",
+)
+def login(body: LoginCredentials):
     for session in get_session():
         user_query = select(User).where(User.email == body.email)
         user = session.exec(user_query).first()
@@ -40,7 +50,7 @@ def login(body: AuthLogin):
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
         return success_response(
-            AuthToken(
+            LoginTokens(
                 access_token=access_token,
                 refresh_token=refresh_token,
             ).model_dump(),

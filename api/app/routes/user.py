@@ -14,7 +14,12 @@ class GetUserPath(BaseModel):
     user_id: int
 
 
-@user_router.get("/<int:user_id>", responses={200: UserRead})
+@user_router.get(
+    "/<int:user_id>",
+    responses={200: UserRead},
+    # operation_id="getUser",
+    description="Get a user by id",
+)
 def get_user(path: GetUserPath):
     for session in get_session():
         user = session.get(User, path.user_id)

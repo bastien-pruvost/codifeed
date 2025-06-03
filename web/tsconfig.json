@@ -31,6 +31,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "baseUrl": ".",
