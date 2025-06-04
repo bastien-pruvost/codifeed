@@ -1,0 +1,19 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/api/.venv/bin/python",
+
+  "python.autoComplete.extraPaths": ["${workspaceFolder}/api"],
+  "python.analysis.extraPaths": ["${workspaceFolder}/api"],
+
+  // Pyright configuration
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.autoImportCompletions": true,
+
+  // Python environment
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll": "explicit"
+    }
+  }
+}
