@@ -1,5 +1,6 @@
 from typing import Any, List, Optional
 
+from flask import Response, make_response
 from pydantic import BaseModel, Field
 
 
@@ -18,9 +19,9 @@ class ErrorResponse(BaseModel):
 def success_response(
     data: Any,
     status_code: int = 200,
-) -> tuple[dict, int]:
+) -> Response:
     """Create a standardized success response"""
-    return data, status_code
+    return make_response(data, status_code)
 
 
 def error_response(

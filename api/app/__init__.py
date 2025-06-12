@@ -38,7 +38,7 @@ def create_app(env: str = "development"):
     )
     app.config.from_object(config)
 
-    CORS(app)
+    CORS(app, origins=["*"], supports_credentials=True)
     JWTManager(app)
 
     register_routes(app)

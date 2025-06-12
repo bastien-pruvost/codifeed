@@ -1,11 +1,25 @@
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask import make_response
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_required,
+    set_access_cookies,
+    set_refresh_cookies,
+    unset_jwt_cookies,
+)
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 from passlib.hash import bcrypt
 from sqlmodel import select
 
 from app.models import get_session
-from app.models.auth import LoginCredentials, LoginTokens
+from app.models.auth import (
+    LoginCredentials,
+    LoginTokens,
+    LogoutResponse,
+    RefreshResponse,
+)
 from app.models.user import User, UserCreate, UserRead
 from app.utils.responses import error_response, success_response
 
@@ -16,7 +30,6 @@ auth_router = APIBlueprint("auth", __name__, url_prefix="/auth", abp_tags=[auth_
 @auth_router.post(
     "/register",
     responses={201: UserRead},
-    # operation_id="register",
     description="Register a new user",
 )
 def register(body: UserCreate):
@@ -37,8 +50,7 @@ def register(body: UserCreate):
 
 @auth_router.post(
     "/login",
-    responses={200: LoginTokens},
-    # operation_id="login",
+    responses={200: UserRead},
     description="Login a user",
 )
 def login(body: LoginCredentials):
@@ -49,10 +61,45 @@ def login(body: LoginCredentials):
             return error_response("Email or password is incorrect", 401)
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
-        return success_response(
-            LoginTokens(
-                access_token=access_token,
-                refresh_token=refresh_token,
-            ).model_dump(),
+        response = make_response(
+            user.model_dump(exclude={"hashed_password"}),
             200,
         )
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+        return response
+
+
+@auth_router.post(
+    "/refresh",
+    responses={200: LoginTokens},
+    description="Refresh a user's access token",
+)
+@jwt_required(refresh=True)
+def refresh():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity)
+    response = make_response(
+        RefreshResponse(
+            message="Token refreshed",
+        ).model_dump(),
+        200,
+    )
+    set_access_cookies(response, access_token)
+    return response
+
+
+@auth_router.post(
+    "/logout",
+    responses={200: LogoutResponse},
+    description="Logout a user",
+)
+def logout():
+    response = make_response(
+        LogoutResponse(
+            message="Logout successful",
+        ).model_dump(),
+        200,
+    )
+    unset_jwt_cookies(response)
+    return response

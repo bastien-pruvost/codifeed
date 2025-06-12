@@ -13,8 +13,12 @@ class Config:
 
     # JWT = [{"jwt": []}]
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)  # 过期时间
-    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
+    JWT_TOKEN_LOCATION = ["cookies"]
+    JWT_COOKIE_HTTPONLY = True
+    JWT_COOKIE_SECURE = True
+    JWT_COOKIE_SAMESITE = "Strict"
+    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=14)
 
     # OPENAPI_VERSION = "3.0.3"
     # OPENAPI_URL_PREFIX = "/api"
@@ -38,6 +42,8 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    JWT_COOKIE_SECURE = False
+    JWT_COOKIE_SAMESITE = "Strict"
 
 
 def get_config(env):

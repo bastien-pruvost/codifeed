@@ -31,3 +31,7 @@ class BaseModel(SQLModel):
 
 class SQLModelWithId(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+
+
+class MessageResponse(BaseModel):
+    message: str

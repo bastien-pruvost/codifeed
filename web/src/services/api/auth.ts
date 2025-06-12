@@ -1,20 +1,25 @@
-import { api } from '@/services/api'
-import type { paths } from '@/types/api.gen'
+import { api } from "@/services/api"
+import type { paths } from "@/types/api.gen"
+import { useMutation } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 
-export function loginMutationOptions(
-  body: paths['/auth/login']['post']['requestBody']['content']['application/json'],
-) {
-  return {
-    mutationKey: ['login'],
-    mutationFn: () => api.POST('/auth/login', { body }),
-  }
+export function useLoginMutation() {
+  const navigate = useNavigate()
+
+  return useMutation({
+    mutationFn: (
+      body: paths["/auth/login"]["post"]["requestBody"]["content"]["application/json"],
+    ) => api.POST("/auth/login", { body }),
+    onSuccess: () => {
+      navigate({ to: "/" })
+    },
+  })
 }
 
-export function registerMutationOptions(
-  body: paths['/auth/register']['post']['requestBody']['content']['application/json'],
-) {
-  return {
-    mutationKey: ['register'],
-    mutationFn: () => api.POST('/auth/register', { body }),
-  }
+export function useRegisterMutation() {
+  return useMutation({
+    mutationFn: (
+      body: paths["/auth/register"]["post"]["requestBody"]["content"]["application/json"],
+    ) => api.POST("/auth/register", { body }),
+  })
 }
