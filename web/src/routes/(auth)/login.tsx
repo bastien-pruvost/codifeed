@@ -1,25 +1,28 @@
-import { createFileRoute, Link } from "@tanstack/react-router"
+import loginImg from "@/assets/images/login-illustration.webp"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useLoginMutation } from "@/services/api/auth"
-import loginImg from "@/assets/images/login-illustration.webp"
+import { useAuth } from "@/hooks/use-auth"
+import { createFileRoute, useRouter } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/(auth)/login")({
   component: LoginPage,
 })
 
 function LoginPage() {
-  const login = useLoginMutation()
+  const { login } = useAuth()
+  const router = useRouter()
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    login.mutate({
+    login({
       email: formData.get("email")?.toString() ?? "",
       password: formData.get("password")?.toString() ?? "",
     })
+    router.invalidate()
+    router.navigate({ to: "/" })
   }
 
   return (
@@ -49,12 +52,6 @@ function LoginPage() {
                   <div className="grid gap-3">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
-                      <Link
-                        to="/forgot-password"
-                        className="ml-auto text-sm underline-offset-2 hover:underline"
-                      >
-                        Forgot your password?
-                      </Link>
                     </div>
                     <Input
                       id="password"
@@ -64,15 +61,21 @@ function LoginPage() {
                       required
                     />
                   </div>
+                  {/* <Link
+                    to="/forgot-password"
+                    className="ml-auto text-sm underline-offset-2 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link> */}
                   <Button type="submit" className="w-full">
                     Login
                   </Button>
 
                   <div className="text-center text-sm">
                     Don&apos;t have an account?{" "}
-                    <Link to="/signup" className="underline underline-offset-4">
+                    {/* <Link to="/signup" className="underline underline-offset-4">
                       Sign up
-                    </Link>
+                    </Link> */}
                   </div>
                 </div>
               </form>
@@ -87,8 +90,8 @@ function LoginPage() {
           </Card>
           <div className="text-center text-xs text-balance text-muted-foreground *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary">
             By clicking login, you agree to our{" "}
-            <Link to="/terms-of-service">Terms of Service</Link> and{" "}
-            <Link to="/privacy-policy">Privacy Policy</Link>.
+            {/* <Link to="/terms-of-service">Terms of Service</Link> and{" "}
+            <Link to="/privacy-policy">Privacy Policy</Link>. */}
           </div>
         </div>
       </div>

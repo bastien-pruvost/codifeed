@@ -1,55 +1,79 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react"
+import { api, QUERY_KEYS } from "@/services/api"
+import type { LoginCredentials, UserRead } from "@/types/api.gen"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createContext, useCallback, useContext, type ReactNode } from "react"
 
-const userIdStorageKey = "codifeed.auth.user_id"
+// const userIdStorageKey = "codifeed.auth.user_id"
 
-function getStoredUserId() {
-  return localStorage.getItem(userIdStorageKey)
-}
+// function getStoredUserId() {
+//   return localStorage.getItem(userIdStorageKey)
+// }
 
-function setStoredUserId(userId: string | null) {
-  if (userId) {
-    localStorage.setItem(userIdStorageKey, userId)
-  } else {
-    localStorage.removeItem(userIdStorageKey)
-  }
-}
+// function setStoredUserId(userId: string | null) {
+//   if (userId) {
+//     localStorage.setItem(userIdStorageKey, userId)
+//   } else {
+//     localStorage.removeItem(userIdStorageKey)
+//   }
+// }
 
 export interface AuthContext {
-  userId: string | null
+  user: UserRead | null | undefined
   isAuthenticated: boolean
-  login: (userId: string) => Promise<void>
+  login: (credentials: LoginCredentials) => void
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContext | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [userId, setUserId] = useState<string | null>(getStoredUserId())
-  const isAuthenticated = !!userId
+  const queryClient = useQueryClient()
 
-  const logout = useCallback(async () => {
-    setStoredUserId(null)
-    setUserId(null)
-  }, [])
+  const { data: user } = useQuery({
+    queryKey: [QUERY_KEYS.authUser],
+    queryFn: () => api.GET("/auth/me", {}).then((res) => res.data ?? null),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
+  })
 
-  const login = useCallback(async (userId: string) => {
-    setStoredUserId(userId)
-    setUserId(userId)
-  }, [])
+  const isAuthenticated = !!user
 
-  useEffect(() => {
-    setUserId(getStoredUserId())
-  }, [])
+  const loginMutation = useMutation({
+    mutationFn: (credentials: LoginCredentials) =>
+      api.POST("/auth/login", { body: credentials }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.authUser] })
+      // router.invalidate()
+      // router.navigate({ to: "/" })
+    },
+  })
+
+  const logoutMutation = useMutation({
+    mutationFn: () => api.POST("/auth/logout", {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.authUser] })
+      // router.invalidate()
+      // router.navigate({ to: "/login" })
+    },
+  })
+
+  const login = useCallback(
+    (credentials: LoginCredentials) => {
+      loginMutation.mutate(credentials)
+    },
+    [loginMutation],
+  )
+
+  const logout = useCallback(() => {
+    logoutMutation.mutate()
+  }, [logoutMutation])
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userId, login, logout }}>
+    <AuthContext.Provider value={{ login, logout, user, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   )

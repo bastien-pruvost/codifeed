@@ -19,7 +19,7 @@
     "lint": "eslint",
     "format": "prettier",
     "check": "prettier --write . && eslint --fix",
-    "openapi-ts": "openapi-typescript http://localhost:8000/openapi/openapi.json -o ./src/types/api.gen.ts"
+    "openapi-ts": "openapi-typescript http://localhost:8000/openapi/openapi.json -o ./src/types/api.gen.ts --root-types --root-types-no-schema-prefix --make-paths-enum --generate-path-params"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

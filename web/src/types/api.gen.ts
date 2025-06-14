@@ -38,6 +38,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get the current user */
+        get: operations["auth_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/refresh": {
         parameters: {
             query?: never;
@@ -80,7 +97,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get all posts */
-        get: operations["post_get"];
+        get: operations["post_posts_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -93,7 +110,9 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                user_id: string;
+            };
             cookie?: never;
         };
         /** @description Get a user by id */
@@ -202,6 +221,13 @@ export interface components {
     headers: never;
     pathItems: never;
 }
+export type LoginCredentials = components['schemas']['LoginCredentials'];
+export type LoginTokens = components['schemas']['LoginTokens'];
+export type LogoutResponse = components['schemas']['LogoutResponse'];
+export type MessageResponse = components['schemas']['MessageResponse'];
+export type UserCreate = components['schemas']['UserCreate'];
+export type UserRead = components['schemas']['UserRead'];
+export type ValidationErrorModel = components['schemas']['ValidationErrorModel'];
 export type $defs = Record<string, never>;
 export interface operations {
     auth_login_post: {
@@ -223,7 +249,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LoginTokens"];
+                    "application/json": components["schemas"]["UserRead"];
                 };
             };
             /** @description Unprocessable Entity */
@@ -253,6 +279,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LogoutResponse"];
+                };
+            };
+        };
+    };
+    auth_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRead"];
                 };
             };
         };
@@ -310,7 +356,7 @@ export interface operations {
             };
         };
     };
-    post_get: {
+    post_posts_get: {
         parameters: {
             query?: {
                 user_id?: number | null;
@@ -372,4 +418,13 @@ export interface operations {
             };
         };
     };
+}
+export enum ApiPaths {
+    auth_login_post = "/auth/login",
+    auth_logout_post = "/auth/logout",
+    auth_me_get = "/auth/me",
+    auth_refresh_post = "/auth/refresh",
+    auth_register_post = "/auth/register",
+    post_posts_get = "/posts",
+    user__int_user_id__get = "/users/{user_id}"
 }

@@ -1,3 +1,5 @@
+import uuid
+
 from flask import make_response
 from flask_jwt_extended import (
     create_access_token,
@@ -103,3 +105,20 @@ def logout():
     )
     unset_jwt_cookies(response)
     return response
+
+
+@auth_router.get(
+    "/me",
+    responses={200: UserRead},
+    description="Get the current user",
+)
+@jwt_required()
+def me():
+    user_id = get_jwt_identity()
+    print(user_id)
+    for session in get_session():
+        user = session.get(User, uuid.UUID(user_id))
+        print(user)
+        if not user:
+            return error_response("User not found", 404)
+        return success_response(user.model_dump(exclude={"hashed_password"}), 200)
