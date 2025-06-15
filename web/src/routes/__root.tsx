@@ -1,7 +1,8 @@
 import { Header } from "@/components/header"
 import { useAuth, type AuthContext } from "@/hooks/use-auth"
+import { authUserQueryOptions } from "@/services/api/auth"
 import type { QueryClient } from "@tanstack/react-query"
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router"
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
 import { lazy, Suspense } from "react"
 
 interface RouterContext {
@@ -11,6 +12,8 @@ interface RouterContext {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
+  loader: ({ context: { queryClient } }) =>
+    queryClient.ensureQueryData({ ...authUserQueryOptions() }),
   notFoundComponent: () => (
     <div className="p-8 text-center text-destructive">Not found</div>
   ),
@@ -22,10 +25,12 @@ function RootComponent() {
     <>
       <Header user={auth.user} />
       <Outlet />
-      <Suspense fallback={null}>
-        {/* <ReactQueryDevtool buttonPosition="top-right" /> */}
-        <TanStackRouterDevtools position="bottom-right" />
-      </Suspense>
+      {import.meta.env.DEV ? (
+        <Suspense fallback={null}>
+          {/* <ReactQueryDevtool buttonPosition="top-right" /> */}
+          <TanStackRouterDevtools position="bottom-right" />
+        </Suspense>
+      ) : null}
     </>
   )
 }

@@ -45,7 +45,7 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <App />,
+      <App />
     </StrictMode>,
   )
 }

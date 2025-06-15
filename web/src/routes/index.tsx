@@ -14,9 +14,8 @@ function App() {
   const postsQuery = useSuspenseQuery(postsQueryOptions)
   const posts = postsQuery.data
 
-  const authFromContext = useAuth()
+  const auth = useAuth()
 
-  const auth = authFromContext
   console.log({ posts })
   console.log(document.location)
 
