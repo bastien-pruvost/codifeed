@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/hooks/use-auth"
+import { QUERY_KEYS } from "@/services/api"
+import { useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useRouter } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/(auth)/login")({
@@ -11,8 +13,9 @@ export const Route = createFileRoute("/(auth)/login")({
 })
 
 function LoginPage() {
-  const { login } = useAuth()
   const router = useRouter()
+  const queryClient = useQueryClient()
+  const { login } = useAuth()
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -21,6 +24,7 @@ function LoginPage() {
       email: formData.get("email")?.toString() ?? "",
       password: formData.get("password")?.toString() ?? "",
     })
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.authUser] })
     router.invalidate()
     router.navigate({ to: "/" })
   }

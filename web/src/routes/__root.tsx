@@ -12,7 +12,7 @@ interface RouterContext {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
-  loader: ({ context: { queryClient } }) =>
+  beforeLoad: ({ context: { queryClient } }) =>
     queryClient.ensureQueryData({ ...authUserQueryOptions() }),
   notFoundComponent: () => (
     <div className="p-8 text-center text-destructive">Not found</div>
