@@ -5,7 +5,10 @@ from sqlmodel import Field, Session, SQLModel, create_engine
 
 sqlite_file_path = "../database/database.db"
 sqlite_url = f"sqlite:///{sqlite_file_path}"
-engine = create_engine(sqlite_url, echo=True)
+engine = create_engine(
+    sqlite_url,
+    echo=False,
+)
 
 
 def init_db():
