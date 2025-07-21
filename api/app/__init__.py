@@ -15,7 +15,7 @@ def create_app(env: str = "development"):
     from app.routes import register_routes
     from app.utils.errors import register_error_handlers
 
-    load_dotenv()
+    load_dotenv(".env.local")
     config = get_config(env)
 
     app_info = Info(

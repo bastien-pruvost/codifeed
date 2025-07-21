@@ -3,7 +3,7 @@ import uuid
 from humps import camelize
 from sqlmodel import Field, Session, SQLModel, create_engine
 
-sqlite_file_path = "../database/database.db"
+sqlite_file_path = "../database/codifeed.db"
 sqlite_url = f"sqlite:///{sqlite_file_path}"
 engine = create_engine(
     sqlite_url,

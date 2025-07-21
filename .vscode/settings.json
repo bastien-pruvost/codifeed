@@ -15,5 +15,13 @@
       "source.organizeImports": "explicit",
       "source.fixAll": "explicit"
     }
+  },
+  "cursorpyright.analysis.autoImportCompletions": true,
+  "cursorpyright.analysis.diagnosticMode": "workspace",
+  "cursorpyright.analysis.extraPaths": ["${workspaceFolder}/api"],
+  "cursorpyright.analysis.typeCheckingMode": "basic",
+
+  "files.associations": {
+    "*.css": "tailwindcss"
   }
 }

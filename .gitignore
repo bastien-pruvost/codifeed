@@ -23,3 +23,7 @@ htmlcov/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Environment
+*.local
+.env.local
