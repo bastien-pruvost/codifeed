@@ -15,11 +15,11 @@ import { StrictMode } from "react"
 const router = createRouter({
   routeTree,
   context: { queryClient, auth: undefined! },
-  defaultPreload: false,
-  scrollRestoration: true,
+  defaultPreload: "intent",
+  defaultPreloadStaleTime: 0,
   // defaultStructuralSharing: true,
-  // defaultPreloadStaleTime: 0,
   // defaultViewTransition: true,
+  scrollRestoration: true,
 })
 
 // Provide the auth context to the router

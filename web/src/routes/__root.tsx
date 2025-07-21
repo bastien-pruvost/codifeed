@@ -1,19 +1,30 @@
 import { Header } from "@/components/header"
 import { useAuth, type AuthContext } from "@/hooks/use-auth"
 import { authUserQueryOptions } from "@/services/api/auth"
+import { shouldCheckAuth } from "@/services/local-storage/auth"
 import type { QueryClient } from "@tanstack/react-query"
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
+import { zodValidator } from "@tanstack/zod-adapter"
 import { lazy, Suspense } from "react"
+import { z } from "zod"
 
 interface RouterContext {
   queryClient: QueryClient
   auth: AuthContext
 }
 
+const rootSearchSchema = z.object({
+  redirect: z.string().optional(),
+})
+
 export const Route = createRootRouteWithContext<RouterContext>()({
+  validateSearch: zodValidator(rootSearchSchema),
+  beforeLoad: async ({ context: { queryClient } }) => {
+    if (shouldCheckAuth()) {
+      await queryClient.ensureQueryData(authUserQueryOptions())
+    }
+  },
   component: RootComponent,
-  beforeLoad: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData({ ...authUserQueryOptions() }),
   notFoundComponent: () => (
     <div className="p-8 text-center text-destructive">Not found</div>
   ),

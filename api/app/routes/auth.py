@@ -30,11 +30,11 @@ auth_router = APIBlueprint("auth", __name__, url_prefix="/auth", abp_tags=[auth_
 
 
 @auth_router.post(
-    "/register",
+    "/signup",
     responses={201: UserRead},
-    description="Register a new user",
+    description="Create a new user",
 )
-def register(body: UserCreate):
+def signup(body: UserCreate):
     user = User.model_validate(
         body,
         update={"hashed_password": bcrypt.hash(body.password)},

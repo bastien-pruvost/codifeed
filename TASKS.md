@@ -11,7 +11,7 @@ This document outlines the development plan for Codifeed, a full-stack social ne
 - [ ] Implement database migrations (e.g., Alembic, or manual SQLModel sync for early dev).
 - [ ] Create User model (id, username, email, hashed_password, created_at, **role** (admin, user, guest)) in [api/app/models](mdc:api/app/models).
 - [ ] Implement JWT-based authentication (e.g., Flask-JWT-Extended):
-  - [ ] Registration endpoint (`/auth/register`) in [api/app/routes](mdc:api/app/routes).
+  - [ ] Signup endpoint (`/auth/signup`) in [api/app/routes](mdc:api/app/routes).
   - [ ] Login endpoint (`/auth/login`) in [api/app/routes](mdc:api/app/routes).
 - [ ] Implement role-based access control for API endpoints.
 - [ ] Set up OpenAPI specification generation.
@@ -29,12 +29,12 @@ This document outlines the development plan for Codifeed, a full-stack social ne
 - [ ] Create basic layout components (Navbar, Footer, Sidebar if needed) in [web/src/components](mdc:web/src/components).
 - [ ] Implement pages:
   - [ ] Login page.
-  - [ ] Registration page.
+  - [ ] Signup page.
   - [ ] User Profile page (display only for now, including avatar, bio, skills).
   - [ ] Settings page for profile updates.
 - [ ] Set up `openapi-typescript` to generate types ([web/src/types/api.gen.ts](mdc:web/src/types/api.gen.ts)).
 - [ ] Set up `openapi-fetch` for type-safe API calls (likely in [web/src/services/api](mdc:web/src/services/api)).
-- [ ] Implement authentication flow (login, register, storing JWT, handling roles).
+- [ ] Implement authentication flow (login, signup, storing JWT, handling roles).
 - [ ] Implement protected routes/pages based on user roles (guest, user, admin).
 - [ ] Implement UI for profile editing, including avatar upload to the backend.
 - [ ] Basic state management for user session (e.g., Zustand, Jotai, or React Context).

@@ -72,7 +72,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/register": {
+    "/auth/signup": {
         parameters: {
             query?: never;
             header?: never;
@@ -81,8 +81,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Register a new user */
-        post: operations["auth_register_post"];
+        /** @description Create a new user */
+        post: operations["auth_signup_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -323,7 +323,7 @@ export interface operations {
             };
         };
     };
-    auth_register_post: {
+    auth_signup_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -424,7 +424,7 @@ export enum ApiPaths {
     auth_logout_post = "/auth/logout",
     auth_me_get = "/auth/me",
     auth_refresh_post = "/auth/refresh",
-    auth_register_post = "/auth/register",
+    auth_signup_post = "/auth/signup",
     post_posts_get = "/posts",
     user__int_user_id__get = "/users/{user_id}"
 }

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useAuth } from "@/hooks/use-auth"
-import { Link } from "@tanstack/react-router"
+import { Link, useRouter } from "@tanstack/react-router"
 import { LogOutIcon, NetworkIcon } from "lucide-react"
 import type { ComponentPropsWithoutRef } from "react"
 
@@ -16,14 +16,14 @@ interface HeaderProps extends ComponentPropsWithoutRef<typeof Wrapper> {
   user?: any
 }
 
-export function Header(props: HeaderProps) {
-  const { user } = props
+export function Header({ user }: HeaderProps) {
+  const router = useRouter()
   const { logout } = useAuth()
 
   return (
     <div className="sticky top-0 right-0 left-0 z-50 border-b">
       <Wrapper className="flex items-center justify-between py-3">
-        <Link to="/" className="flex items-center gap-2 text-primary">
+        <Link to="/home" className="flex items-center gap-2 text-primary">
           <NetworkIcon />
           <span className="text-xl font-medium">Codifeed</span>
         </Link>
@@ -43,7 +43,11 @@ export function Header(props: HeaderProps) {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => logout()}>
+              <DropdownMenuItem
+                onClick={() =>
+                  logout().finally(() => router.invalidate({ sync: true }))
+                }
+              >
                 <LogOutIcon />
                 Logout
               </DropdownMenuItem>
@@ -54,9 +58,9 @@ export function Header(props: HeaderProps) {
             <Button asChild variant="outline">
               <Link to="/login">Login</Link>
             </Button>
-            {/* <Button asChild>
-            <Link to="/register">Register</Link>
-          </Button> */}
+            <Button asChild>
+              <Link to="/signup">Signup</Link>
+            </Button>
           </div>
         )}
       </Wrapper>

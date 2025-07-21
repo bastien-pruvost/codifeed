@@ -4,29 +4,34 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/hooks/use-auth"
-import { QUERY_KEYS } from "@/services/api"
 import { useQueryClient } from "@tanstack/react-query"
-import { createFileRoute, useRouter } from "@tanstack/react-router"
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
 
-export const Route = createFileRoute("/(auth)/login")({
+export const Route = createFileRoute("/_unauthenticated/(auth)/login")({
   component: LoginPage,
 })
 
 function LoginPage() {
   const router = useRouter()
+  const search = Route.useSearch()
   const queryClient = useQueryClient()
   const { login } = useAuth()
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    login({
-      email: formData.get("email")?.toString() ?? "",
-      password: formData.get("password")?.toString() ?? "",
-    })
-    queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.authUser] })
-    router.invalidate()
-    router.navigate({ to: "/" })
+    try {
+      const formData = new FormData(e.currentTarget)
+      await login({
+        email: formData.get("email")?.toString() ?? "",
+        password: formData.get("password")?.toString() ?? "",
+      })
+
+      // Navigate to redirect URL or home
+      router.history.push(search.redirect ?? "/home")
+    } catch (error) {
+      console.error("Login failed:", error)
+      // You might want to show an error message to the user here
+    }
   }
 
   return (
@@ -77,9 +82,9 @@ function LoginPage() {
 
                   <div className="text-center text-sm">
                     Don&apos;t have an account?{" "}
-                    {/* <Link to="/signup" className="underline underline-offset-4">
+                    <Link to="/signup" className="underline underline-offset-4">
                       Sign up
-                    </Link> */}
+                    </Link>
                   </div>
                 </div>
               </form>
