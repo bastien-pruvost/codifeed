@@ -1,27 +1,31 @@
 import { Header } from "@/components/header"
+import { Toaster } from "@/components/ui/sonner"
 import { useAuth, type AuthContext } from "@/hooks/use-auth"
 import { authUserQueryOptions } from "@/services/api/auth"
-import { shouldCheckAuth } from "@/services/local-storage/auth"
+import { shouldBeAuthenticated } from "@/services/local-storage/auth"
+
 import type { QueryClient } from "@tanstack/react-query"
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-adapter"
 import { lazy, Suspense } from "react"
-import { z } from "zod"
 
 interface RouterContext {
   queryClient: QueryClient
   auth: AuthContext
 }
 
-const rootSearchSchema = z.object({
-  redirect: z.string().optional(),
-})
-
 export const Route = createRootRouteWithContext<RouterContext>()({
-  validateSearch: zodValidator(rootSearchSchema),
-  beforeLoad: async ({ context: { queryClient } }) => {
-    if (shouldCheckAuth()) {
-      await queryClient.ensureQueryData(authUserQueryOptions())
+  beforeLoad: async ({ context }) => {
+    console.log("beforeLoad in root")
+    const user = shouldBeAuthenticated()
+      ? await context.queryClient.ensureQueryData(authUserQueryOptions())
+      : null
+
+    return {
+      auth: {
+        user,
+        isAuthenticated: !!user,
+        isLoading: false,
+      },
     }
   },
   component: RootComponent,
@@ -31,11 +35,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 })
 
 function RootComponent() {
+  console.log("Root load")
   const auth = useAuth()
+  // const context = Route.useRouteContext()
+
   return (
     <>
       <Header user={auth.user} />
       <Outlet />
+      <Toaster />
       {import.meta.env.DEV ? (
         <Suspense fallback={null}>
           {/* <ReactQueryDevtool buttonPosition="top-right" /> */}

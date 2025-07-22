@@ -8,12 +8,21 @@ export const Route = createFileRoute("/_authenticated/home")({
 })
 
 function RouteComponent() {
+  console.log("Home load")
   const auth = useAuth()
+  // const routeContext = Route.useRouteContext()
+
   // const postsQuery = useSuspenseQuery(postsQueryOptions)
   // const posts = postsQuery.data
-  const routeContext = Route.useRouteContext()
 
-  console.log({ routeContext })
+  // console.log("AUTH FROM HOOK: ", {
+  //   user: !!auth.user,
+  //   isLoading: auth.isLoading,
+  // })
+  // console.log("AUTH FROM CONTEXT: ", {
+  //   user: !!routeContext.auth.user,
+  //   isLoading: routeContext.auth.isLoading,
+  // })
 
   return (
     <div className="text-center">
@@ -21,8 +30,8 @@ function RouteComponent() {
       <p></p>
       <p>
         {auth.isAuthenticated
-          ? "You are authenticated"
-          : "You are not authenticated"}
+          ? "You are authenticated ✅"
+          : "You are not authenticated ❌"}
       </p>
       <p>
         {auth.user

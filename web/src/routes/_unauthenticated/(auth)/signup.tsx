@@ -1,37 +1,36 @@
 import signupImg from "@/assets/images/signup-illustration.webp"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useSignupMutation } from "@/services/api/auth"
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
+
+import { createFileRoute, Link } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_unauthenticated/(auth)/signup")({
   component: SignupPage,
 })
 
 function SignupPage() {
-  const router = useRouter()
-  const signupMutation = useSignupMutation()
+  // const router = useRouter()
+  // const signupMutation = useSignupMutation()
 
   const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    // const formData = new FormData(e.currentTarget)
 
-    signupMutation.mutate(
-      {
-        firstname: formData.get("firstname")?.toString() ?? "",
-        lastname: formData.get("lastname")?.toString() ?? "",
-        email: formData.get("email")?.toString() ?? "",
-        password: formData.get("password")?.toString() ?? "",
-        avatar: null,
-      },
-      {
-        onSuccess: () => {
-          router.navigate({ to: "/login" })
-        },
-      },
-    )
+    // signupMutation.mutate(
+    //   {
+    //     firstname: formData.get("firstname")?.toString() ?? "",
+    //     lastname: formData.get("lastname")?.toString() ?? "",
+    //     email: formData.get("email")?.toString() ?? "",
+    //     password: formData.get("password")?.toString() ?? "",
+    //     avatar: null,
+    //   },
+    //   {
+    //     onSuccess: () => {
+    //       router.navigate({ to: "/login" })
+    //     },
+    //   },
+    // )
   }
 
   return (
@@ -90,7 +89,7 @@ function SignupPage() {
                       required
                     />
                   </div>
-                  <Button
+                  {/* <Button
                     type="submit"
                     className="w-full"
                     disabled={signupMutation.isPending}
@@ -98,7 +97,7 @@ function SignupPage() {
                     {signupMutation.isPending
                       ? "Creating account..."
                       : "Sign up"}
-                  </Button>
+                  </Button> */}
 
                   <div className="text-center text-sm">
                     Already have an account?{" "}

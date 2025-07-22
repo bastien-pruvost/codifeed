@@ -8,24 +8,25 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useAuth } from "@/hooks/use-auth"
-import { Link, useRouter } from "@tanstack/react-router"
-import { LogOutIcon, NetworkIcon } from "lucide-react"
+import type { UserRead } from "@/types/api.gen"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { LogOutIcon, MessageSquareCode } from "lucide-react"
 import type { ComponentPropsWithoutRef } from "react"
 
 interface HeaderProps extends ComponentPropsWithoutRef<typeof Wrapper> {
-  user?: any
+  user?: UserRead
 }
 
 export function Header({ user }: HeaderProps) {
-  const router = useRouter()
   const { logout } = useAuth()
+  const navigate = useNavigate()
 
   return (
     <div className="sticky top-0 right-0 left-0 z-50 border-b">
       <Wrapper className="flex items-center justify-between py-3">
-        <Link to="/home" className="flex items-center gap-2 text-primary">
-          <NetworkIcon />
-          <span className="text-xl font-medium">Codifeed</span>
+        <Link to="/home" className="flex items-center gap-2.5 text-primary">
+          <MessageSquareCode className="size-7" />
+          <span className="mb-1 text-2xl font-semibold">Codifeed</span>
         </Link>
 
         {user ? (
@@ -33,7 +34,10 @@ export function Header({ user }: HeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Avatar>
-                  <AvatarImage src={user?.avatar} alt={user?.firstname} />
+                  <AvatarImage
+                    src={user?.avatar ?? ""}
+                    alt={`${user?.firstname} ${user?.lastname}`}
+                  />
                   <AvatarFallback>
                     {user?.firstname.charAt(0)}
                     {user?.lastname.charAt(0)}
@@ -44,9 +48,9 @@ export function Header({ user }: HeaderProps) {
 
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() =>
-                  logout().finally(() => router.invalidate({ sync: true }))
-                }
+                onClick={async () => {
+                  await logout().then(() => navigate({ to: "/" }))
+                }}
               >
                 <LogOutIcon />
                 Logout

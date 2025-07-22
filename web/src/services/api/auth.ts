@@ -1,16 +1,29 @@
 import { api, QUERY_KEYS } from "@/services/api"
-import { shouldCheckAuth } from "@/services/local-storage/auth"
+import {
+  setShouldBeAuthenticated,
+  shouldBeAuthenticated,
+} from "@/services/local-storage/auth"
+
 import { queryOptions } from "@tanstack/react-query"
 
 export function authUserQueryOptions(options?: { forceEnabled?: boolean }) {
   return queryOptions({
     queryKey: [QUERY_KEYS.authUser],
+    enabled: shouldBeAuthenticated() ?? options?.forceEnabled,
     queryFn: () =>
-      shouldCheckAuth()
-        ? api.GET("/auth/me", {}).then((res) => res.data ?? null)
-        : null,
-    enabled: options?.forceEnabled,
+      api
+        .GET("/auth/me", {})
+        .then((res) => res.data ?? null)
+        .catch((err) => {
+          console.log("ERR CATCHED: ", err)
+          throw new Error("ERROR: ", err)
+        }),
+    meta: {
+      errorMessage: "You are not authenticated",
+    },
     refetchInterval: 1000 * 60 * 5, // 5 minutes - periodic check for long sessions
+    staleTime: 0, // delete
+    gcTime: 0, // delete
     refetchOnWindowFocus: true, // Check when user returns to tab
     refetchOnMount: true, // Refetch on every component mount
     refetchOnReconnect: true, // Check when network reconnects

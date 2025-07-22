@@ -4,17 +4,23 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/hooks/use-auth"
-import { useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
+import { zodValidator } from "@tanstack/zod-adapter"
+import { z } from "zod"
+
+const rootSearchSchema = z.object({
+  redirect: z.string().optional(),
+})
 
 export const Route = createFileRoute("/_unauthenticated/(auth)/login")({
+  validateSearch: zodValidator(rootSearchSchema),
   component: LoginPage,
 })
 
 function LoginPage() {
   const router = useRouter()
   const search = Route.useSearch()
-  const queryClient = useQueryClient()
+  // const queryClient = useQueryClient()
   const { login } = useAuth()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {

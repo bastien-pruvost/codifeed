@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthenticatedRouteImport } from './routes/_unauthenticated'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as UnauthenticatedIndexRouteImport } from './routes/_unauthenticated/index'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as UnauthenticatedauthSignupRouteImport } from './routes/_unauthenticated/(auth)/signup'
 import { Route as UnauthenticatedauthLoginRouteImport } from './routes/_unauthenticated/(auth)/login'
@@ -28,6 +29,11 @@ const UnauthenticatedIndexRoute = UnauthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => UnauthenticatedRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
@@ -49,12 +55,14 @@ const UnauthenticatedauthLoginRoute =
 
 export interface FileRoutesByFullPath {
   '/home': typeof AuthenticatedHomeRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/': typeof UnauthenticatedIndexRoute
   '/login': typeof UnauthenticatedauthLoginRoute
   '/signup': typeof UnauthenticatedauthSignupRoute
 }
 export interface FileRoutesByTo {
   '/home': typeof AuthenticatedHomeRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/': typeof UnauthenticatedIndexRoute
   '/login': typeof UnauthenticatedauthLoginRoute
   '/signup': typeof UnauthenticatedauthSignupRoute
@@ -64,20 +72,22 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_unauthenticated': typeof UnauthenticatedRouteWithChildren
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_unauthenticated/': typeof UnauthenticatedIndexRoute
   '/_unauthenticated/(auth)/login': typeof UnauthenticatedauthLoginRoute
   '/_unauthenticated/(auth)/signup': typeof UnauthenticatedauthSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/home' | '/' | '/login' | '/signup'
+  fullPaths: '/home' | '/profile' | '/' | '/login' | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/home' | '/' | '/login' | '/signup'
+  to: '/home' | '/profile' | '/' | '/login' | '/signup'
   id:
     | '__root__'
     | '/_authenticated'
     | '/_unauthenticated'
     | '/_authenticated/home'
+    | '/_authenticated/profile'
     | '/_unauthenticated/'
     | '/_unauthenticated/(auth)/login'
     | '/_unauthenticated/(auth)/signup'
@@ -111,6 +121,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnauthenticatedIndexRouteImport
       parentRoute: typeof UnauthenticatedRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/home': {
       id: '/_authenticated/home'
       path: '/home'
@@ -137,10 +154,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

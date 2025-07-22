@@ -1,5 +1,5 @@
 export const LOCAL_STORAGE_KEYS = {
-  shouldCheckAuth: "codifeed.auth.should_check_auth",
+  shouldBeAuthenticated: "codifeed.auth.should_be_authenticated",
 }
 
 export function getLocalStorageItem<T>(key: string, defaultValue: T): T {

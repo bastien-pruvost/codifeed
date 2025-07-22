@@ -5,15 +5,21 @@ import {
 } from "@/services/local-storage"
 
 // Store a flag indicating potential authentication state
-export function setShouldCheckAuth(isAuthenticated: boolean) {
-  if (isAuthenticated) {
-    setLocalStorageItem(LOCAL_STORAGE_KEYS.shouldCheckAuth, isAuthenticated)
+export function setShouldBeAuthenticated(shouldBeAuthenticated: boolean) {
+  if (shouldBeAuthenticated) {
+    setLocalStorageItem(
+      LOCAL_STORAGE_KEYS.shouldBeAuthenticated,
+      shouldBeAuthenticated,
+    )
     return
   }
-  localStorage.removeItem(LOCAL_STORAGE_KEYS.shouldCheckAuth)
+  localStorage.removeItem(LOCAL_STORAGE_KEYS.shouldBeAuthenticated)
 }
 
 // Get the flag indicating potential authentication state
-export function shouldCheckAuth() {
-  return getLocalStorageItem<boolean>(LOCAL_STORAGE_KEYS.shouldCheckAuth, false)
+export function shouldBeAuthenticated() {
+  return getLocalStorageItem<boolean>(
+    LOCAL_STORAGE_KEYS.shouldBeAuthenticated,
+    false,
+  )
 }
