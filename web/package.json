@@ -28,6 +28,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/vite": "^4.1.8",
     "@tanstack/react-query": "^5.80.2",
+    "@tanstack/react-query-devtools": "^5.83.0",
     "@tanstack/react-router": "^1.120.15",
     "@tanstack/router-plugin": "^1.120.15",
     "@tanstack/zod-adapter": "^1.129.0",

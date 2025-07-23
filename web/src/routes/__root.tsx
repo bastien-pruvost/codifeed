@@ -46,8 +46,8 @@ function RootComponent() {
       <Toaster />
       {import.meta.env.DEV ? (
         <Suspense fallback={null}>
-          {/* <ReactQueryDevtool buttonPosition="top-right" /> */}
-          <TanStackRouterDevtools position="bottom-right" />
+          <TanStackRouterDevtools position="bottom-left" />
+          <ReactQueryDevtools buttonPosition="bottom-right" />
         </Suspense>
       ) : null}
     </>
@@ -58,6 +58,14 @@ const TanStackRouterDevtools = lazy(() =>
   import.meta.env.DEV
     ? import("@tanstack/react-router-devtools").then((module) => ({
         default: module.TanStackRouterDevtools,
+      }))
+    : Promise.resolve({ default: () => null }),
+)
+
+const ReactQueryDevtools = lazy(() =>
+  import.meta.env.DEV
+    ? import("@tanstack/react-query-devtools").then((module) => ({
+        default: module.ReactQueryDevtools,
       }))
     : Promise.resolve({ default: () => null }),
 )
