@@ -1,26 +1,31 @@
 {
+  // Python configuration
   "python.defaultInterpreterPath": "${workspaceFolder}/api/.venv/bin/python",
-
   "python.autoComplete.extraPaths": ["${workspaceFolder}/api"],
-  "python.analysis.extraPaths": ["${workspaceFolder}/api"],
-
-  // Pyright configuration
-  "python.analysis.typeCheckingMode": "basic",
-  "python.analysis.diagnosticMode": "workspace",
-  "python.analysis.autoImportCompletions": true,
-
-  // Python environment
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit",
       "source.fixAll": "explicit"
     }
   },
-  "cursorpyright.analysis.autoImportCompletions": true,
-  "cursorpyright.analysis.diagnosticMode": "workspace",
+  // Pyright configuration
+  "python.analysis.extraPaths": ["${workspaceFolder}/api"],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.autoImportCompletions": true,
   "cursorpyright.analysis.extraPaths": ["${workspaceFolder}/api"],
   "cursorpyright.analysis.typeCheckingMode": "basic",
+  "cursorpyright.analysis.diagnosticMode": "workspace",
+  "cursorpyright.analysis.autoImportCompletions": true,
 
+  // TypeScript configuration
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.preferences.autoImportFileExcludePatterns": ["@radix-ui/*"],
+
+  // Files configuration
   "files.associations": {
     "*.css": "tailwindcss"
   }

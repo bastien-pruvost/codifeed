@@ -1,24 +1,26 @@
-import { resolve } from 'node:path'
-import { defineConfig } from 'vite'
+/// <reference types="vitest" />
+import path from "node:path"
+import { fileURLToPath } from "node:url"
 
-import ReactVite from '@vitejs/plugin-react'
-import TailwindCssVite from '@tailwindcss/vite'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import TailwindCssVite from "@tailwindcss/vite"
+import { tanstackRouter } from "@tanstack/router-plugin/vite"
+import ReactVite from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
+    tanstackRouter({ target: "react", autoCodeSplitting: true }),
     ReactVite(),
     TailwindCssVite(),
   ],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: "jsdom",
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
+      "@": path.resolve(path.dirname(fileURLToPath(import.meta.url)), "./src"),
     },
   },
 })

@@ -1,39 +1,50 @@
 {
   "include": [
+    "**/*.js",
     "**/*.ts",
-    "**/*.tsx",
-    "eslint.config.js",
-    "prettier.config.js",
-    "vite.config.js"
+    "**/*.tsx"
+    // "eslint.config.js",
+    // "prettier.config.js",
+    // "vite.config.js"
   ],
+  "exclude": ["node_modules", "dist", "**/*.gen.ts"],
 
   "compilerOptions": {
     "types": ["vite/client"],
     "target": "ES2022",
     "module": "ESNext",
+    "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
 
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    // "moduleResolution": "node",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
+    // Output
     "noEmit": true,
+    "sourceMap": true,
 
+    // Highly recommended
     "strict": true,
-    "strictNullChecks": true,
+
+    // Recommended
+    "allowJs": true,
+    "checkJs": true,
     "esModuleInterop": true,
+    // "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "isolatedModules": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+
+    // Strictness
+    "allowUnreachableCode": false,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "noUncheckedIndexedAccess": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
+    // "allowImportingTsExtensions": true, // Remove if no errors
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
