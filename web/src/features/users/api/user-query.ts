@@ -1,5 +1,6 @@
-import { api, QUERY_KEYS } from "@/services/api"
-import type { paths } from "@/types/api.gen"
+import type { paths } from "@/types/generated/api.gen"
+import { api } from "@/services/fetch-client"
+import { QUERY_KEYS } from "@/services/query-client"
 
 export function userQueryOptions(
   userId: paths["/users/{user_id}"]["get"]["parameters"]["path"]["user_id"],

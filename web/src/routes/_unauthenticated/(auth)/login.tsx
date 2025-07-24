@@ -1,12 +1,13 @@
-import loginImg from "@/assets/images/login-illustration.webp"
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
+import { zodValidator } from "@tanstack/zod-adapter"
+import { z } from "zod"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useAuth } from "@/hooks/use-auth"
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-adapter"
-import { z } from "zod"
+import { useLoginMutation } from "@/features/auth/api/login-mutation"
+import loginImg from "@/features/auth/assets/login-illustration.webp"
 
 const rootSearchSchema = z.object({
   redirect: z.string().optional(),
@@ -20,8 +21,8 @@ export const Route = createFileRoute("/_unauthenticated/(auth)/login")({
 function LoginPage() {
   const router = useRouter()
   const search = Route.useSearch()
-  // const queryClient = useQueryClient()
-  const { login } = useAuth()
+
+  const { mutateAsync: login } = useLoginMutation()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

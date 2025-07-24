@@ -9,17 +9,24 @@ const config = {
   ],
   tailwindStylesheet: "./src/styles/global.css",
   importOrder: [
-    "<TYPES>",
-    "<TYPES>^@/",
-    "<TYPES>^[.]",
-    "",
+    // Node built-ins (types and runtime together)
+    "<TYPES>^(node:)",
     "<BUILTIN_MODULES>",
     "",
+    // Third-party packages (types and runtime together)
+    "<TYPES>",
     "<THIRD_PARTY_MODULES>",
     "",
-    "^@/(.*)$",
-    "^[./]",
+    // Internal absolute imports (types and runtime together)
+    "<TYPES>^@/types/",
+    "<TYPES>^@/",
+    "^@/",
     "",
+    // Internal relative imports (types and runtime together)
+    "<TYPES>^[.]",
+    "^[.]",
+    "",
+    // Side effects (CSS, etc.) - always last
     "^(?!.*[.]css$)[./].*$",
     ".css$",
   ],

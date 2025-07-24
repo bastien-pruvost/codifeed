@@ -1,9 +1,8 @@
-import { cn } from "@/lib/utils"
 import { LoaderCircle } from "lucide-react"
 
-interface SpinnerProps extends React.ComponentProps<"svg"> {}
+import { cn } from "@/utils/classnames"
 
-function Spinner({ className, ...props }: SpinnerProps) {
+function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   return <LoaderCircle className={cn("animate-spin", className)} {...props} />
 }
 

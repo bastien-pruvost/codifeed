@@ -1,6 +1,4 @@
-import type { paths } from "@/types/api.gen"
 import { QueryCache, QueryClient } from "@tanstack/react-query"
-import createFetchClient, { type Middleware } from "openapi-fetch"
 import { toast } from "sonner"
 
 export const QUERY_KEYS = {
@@ -9,24 +7,6 @@ export const QUERY_KEYS = {
   posts: "posts",
   comments: "comments",
 }
-
-const errorMiddleware: Middleware = {
-  async onResponse({ response }) {
-    if (!response.ok) {
-      throw new Error(
-        `${response.url}: ${response.status} ${response.statusText}`,
-      )
-    }
-  },
-}
-
-export const api = createFetchClient<paths>({
-  baseUrl: import.meta.env.VITE_API_URL,
-  headers: { "Content-Type": "application/json", Accept: "application/json" },
-  credentials: "include",
-})
-
-// api.use(errorMiddleware)
 
 export const queryClient = new QueryClient({
   defaultOptions: {

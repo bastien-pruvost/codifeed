@@ -1,9 +1,9 @@
-import signupImg from "@/assets/images/signup-illustration.webp"
+import { createFileRoute, Link } from "@tanstack/react-router"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
-import { createFileRoute, Link } from "@tanstack/react-router"
+import signupImg from "@/features/auth/assets/signup-illustration.webp"
 
 export const Route = createFileRoute("/_unauthenticated/(auth)/signup")({
   component: SignupPage,

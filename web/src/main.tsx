@@ -1,21 +1,33 @@
+import type { QueryClient } from "@tanstack/react-query"
 import { QueryClientProvider } from "@tanstack/react-query"
-import { RouterProvider, createRouter } from "@tanstack/react-router"
-import ReactDOM from "react-dom/client"
+import { createRouter, RouterProvider } from "@tanstack/react-router"
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
 
-// Import the generated route tree
-import reportWebVitals from "@/reportWebVitals.ts"
-import { routeTree } from "@/routeTree.gen.ts"
+import type { UserRead } from "@/types/generated/api.gen"
+import { reportWebVitals } from "@/reportWebVitals"
+import { routeTree } from "@/routeTree.gen"
+import { queryClient } from "@/services/query-client"
 
-import { AuthProvider, useAuth } from "@/hooks/use-auth"
-import { queryClient } from "@/services/api"
 import "@/styles/global.css"
-import { Spinner } from "@/components/ui/spinner"
-import { Suspense } from "react"
+
+export interface RouterContext {
+  queryClient: QueryClient
+  auth: {
+    user: UserRead
+    isAuthenticated: boolean
+  }
+}
+
+const defaultRouterContext: RouterContext = {
+  queryClient,
+  auth: undefined!,
+}
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: { queryClient, auth: undefined! },
+  context: defaultRouterContext,
   defaultPreload: false, // TODO: change to "intent" in production
   defaultPreloadStaleTime: 0,
   // defaultStructuralSharing: true,
@@ -23,42 +35,26 @@ const router = createRouter({
   scrollRestoration: true,
 })
 
+// Wrap the Router in all the providers / contexts
+function App() {
+  console.log("App mount")
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  )
+}
+
 // Render the app
 const rootElement = document.getElementById("app")
 if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
+  console.log("React render app")
+  const root = createRoot(rootElement)
   root.render(
-    // <StrictMode>
-    <App />,
-    // </StrictMode>,
+    <StrictMode>
+      <App />
+    </StrictMode>,
   )
-}
-
-// Wrap the router in all the providers / contexts
-function App() {
-  console.log("App load")
-  return (
-    <Suspense
-      fallback={
-        <div className="flex h-screen w-screen items-center justify-center">
-          <Spinner className="size-8" />
-        </div>
-      }
-    >
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <Router />
-        </AuthProvider>
-      </QueryClientProvider>
-    </Suspense>
-  )
-}
-
-// Provide the auth context to the router
-function Router() {
-  console.log("Router load")
-  const auth = useAuth()
-  return <RouterProvider router={router} context={{ queryClient, auth }} />
 }
 
 // If you want to start measuring performance in your app, pass a function

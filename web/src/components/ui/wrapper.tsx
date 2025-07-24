@@ -1,9 +1,12 @@
-import { cn } from "@/lib/utils"
 import type { ComponentPropsWithoutRef } from "react"
 
-interface WrapperProps extends ComponentPropsWithoutRef<"div"> {}
+import { cn } from "@/utils/classnames"
 
-export function Wrapper({ children, className, ...props }: WrapperProps) {
+export function Wrapper({
+  children,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<"div">) {
   return (
     <div className={cn("mx-auto max-w-7xl px-4", className)} {...props}>
       {children}

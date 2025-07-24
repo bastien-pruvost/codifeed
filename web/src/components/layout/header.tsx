@@ -1,3 +1,8 @@
+import type { ComponentPropsWithoutRef } from "react"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { LogOutIcon, MessageSquareCode } from "lucide-react"
+
+import type { UserRead } from "@/types/generated/api.gen"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -7,18 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Wrapper } from "@/components/ui/wrapper"
-import { useAuth } from "@/hooks/use-auth"
-import type { UserRead } from "@/types/api.gen"
-import { Link, useNavigate } from "@tanstack/react-router"
-import { LogOutIcon, MessageSquareCode } from "lucide-react"
-import type { ComponentPropsWithoutRef } from "react"
+import { useLogoutMutation } from "@/features/auth/api/logout-mutation"
 
 interface HeaderProps extends ComponentPropsWithoutRef<typeof Wrapper> {
-  user?: UserRead
+  user?: UserRead | null | undefined
 }
 
 export function Header({ user }: HeaderProps) {
-  const { logout } = useAuth()
+  const { mutateAsync: logout } = useLogoutMutation()
   const navigate = useNavigate()
 
   return (

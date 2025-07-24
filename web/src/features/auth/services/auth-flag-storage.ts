@@ -1,7 +1,7 @@
 import {
   getLocalStorageItem,
-  setLocalStorageItem,
   LOCAL_STORAGE_KEYS,
+  setLocalStorageItem,
 } from "@/services/local-storage"
 
 // Store a flag indicating potential authentication state
