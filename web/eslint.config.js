@@ -17,6 +17,17 @@ export default tseslint.config(
   },
   eslint.configs.recommended,
   tseslint.configs.recommended,
+  {
+    rules: {
+      "no-unused-vars": [
+        "warn",
+        {
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
   // tseslint.configs.strictTypeChecked,
   // pluginReact.configs.flat.recommended,
 )
