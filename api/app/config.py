@@ -8,17 +8,17 @@ class Config:
 
     API_PREFIX = "/api"
 
-    SQLITE_DB_FILE_PATH = os.getenv("SQLITE_DB_FILE_PATH")
-    SQLITE_DB_URI = os.getenv("SQLITE_DB_URI")
+    SQLITE_DB_URI = os.getenv("DATABASE_URL")
 
     # JWT = [{"jwt": []}]
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=14)
     JWT_TOKEN_LOCATION = ["cookies"]
     JWT_COOKIE_HTTPONLY = True
     JWT_COOKIE_SECURE = True
+
     JWT_COOKIE_SAMESITE = "Strict"
-    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
-    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=14)
 
     # OPENAPI_VERSION = "3.0.3"
     # OPENAPI_URL_PREFIX = "/api"

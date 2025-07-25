@@ -1,38 +1,27 @@
 from typing import Any, List, Optional
 
 from flask import Response, make_response
-from pydantic import BaseModel, Field
 
-
-class ErrorDetail(BaseModel):
-    loc: List[str] = Field(description="Location of the error")
-    msg: str = Field(description="Error message")
-    type: str = Field(description="Error type")
-
-
-class ErrorResponse(BaseModel):
-    status_code: int = Field(description="Status code")
-    message: str = Field(description="Error message")
-    detail: List[ErrorDetail] = Field(description="Error details")
+from app.database.models import ErrorDetail, ErrorResponse
 
 
 def success_response(
     data: Any,
-    status_code: int = 200,
+    status: int = 200,
 ) -> Response:
     """Create a standardized success response"""
-    return make_response(data, status_code)
+    return make_response(data, status)
 
 
 def error_response(
     message: str = "An error occurred",
-    status_code: int = 400,
+    status: int = 500,
     detail: Optional[List[ErrorDetail]] = None,
 ) -> tuple[dict, int]:
     """Create a standardized error response"""
     response = ErrorResponse(
-        status_code=status_code,
+        status=status,
         message=message,
         detail=detail or [],
     )
-    return response.model_dump(), status_code
+    return response.model_dump(), status

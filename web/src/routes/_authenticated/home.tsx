@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { useRefreshTokenMutation } from "@/features/auth/api/refresh-token-mutation"
+
 export const Route = createFileRoute("/_authenticated/home")({
   component: RouteComponent,
   // loader: ({ context: { queryClient } }) =>
@@ -13,7 +15,7 @@ function RouteComponent() {
   // const postsQuery = useSuspenseQuery(postsQueryOptions)
   // const posts = postsQuery.data
   const user = auth.user
-
+  const { mutateAsync: refreshToken } = useRefreshTokenMutation()
   return (
     <div className="text-center">
       <h1>Home</h1>
@@ -32,6 +34,14 @@ function RouteComponent() {
           <p>No user</p>
         </>
       )}
+
+      <button
+        onClick={() => {
+          refreshToken()
+        }}
+      >
+        Refresh token
+      </button>
     </div>
   )
 }

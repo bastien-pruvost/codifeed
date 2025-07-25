@@ -14,7 +14,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Login a user */
-        post: operations["auth_login_post"];
+        post: operations["auth_auth_login_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -31,24 +31,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Logout a user */
-        post: operations["auth_logout_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get the current user */
-        get: operations["auth_me_get"];
-        put?: never;
-        post?: never;
+        post: operations["auth_auth_logout_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -65,7 +48,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Refresh a user's access token */
-        post: operations["auth_refresh_post"];
+        post: operations["auth_auth_refresh_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -82,7 +65,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Create a new user */
-        post: operations["auth_signup_post"];
+        post: operations["auth_auth_signup_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -97,7 +80,24 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get all posts */
-        get: operations["post_posts_get"];
+        get: operations["posts_posts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get the current user */
+        get: operations["user_users_me_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -116,7 +116,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get a user by id */
-        get: operations["user__int_user_id__get"];
+        get: operations["user_users__int_user_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -138,10 +138,10 @@ export interface components {
         };
         /** LoginTokens */
         LoginTokens: {
-            /** Accesstoken */
-            accessToken: string;
-            /** Refreshtoken */
-            refreshToken: string;
+            /** Access Token */
+            access_token: string;
+            /** Refresh Token */
+            refresh_token: string;
         };
         /** LogoutResponse */
         LogoutResponse: {
@@ -230,7 +230,7 @@ export type UserRead = components['schemas']['UserRead'];
 export type ValidationErrorModel = components['schemas']['ValidationErrorModel'];
 export type $defs = Record<string, never>;
 export interface operations {
-    auth_login_post: {
+    auth_auth_login_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -263,7 +263,7 @@ export interface operations {
             };
         };
     };
-    auth_logout_post: {
+    auth_auth_logout_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -283,27 +283,7 @@ export interface operations {
             };
         };
     };
-    auth_me_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserRead"];
-                };
-            };
-        };
-    };
-    auth_refresh_post: {
+    auth_auth_refresh_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -323,7 +303,7 @@ export interface operations {
             };
         };
     };
-    auth_signup_post: {
+    auth_auth_signup_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -356,7 +336,7 @@ export interface operations {
             };
         };
     };
-    post_posts_get: {
+    posts_posts_get: {
         parameters: {
             query?: {
                 user_id?: number | null;
@@ -387,7 +367,27 @@ export interface operations {
             };
         };
     };
-    user__int_user_id__get: {
+    user_users_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRead"];
+                };
+            };
+        };
+    };
+    user_users__int_user_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -420,11 +420,11 @@ export interface operations {
     };
 }
 export enum ApiPaths {
-    auth_login_post = "/auth/login",
-    auth_logout_post = "/auth/logout",
-    auth_me_get = "/auth/me",
-    auth_refresh_post = "/auth/refresh",
-    auth_signup_post = "/auth/signup",
-    post_posts_get = "/posts",
-    user__int_user_id__get = "/users/{user_id}"
+    auth_auth_login_post = "/auth/login",
+    auth_auth_logout_post = "/auth/logout",
+    auth_auth_refresh_post = "/auth/refresh",
+    auth_auth_signup_post = "/auth/signup",
+    posts_posts_get = "/posts",
+    user_users_me_get = "/users/me",
+    user_users__int_user_id__get = "/users/{user_id}"
 }

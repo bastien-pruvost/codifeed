@@ -1,5 +1,3 @@
-import uuid
-
 from flask import make_response
 from flask_jwt_extended import (
     create_access_token,
@@ -12,38 +10,33 @@ from flask_jwt_extended import (
 )
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
-from passlib.hash import bcrypt
 from sqlmodel import select
 
-from app.models import get_session
-from app.models.auth import (
-    LoginCredentials,
-    LoginTokens,
-    LogoutResponse,
-    RefreshResponse,
-)
-from app.models.user import User, UserCreate, UserRead
+from app.database.session import get_session
+from app.extensions.hashing import hash_password, verify_password
+from app.models.auth import LoginCredentials, LoginTokens, LogoutResponse, RefreshResponse
+from app.models.users import User, UserCreate, UserRead
 from app.utils.responses import error_response, success_response
 
 auth_tag = Tag(name="Auth", description="Authentication routes")
-auth_router = APIBlueprint("auth", __name__, url_prefix="/auth", abp_tags=[auth_tag])
+auth_router = APIBlueprint("auth", __name__, abp_tags=[auth_tag])
 
 
 @auth_router.post(
-    "/signup",
+    "/auth/signup",
     responses={201: UserRead},
     description="Create a new user",
 )
 def signup(body: UserCreate):
     user = User.model_validate(
         body,
-        update={"hashed_password": bcrypt.hash(body.password)},
+        update={"hashed_password": hash_password(body.password)},
     )
-    for session in get_session():
+    with get_session() as session:
         existing_user_query = select(User).where(User.email == user.email)
         existing_user = session.exec(existing_user_query).first()
         if existing_user:
-            return error_response("User already exists", 400)
+            return error_response("A user with this email already exists", 400)
         session.add(user)
         session.commit()
         session.refresh(user)
@@ -51,15 +44,15 @@ def signup(body: UserCreate):
 
 
 @auth_router.post(
-    "/login",
+    "/auth/login",
     responses={200: UserRead},
     description="Login a user",
 )
 def login(body: LoginCredentials):
-    for session in get_session():
+    with get_session() as session:
         user_query = select(User).where(User.email == body.email)
         user = session.exec(user_query).first()
-        if not user or not bcrypt.verify(body.password, user.hashed_password):
+        if not user or not verify_password(body.password, user.hashed_password):
             return error_response("Email or password is incorrect", 401)
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
@@ -73,7 +66,7 @@ def login(body: LoginCredentials):
 
 
 @auth_router.post(
-    "/refresh",
+    "/auth/refresh",
     responses={200: LoginTokens},
     description="Refresh a user's access token",
 )
@@ -92,7 +85,7 @@ def refresh():
 
 
 @auth_router.post(
-    "/logout",
+    "/auth/logout",
     responses={200: LogoutResponse},
     description="Logout a user",
 )
@@ -105,20 +98,3 @@ def logout():
     )
     unset_jwt_cookies(response)
     return response
-
-
-@auth_router.get(
-    "/me",
-    responses={200: UserRead},
-    description="Get the current user",
-)
-@jwt_required()
-def me():
-    user_id = get_jwt_identity()
-    print(user_id)
-    for session in get_session():
-        user = session.get(User, uuid.UUID(user_id))
-        print(user)
-        if not user:
-            return error_response("User not found", 404)
-        return success_response(user.model_dump(exclude={"hashed_password"}), 200)

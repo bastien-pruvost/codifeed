@@ -11,7 +11,7 @@ export function authUserQueryOptions(options?: { forceEnabled?: boolean }) {
       console.log("-> auth user query called")
       return shouldBeAuthenticated()
         ? api
-            .GET("/auth/me", {})
+            .GET("/users/me", {})
             .then((res) => res.data ?? null)
             .catch((err) => {
               console.log("ERR CATCHED: ", err)

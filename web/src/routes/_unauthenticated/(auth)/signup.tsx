@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useSignupMutation } from "@/features/auth/api/signup-mutation"
 import signupImg from "@/features/auth/assets/signup-illustration.webp"
 
 export const Route = createFileRoute("/_unauthenticated/(auth)/signup")({
@@ -10,27 +12,22 @@ export const Route = createFileRoute("/_unauthenticated/(auth)/signup")({
 })
 
 function SignupPage() {
-  // const router = useRouter()
-  // const signupMutation = useSignupMutation()
+  const { mutateAsync: signup } = useSignupMutation()
 
-  const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // const formData = new FormData(e.currentTarget)
-
-    // signupMutation.mutate(
-    //   {
-    //     firstname: formData.get("firstname")?.toString() ?? "",
-    //     lastname: formData.get("lastname")?.toString() ?? "",
-    //     email: formData.get("email")?.toString() ?? "",
-    //     password: formData.get("password")?.toString() ?? "",
-    //     avatar: null,
-    //   },
-    //   {
-    //     onSuccess: () => {
-    //       router.navigate({ to: "/login" })
-    //     },
-    //   },
-    // )
+    try {
+      const formData = new FormData(e.currentTarget)
+      await signup({
+        firstName: formData.get("firstname")?.toString() ?? "",
+        lastName: formData.get("lastname")?.toString() ?? "",
+        email: formData.get("email")?.toString() ?? "",
+        password: formData.get("password")?.toString() ?? "",
+        avatar: null,
+      })
+    } catch (error) {
+      console.error("Signup failed:", error)
+    }
   }
 
   return (
@@ -89,15 +86,7 @@ function SignupPage() {
                       required
                     />
                   </div>
-                  {/* <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={signupMutation.isPending}
-                  >
-                    {signupMutation.isPending
-                      ? "Creating account..."
-                      : "Sign up"}
-                  </Button> */}
+                  <Button type="submit" className="w-full"></Button>
 
                   <div className="text-center text-sm">
                     Already have an account?{" "}

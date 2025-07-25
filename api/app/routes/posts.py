@@ -4,10 +4,10 @@ from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 from pydantic import BaseModel
 
-from app.models import MessageResponse
+from app.database.models import MessageResponse
 
-post_tag = Tag(name="Post", description="Post routes")
-post_router = APIBlueprint("post", __name__, abp_tags=[post_tag])
+posts_tag = Tag(name="Posts", description="Posts routes")
+posts_router = APIBlueprint("posts", __name__, abp_tags=[posts_tag])
 
 
 class GetPostsQuery(BaseModel):
@@ -16,7 +16,7 @@ class GetPostsQuery(BaseModel):
     user_id: int | None = None
 
 
-@post_router.get(
+@posts_router.get(
     "/posts",
     responses={200: MessageResponse},
     description="Get all posts",

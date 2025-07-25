@@ -8,14 +8,14 @@ from flask_openapi3.types import SecuritySchemesDict
 
 def create_app(env: str = "development"):
     """Create a new Flask application instance"""
-    from dotenv import load_dotenv
 
     from app.config import get_config
-    from app.models import init_db
-    from app.routes import register_routes
-    from app.utils.errors import register_error_handlers
+    from app.database.initialization import init_db
+    from app.exceptions.handlers import register_error_handlers
+    from app.routes.auth import auth_router
+    from app.routes.posts import posts_router
+    from app.routes.users import users_router
 
-    load_dotenv(".env.local")
     config = get_config(env)
 
     app_info = Info(
@@ -41,7 +41,11 @@ def create_app(env: str = "development"):
     CORS(app, origins=["*"], supports_credentials=True)
     JWTManager(app)
 
-    register_routes(app)
+    # Register feature routers
+    app.register_api(auth_router)
+    app.register_api(users_router)
+    app.register_api(posts_router)
+
     register_error_handlers(app)
 
     init_db()

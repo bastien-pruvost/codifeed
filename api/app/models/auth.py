@@ -1,4 +1,4 @@
-from app.models import BaseModel, MessageResponse
+from app.database.models import BaseModel, MessageResponse
 
 
 class LoginCredentials(BaseModel):

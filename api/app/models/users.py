@@ -1,6 +1,6 @@
 from sqlmodel import Field
 
-from app.models import BaseModel, SQLModelWithId
+from app.database.models import BaseModel, BaseModelWithId
 
 
 class UserBase(BaseModel):
@@ -22,5 +22,5 @@ class UserRead(UserBase):
     id: int
 
 
-class User(UserBase, SQLModelWithId, table=True):
+class User(UserBase, BaseModelWithId, table=True):
     hashed_password: str = Field(max_length=255)
