@@ -11,7 +11,8 @@ def create_app(env: str = "development"):
 
     from app.config import get_config
     from app.database.initialization import init_db
-    from app.exceptions.handlers import register_error_handlers
+    from app.exceptions import register_error_handlers
+    from app.middlewares.refresh_expiring_tokens import refresh_expiring_tokens
     from app.routes.auth import auth_router
     from app.routes.posts import posts_router
     from app.routes.users import users_router
@@ -38,16 +39,21 @@ def create_app(env: str = "development"):
     )
     app.config.from_object(config)
 
-    CORS(app, origins=["*"], supports_credentials=True)
+    CORS(app)
     JWTManager(app)
 
-    # Register feature routers
+    # Register error handlers
+    register_error_handlers(app)
+
+    # Register middlewares
+    app.after_request(refresh_expiring_tokens)
+
+    # Register all routes
     app.register_api(auth_router)
     app.register_api(users_router)
     app.register_api(posts_router)
 
-    register_error_handlers(app)
-
+    # Initialize database
     init_db()
 
     return app

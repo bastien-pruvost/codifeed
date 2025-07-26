@@ -1,29 +1,31 @@
 import os
+from datetime import timedelta
 
 
 class Config:
+    # APP Config
     APP_NAME = "Codifeed - REST API"
     APP_VERSION = "1.0.0"
     APP_DESCRIPTION = "Flask REST API for Codifeed app."
 
+    # FLASK Config
+    SECRET_KEY = os.getenv("SECRET_KEY")
     API_PREFIX = "/api"
 
-    SQLITE_DB_URI = os.getenv("DATABASE_URL")
+    # CORS Config
+    CORS_ORIGINS = ["http://localhost:3000"]
+    CORS_SUPPORTS_CREDENTIALS = True
 
-    # JWT = [{"jwt": []}]
+    # JWT Config
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
-    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=14)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     JWT_TOKEN_LOCATION = ["cookies"]
     JWT_COOKIE_HTTPONLY = True
     JWT_COOKIE_SECURE = True
-
     JWT_COOKIE_SAMESITE = "Strict"
 
-    # OPENAPI_VERSION = "3.0.3"
-    # OPENAPI_URL_PREFIX = "/api"
-    # OPENAPI_SWAGGER_UI_PATH = "/docs"
-
+    # SWAGGER Config
     # SWAGGER_CONFIG = {
     #     "docExpansion": "none",
     #     "validatorUrl": None,
@@ -33,20 +35,19 @@ class Config:
     #     "persistAuthorization": True,
     # }
 
-    # DATA_PREFIX = "/data/data"
-    # FILE_PATH = os.path.join(DATA_PREFIX, "files")
-    # for d in [FILE_PATH]:
-    #     if not os.path.exists(d):
-    #         os.makedirs(d)
-
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    JWT_COOKIE_SECURE = False
-    JWT_COOKIE_SAMESITE = "Strict"
+    TESTING = False
+
+
+class ProductionConfig(Config):
+    DEBUG = False
+    TESTING = False
 
 
 def get_config(env):
     return {
         "development": DevelopmentConfig,
-    }.get(env, Config)
+        "production": ProductionConfig,
+    }.get(env, ProductionConfig)
