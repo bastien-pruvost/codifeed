@@ -17,8 +17,10 @@ def create_app(env: str = "development"):
     from app.routes.posts import posts_router
     from app.routes.users import users_router
 
+    # Get config from environment
     config = get_config(env)
 
+    # Initialize app config
     app_info = Info(
         title=config.APP_NAME,
         version=config.APP_VERSION,
@@ -39,16 +41,17 @@ def create_app(env: str = "development"):
     )
     app.config.from_object(config)
 
+    # Initialize extensions
     CORS(app)
     JWTManager(app)
 
-    # Register error handlers
+    # Initialize error handlers
     register_error_handlers(app)
 
-    # Register middlewares
+    # Initialize middlewares
     app.after_request(refresh_expiring_tokens)
 
-    # Register all routes
+    # Initialize routes
     app.register_api(auth_router)
     app.register_api(users_router)
     app.register_api(posts_router)
