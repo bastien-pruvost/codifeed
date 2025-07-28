@@ -27,3 +27,6 @@ desktop.ini
 # Environment
 *.local
 .env.local
+
+# Bug reproduction
+bug-reproduction/
