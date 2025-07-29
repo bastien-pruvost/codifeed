@@ -14,7 +14,7 @@ export function useLogoutMutation() {
     },
     onSuccess: async () => {
       setShouldBeAuthenticated(false)
-      await queryClient.setQueryData([QUERY_KEYS.authUser], null)
+      queryClient.setQueryData<null>([QUERY_KEYS.authUser], null)
     },
   })
 }

@@ -15,7 +15,11 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     //   ? await context.queryClient.ensureQueryData(authUserQueryOptions())
     //   : null
 
-    const user = await context.queryClient.fetchQuery(authUserQueryOptions())
+    const user = await context.queryClient.ensureQueryData(
+      authUserQueryOptions(),
+    )
+
+    // const user = null
 
     return {
       auth: {
@@ -32,6 +36,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
   console.log("Root load")
   const { auth } = Route.useRouteContext()
+
+  // const user = useSuspenseQuery(authUserQueryOptions())
+
+  // console.log({ user })
 
   return (
     <>

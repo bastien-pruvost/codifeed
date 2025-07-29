@@ -1,5 +1,4 @@
-import uuid
-from typing import List
+from uuid import uuid4
 
 from sqlmodel import Field, SQLModel
 
@@ -14,20 +13,16 @@ class BaseModel(SQLModel):
 
 
 class BaseModelWithId(BaseModel):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: str = Field(default_factory=uuid4, primary_key=True)
 
 
-class ErrorDetail(BaseModel):
-    loc: List[str] = Field(description="Location of the error")
-    msg: str = Field(description="Error message")
-    type: str = Field(description="Error type")
+# class SuccessResponse(BaseModel):
+#     """Standard success response format"""
 
-
-class ErrorResponse(BaseModel):
-    status: int = Field(description="Status code")
-    message: str = Field(description="Error message")
-    detail: List[ErrorDetail] = Field(description="Error details")
+#     data: Optional[Any] = Field(default=None, description="Response data")
 
 
 class MessageResponse(BaseModel):
-    message: str
+    """Standard message response format"""
+
+    message: str = Field(description="Main message")

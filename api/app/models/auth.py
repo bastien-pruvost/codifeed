@@ -1,4 +1,5 @@
 from app.database.models import BaseModel, MessageResponse
+from app.models.users import UserRead
 
 
 class LoginCredentials(BaseModel):
@@ -6,18 +7,25 @@ class LoginCredentials(BaseModel):
     password: str
 
 
-class LoginTokens(BaseModel):
+class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
 
 
-class LoginResponse(MessageResponse):
-    pass
+class SignupResponse(BaseModel):
+    user: UserRead
+    message: str = "Account created successfully."
 
 
-class RefreshResponse(MessageResponse):
-    pass
+class LoginResponse(BaseModel):
+    user: UserRead
+    message: str = "Logged in successfully."
+
+
+class RefreshResponse(BaseModel):
+    user: UserRead
+    message: str = "Token refreshed successfully."
 
 
 class LogoutResponse(MessageResponse):
-    pass
+    message: str = "Logged out successfully."

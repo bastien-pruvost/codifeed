@@ -8,12 +8,14 @@ from flask_jwt_extended import (
     get_jwt_identity,
     set_access_cookies,
     set_refresh_cookies,
+    verify_jwt_in_request,
 )
 
 
-def refresh_expiring_tokens(response):
+def auto_refresh_expiring_tokens(response):
     """Refresh expiring tokens if they are within 15 minutes of expiring"""
     try:
+        verify_jwt_in_request(optional=True, refresh=True)
         jwt = get_jwt()
         if not jwt:
             return response

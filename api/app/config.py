@@ -26,19 +26,18 @@ class Config:
     JWT_COOKIE_SAMESITE = "Strict"
 
     # SWAGGER Config
-    # SWAGGER_CONFIG = {
-    #     "docExpansion": "none",
-    #     "validatorUrl": None,
-    #     "tryItOutEnabled": True,
-    #     "filter": True,
-    #     "tagsSorter": "alpha",
-    #     "persistAuthorization": True,
-    # }
+    SWAGGER_CONFIG = {
+        "docExpansion": "list",
+        "tryItOutEnabled": False,
+        "persistAuthorization": True,
+    }
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False
+    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=1)
+    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(seconds=1)
 
 
 class ProductionConfig(Config):

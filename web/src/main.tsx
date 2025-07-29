@@ -1,6 +1,10 @@
 import type { QueryClient } from "@tanstack/react-query"
 import { QueryClientProvider } from "@tanstack/react-query"
-import { createRouter, RouterProvider } from "@tanstack/react-router"
+import {
+  createRouter,
+  ErrorComponent,
+  RouterProvider,
+} from "@tanstack/react-router"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 
@@ -10,6 +14,8 @@ import { routeTree } from "@/routeTree.gen"
 import { queryClient } from "@/services/query-client"
 
 import "@/styles/global.css"
+
+import { Spinner } from "@/components/ui/spinner"
 
 export interface RouterContext {
   queryClient: QueryClient
@@ -33,6 +39,12 @@ const router = createRouter({
   // defaultStructuralSharing: true,
   // defaultViewTransition: true,
   scrollRestoration: true,
+  defaultPendingComponent: () => (
+    <div className={`p-2 text-2xl`}>
+      <Spinner />
+    </div>
+  ),
+  defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
 })
 
 // Wrap the Router in all the providers / contexts

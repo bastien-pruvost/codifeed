@@ -1,100 +1,66 @@
-from flask import make_response
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    get_jwt_identity,
-    jwt_required,
-    set_access_cookies,
-    set_refresh_cookies,
-    unset_jwt_cookies,
-)
+from flask_jwt_extended import jwt_required
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
-from sqlmodel import select
+from werkzeug.exceptions import BadRequest
 
-from app.database.session import get_session
-from app.extensions.hashing import hash_password, verify_password
-from app.models.auth import LoginCredentials, LoginTokens, LogoutResponse, RefreshResponse
-from app.models.users import User, UserCreate, UserRead
-from app.utils.responses import error_response, success_response
+from app.models.auth import (
+    LoginCredentials,
+    LoginResponse,
+    LogoutResponse,
+    RefreshResponse,
+    SignupResponse,
+)
+from app.models.users import UserCreate
+from app.services.auth_service import AuthService
+from app.services.user_service import UserService
+from app.utils.responses import abp_responses, success_response
 
 auth_tag = Tag(name="Auth", description="Authentication routes")
-auth_router = APIBlueprint("auth", __name__, abp_tags=[auth_tag])
+auth_router = APIBlueprint("auth", __name__, abp_tags=[auth_tag], abp_responses=abp_responses)
 
 
 @auth_router.post(
     "/auth/signup",
-    responses={201: UserRead},
-    description="Create a new user",
+    responses={201: SignupResponse},
+    description="Create a new user account",
 )
 def signup(body: UserCreate):
-    user = User.model_validate(
-        body,
-        update={"hashed_password": hash_password(body.password)},
-    )
-    with get_session() as session:
-        existing_user_query = select(User).where(User.email == user.email)
-        existing_user = session.exec(existing_user_query).first()
-        if existing_user:
-            return error_response("A user with this email already exists", 400)
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-    return success_response(user.model_dump(exclude={"hashed_password"}), 201)
+    if UserService.email_exists(body.email):
+        raise BadRequest(description="A user with this email already exists")
+    user = UserService.create_user(body)
+    response_data = SignupResponse(user=user.to_read_model())
+    return success_response(response_data.model_dump(), 201)
 
 
 @auth_router.post(
     "/auth/login",
-    responses={200: UserRead},
-    description="Login a user",
+    responses={200: LoginResponse},
+    description="Login a user with email and password",
 )
 def login(body: LoginCredentials):
-    with get_session() as session:
-        user_query = select(User).where(User.email == body.email)
-        user = session.exec(user_query).first()
-        if not user or not verify_password(body.password, user.hashed_password):
-            return error_response("Email or password is incorrect", 401)
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
-        response = make_response(
-            user.model_dump(exclude={"hashed_password"}),
-            200,
-        )
-        set_access_cookies(response, access_token)
-        set_refresh_cookies(response, refresh_token)
-        return response
+    user = UserService.verify_credentials(body.email, body.password)
+    if not user:
+        raise BadRequest(description="Email or password is incorrect") from None
+    response_data = LoginResponse(user=user.to_read_model())
+    return AuthService.create_authenticated_response(response_data.model_dump(), user.id)
 
 
 @auth_router.post(
     "/auth/refresh",
-    responses={200: LoginTokens},
-    description="Refresh a user's access token",
+    responses={200: RefreshResponse},
+    description="Refresh a user's tokens (access and refresh)",
 )
 @jwt_required(refresh=True)
 def refresh():
-    identity = get_jwt_identity()
-    access_token = create_access_token(identity=identity)
-    response = make_response(
-        RefreshResponse(
-            message="Token refreshed",
-        ).model_dump(),
-        200,
-    )
-    set_access_cookies(response, access_token)
-    return response
+    tokens = AuthService.refresh_tokens()
+    return AuthService.create_refresh_response(tokens.model_dump())
 
 
 @auth_router.post(
     "/auth/logout",
     responses={200: LogoutResponse},
-    description="Logout a user",
+    description="Logout a user by clearing cookies",
 )
 def logout():
-    response = make_response(
-        LogoutResponse(
-            message="Logout successful",
-        ).model_dump(),
-        200,
-    )
-    unset_jwt_cookies(response)
-    return response
+    response_data = LogoutResponse()
+    return AuthService.create_logout_response(response_data.model_dump())

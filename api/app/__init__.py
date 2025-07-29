@@ -1,9 +1,14 @@
+from typing import List, Optional
+
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.info import Info
-from flask_openapi3.models.security_scheme import SecurityScheme
 from flask_openapi3.openapi import OpenAPI
 from flask_openapi3.types import SecuritySchemesDict
+from pydantic import BaseModel, Field
+
+from app.utils.responses import ErrorResponse
 
 
 def create_app(env: str = "development"):
@@ -12,7 +17,7 @@ def create_app(env: str = "development"):
     from app.config import get_config
     from app.database.initialization import init_db
     from app.exceptions import register_error_handlers
-    from app.middlewares.refresh_expiring_tokens import refresh_expiring_tokens
+    from app.middlewares.refresh_expiring_tokens import auto_refresh_expiring_tokens
     from app.routes.auth import auth_router
     from app.routes.posts import posts_router
     from app.routes.users import users_router
@@ -29,16 +34,29 @@ def create_app(env: str = "development"):
 
     app_security_schemes = SecuritySchemesDict(
         {
-            "basic": SecurityScheme(type="http", scheme="basic"),
-            "jwt": SecurityScheme(type="http", scheme="bearer", bearerFormat="JWT"),
-        }
+            "access_token_cookie": {
+                "type": "apiKey",
+                "name": "access_token_cookie",
+                "in": "cookie",
+            },
+            "refresh_token_cookie": {
+                "type": "apiKey",
+                "name": "refresh_token_cookie",
+                "in": "cookie",
+            },
+            "csrf_access_token": {"type": "apiKey", "name": "csrf_access_token", "in": "cookie"},
+            "csrf_refresh_token": {"type": "apiKey", "name": "csrf_refresh_token", "in": "cookie"},
+            "x_csrf_token": {"type": "apiKey", "name": "X-CSRF-TOKEN", "in": "header"},
+        },
     )
 
     app = OpenAPI(
         __name__,
         info=app_info,
         security_schemes=app_security_schemes,
+        # validation_error_model=ValidationErrorItem,
     )
+
     app.config.from_object(config)
 
     # Initialize extensions
@@ -49,7 +67,7 @@ def create_app(env: str = "development"):
     register_error_handlers(app)
 
     # Initialize middlewares
-    app.after_request(refresh_expiring_tokens)
+    app.after_request(auto_refresh_expiring_tokens)
 
     # Initialize routes
     app.register_api(auth_router)

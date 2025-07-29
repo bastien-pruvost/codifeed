@@ -19,8 +19,13 @@ class UserUpdate(UserBase):
 
 
 class UserRead(UserBase):
-    id: int
+    id: str
 
 
 class User(UserBase, BaseModelWithId, table=True):
     hashed_password: str = Field(max_length=255)
+
+    def to_read_model(self) -> UserRead:
+        """Convert User to safe dict for API responses, excluding sensitive fields."""
+        user_dict = self.model_dump(exclude={"hashed_password"})
+        return UserRead(**user_dict)

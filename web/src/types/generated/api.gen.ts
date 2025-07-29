@@ -13,8 +13,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Login a user */
-        post: operations["auth_auth_login_post"];
+        /** @description Login a user with email and password */
+        post: operations["auth_login_auth_login_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -30,8 +30,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Logout a user */
-        post: operations["auth_auth_logout_post"];
+        /** @description Logout a user by clearing cookies */
+        post: operations["auth_logout_auth_logout_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -47,8 +47,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Refresh a user's access token */
-        post: operations["auth_auth_refresh_post"];
+        /** @description Refresh a user's tokens (access and refresh) */
+        post: operations["auth_refresh_auth_refresh_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -64,8 +64,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Create a new user */
-        post: operations["auth_auth_signup_post"];
+        /** @description Create a new user account */
+        post: operations["auth_signup_auth_signup_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -80,7 +80,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get all posts */
-        get: operations["posts_posts_get"];
+        get: operations["posts_get_posts_posts_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -97,7 +97,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get the current user */
-        get: operations["user_users_me_get"];
+        get: operations["user_me_users_me_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -116,7 +116,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get a user by id */
-        get: operations["user_users__int_user_id__get"];
+        get: operations["user_get_user_users__string_user_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -129,6 +129,29 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * ErrorResponse
+         * @description Standard error response format
+         */
+        ErrorResponse: {
+            /**
+             * Code
+             * @description Error code for programmatic handling
+             * @default null
+             */
+            code: string | null;
+            /**
+             * Details
+             * @description Detailed validation errors
+             * @default null
+             */
+            details: components["schemas"]["ValidationErrorItem"][] | null;
+            /**
+             * Message
+             * @description Main error message
+             */
+            message: string;
+        };
         /** LoginCredentials */
         LoginCredentials: {
             /** Email */
@@ -136,22 +159,51 @@ export interface components {
             /** Password */
             password: string;
         };
-        /** LoginTokens */
-        LoginTokens: {
-            /** Access Token */
-            access_token: string;
-            /** Refresh Token */
-            refresh_token: string;
+        /** LoginResponse */
+        LoginResponse: {
+            /**
+             * Message
+             * @default Logged in successfully.
+             */
+            message: string;
+            user: components["schemas"]["UserRead"];
         };
         /** LogoutResponse */
         LogoutResponse: {
-            /** Message */
+            /**
+             * Message
+             * @default Logged out successfully.
+             */
             message: string;
         };
-        /** MessageResponse */
+        /**
+         * MessageResponse
+         * @description Standard message response format
+         */
         MessageResponse: {
-            /** Message */
+            /**
+             * Message
+             * @description Main message
+             */
             message: string;
+        };
+        /** RefreshResponse */
+        RefreshResponse: {
+            /**
+             * Message
+             * @default Token refreshed successfully.
+             */
+            message: string;
+            user: components["schemas"]["UserRead"];
+        };
+        /** SignupResponse */
+        SignupResponse: {
+            /**
+             * Message
+             * @default Account created successfully.
+             */
+            message: string;
+            user: components["schemas"]["UserRead"];
         };
         /** UserCreate */
         UserCreate: {
@@ -181,9 +233,42 @@ export interface components {
             /** Firstname */
             firstname: string;
             /** Id */
-            id: number;
+            id: string;
             /** Lastname */
             lastname: string;
+        };
+        /**
+         * ValidationErrorItem
+         * @description Validation error item matching Pydantic v2 format - used for all validation errors
+         */
+        ValidationErrorItem: {
+            /**
+             * Input
+             * @description Input value that caused the error
+             * @default null
+             */
+            input: unknown | null;
+            /**
+             * Loc
+             * @description Location of the error (field path)
+             */
+            loc: string[];
+            /**
+             * Msg
+             * @description Human-readable error message
+             */
+            msg: string;
+            /**
+             * Type
+             * @description Error type (e.g., 'missing', 'string_too_short')
+             */
+            type: string;
+            /**
+             * Url
+             * @description URL to Pydantic error documentation
+             * @default null
+             */
+            url: string | null;
         };
         /** ValidationErrorModel */
         ValidationErrorModel: {
@@ -221,16 +306,20 @@ export interface components {
     headers: never;
     pathItems: never;
 }
+export type ErrorResponse = components['schemas']['ErrorResponse'];
 export type LoginCredentials = components['schemas']['LoginCredentials'];
-export type LoginTokens = components['schemas']['LoginTokens'];
+export type LoginResponse = components['schemas']['LoginResponse'];
 export type LogoutResponse = components['schemas']['LogoutResponse'];
 export type MessageResponse = components['schemas']['MessageResponse'];
+export type RefreshResponse = components['schemas']['RefreshResponse'];
+export type SignupResponse = components['schemas']['SignupResponse'];
 export type UserCreate = components['schemas']['UserCreate'];
 export type UserRead = components['schemas']['UserRead'];
+export type ValidationErrorItem = components['schemas']['ValidationErrorItem'];
 export type ValidationErrorModel = components['schemas']['ValidationErrorModel'];
 export type $defs = Record<string, never>;
 export interface operations {
-    auth_auth_login_post: {
+    auth_login_auth_login_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -249,7 +338,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserRead"];
+                    "application/json": components["schemas"]["LoginResponse"];
                 };
             };
             /** @description Unprocessable Entity */
@@ -258,12 +347,28 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorModel"][];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
     };
-    auth_auth_logout_post: {
+    auth_logout_auth_logout_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -281,9 +386,34 @@ export interface operations {
                     "application/json": components["schemas"]["LogoutResponse"];
                 };
             };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
-    auth_auth_refresh_post: {
+    auth_refresh_auth_refresh_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -298,12 +428,37 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LoginTokens"];
+                    "application/json": components["schemas"]["RefreshResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
     };
-    auth_auth_signup_post: {
+    auth_signup_auth_signup_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -322,7 +477,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserRead"];
+                    "application/json": components["schemas"]["SignupResponse"];
                 };
             };
             /** @description Unprocessable Entity */
@@ -331,12 +486,28 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorModel"][];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
     };
-    posts_posts_get: {
+    posts_get_posts_posts_get: {
         parameters: {
             query?: {
                 user_id?: number | null;
@@ -367,7 +538,7 @@ export interface operations {
             };
         };
     };
-    user_users_me_get: {
+    user_me_users_me_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -387,12 +558,12 @@ export interface operations {
             };
         };
     };
-    user_users__int_user_id__get: {
+    user_get_user_users__string_user_id__get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                user_id: number;
+                user_id: string;
             };
             cookie?: never;
         };
@@ -420,11 +591,11 @@ export interface operations {
     };
 }
 export enum ApiPaths {
-    auth_auth_login_post = "/auth/login",
-    auth_auth_logout_post = "/auth/logout",
-    auth_auth_refresh_post = "/auth/refresh",
-    auth_auth_signup_post = "/auth/signup",
-    posts_posts_get = "/posts",
-    user_users_me_get = "/users/me",
-    user_users__int_user_id__get = "/users/{user_id}"
+    auth_login_auth_login_post = "/auth/login",
+    auth_logout_auth_logout_post = "/auth/logout",
+    auth_refresh_auth_refresh_post = "/auth/refresh",
+    auth_signup_auth_signup_post = "/auth/signup",
+    posts_get_posts_posts_get = "/posts",
+    user_me_users_me_get = "/users/me",
+    user_get_user_users__string_user_id__get = "/users/{user_id}"
 }
