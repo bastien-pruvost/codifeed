@@ -1,7 +1,7 @@
 # IDE
 .idea/
 # .vscode/
-# .cursor/
+.cursor/
 *.swp
 *.swo
 
@@ -27,6 +27,3 @@ desktop.ini
 # Environment
 *.local
 .env.local
-
-# Bug reproduction
-bug-reproduction/
