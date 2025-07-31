@@ -1,13 +1,16 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
 import { zodValidator } from "@tanstack/zod-adapter"
+import { AlertCircleIcon } from "lucide-react"
 import { z } from "zod"
 
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useLoginMutation } from "@/features/auth/api/login-mutation"
 import loginImg from "@/features/auth/assets/login-illustration.webp"
+import { getErrorMessage } from "@/utils/errors"
 
 const rootSearchSchema = z.object({
   redirect: z.string().optional(),
@@ -22,23 +25,19 @@ function LoginPage() {
   const router = useRouter()
   const search = Route.useSearch()
 
-  const { mutateAsync: login } = useLoginMutation()
+  const loginMutation = useLoginMutation()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    try {
-      const formData = new FormData(e.currentTarget)
-      await login({
-        email: formData.get("email")?.toString() ?? "",
-        password: formData.get("password")?.toString() ?? "",
-      })
 
-      // Navigate to redirect URL or home
-      router.history.push(search.redirect ?? "/home")
-    } catch (error) {
-      console.error("Login failed:", error)
-      // You might want to show an error message to the user here
-    }
+    const formData = new FormData(e.currentTarget)
+    await loginMutation.mutateAsync({
+      email: formData.get("email")?.toString() ?? "",
+      password: formData.get("password")?.toString() ?? "",
+    })
+
+    // Navigate to redirect URL or home
+    router.history.push(search.redirect ?? "/home")
   }
 
   return (
@@ -86,6 +85,15 @@ function LoginPage() {
                   <Button type="submit" className="w-full">
                     Login
                   </Button>
+
+                  {loginMutation.error && (
+                    <Alert variant="destructive">
+                      <AlertCircleIcon />
+                      <AlertDescription>
+                        {getErrorMessage(loginMutation.error)}
+                      </AlertDescription>
+                    </Alert>
+                  )}
 
                   <div className="text-center text-sm">
                     Don&apos;t have an account?{" "}

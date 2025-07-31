@@ -1,9 +1,8 @@
 import { queryOptions } from "@tanstack/react-query"
 
-import { api } from "@/services/fetch-client"
-import { QUERY_KEYS } from "@/services/query-client"
+import { api } from "@/services/http-client"
 
 export const postsQueryOptions = queryOptions({
-  queryKey: [QUERY_KEYS.posts],
+  queryKey: ["posts"], // TODO: use query keys
   queryFn: () => api.GET("/posts", {}),
 })

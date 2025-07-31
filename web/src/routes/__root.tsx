@@ -5,27 +5,14 @@ import type { RouterContext } from "@/main"
 import { Header } from "@/components/layout/header"
 import { Toaster } from "@/components/ui/sonner"
 import { authUserQueryOptions } from "@/features/auth/api/auth-user-query"
+import { shouldBeAuthenticated } from "@/features/auth/services/auth-flag-storage"
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context }) => {
-    console.log("root beforeLoad")
-
-    // Only fetch user if local storage flag says so
-    // const user = shouldBeAuthenticated()
-    //   ? await context.queryClient.ensureQueryData(authUserQueryOptions())
-    //   : null
-
-    const user = await context.queryClient.ensureQueryData(
-      authUserQueryOptions(),
-    )
-
-    // const user = null
-
-    return {
-      auth: {
-        user,
-      },
-    }
+    const user = shouldBeAuthenticated()
+      ? await context.queryClient.ensureQueryData(authUserQueryOptions())
+      : null
+    return { auth: { user } }
   },
   component: RootComponent,
   notFoundComponent: () => (
@@ -34,18 +21,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 })
 
 function RootComponent() {
-  console.log("Root load")
   const { auth } = Route.useRouteContext()
-
-  // const user = useSuspenseQuery(authUserQueryOptions())
-
-  // console.log({ user })
 
   return (
     <>
       <Header user={auth.user} />
       <Outlet />
-      <Toaster />
+      <Toaster position="top-center" richColors />
 
       {import.meta.env.DEV ? (
         <Suspense fallback={null}>

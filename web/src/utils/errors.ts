@@ -98,7 +98,7 @@ export function getErrorMessage(error: unknown): string {
   // Handle generic Error objects
   if (error instanceof Error) {
     // Handle network errors
-    if (error.message?.includes("fetch") || error.name === "NetworkError") {
+    if (isNetworkError(error)) {
       return "Network error. Please check your connection"
     }
     return error.message
@@ -106,4 +106,13 @@ export function getErrorMessage(error: unknown): string {
 
   // Fallback for unknown error types
   return "An unexpected error occurred"
+}
+
+export function isNetworkError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.message?.includes("fetch") ||
+      error.name === "NetworkError" ||
+      !navigator.onLine)
+  )
 }

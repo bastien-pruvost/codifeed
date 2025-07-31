@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import type { UserRead } from "@/types/generated/api.gen"
-import { api } from "@/services/fetch-client"
-import { QUERY_KEYS } from "@/services/query-client"
+import { authQueryKeys } from "@/features/auth/api/query-keys"
+import { api } from "@/services/http-client"
 
 export function useRefreshTokenMutation() {
   const queryClient = useQueryClient()
@@ -13,7 +13,7 @@ export function useRefreshTokenMutation() {
       return response.data
     },
     onSuccess: async (data) => {
-      queryClient.setQueryData<UserRead>([QUERY_KEYS.authUser], data?.user)
+      queryClient.setQueryData<UserRead>(authQueryKeys.user(), data?.user)
     },
   })
 }

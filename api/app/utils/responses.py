@@ -27,15 +27,6 @@ class ErrorResponse(BaseModel):
     )
 
 
-abp_responses = ResponseDict(
-    {
-        "4XX": ErrorResponse,
-        "5XX": ErrorResponse,
-        "422": ErrorResponse,
-    }
-)
-
-
 # Error code constants for consistent handling
 class ErrorCodes:
     # Authentication & Authorization
@@ -63,6 +54,15 @@ class ErrorCodes:
     BAD_REQUEST = "BAD_REQUEST"
     METHOD_NOT_ALLOWED = "METHOD_NOT_ALLOWED"
     RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED"
+
+
+abp_responses = ResponseDict(
+    {
+        "4XX": ErrorResponse,
+        "5XX": ErrorResponse,
+        "422": ErrorResponse,
+    }
+)
 
 
 def success_response(
@@ -101,29 +101,6 @@ def validation_error_response(
     )
 
 
-# def http_exception_response(
-#     exception: HTTPException,
-#     code: Optional[str] = None,
-# ) -> Response:
-#     """Create response from HTTP exception"""
-#     error_code_map = {
-#         400: ErrorCodes.BAD_REQUEST,
-#         401: ErrorCodes.UNAUTHORIZED,
-#         403: ErrorCodes.FORBIDDEN,
-#         404: ErrorCodes.NOT_FOUND,
-#         405: ErrorCodes.METHOD_NOT_ALLOWED,
-#         409: ErrorCodes.CONFLICT,
-#         429: ErrorCodes.RATE_LIMIT_EXCEEDED,
-#     }
-
-#     status_code = exception.code or 500
-#     return error_response(
-#         message=exception.description or str(exception),
-#         status=status_code,
-#         code=code or error_code_map.get(status_code, ErrorCodes.INTERNAL_ERROR),
-#     )
-
-
 def pydantic_validation_error_response(
     validation_error: ValidationError,
 ) -> Response:
@@ -137,60 +114,3 @@ def pydantic_validation_error_response(
         for error in validation_error.errors()
     ]
     return validation_error_response(validation_errors)
-
-
-# def database_error_response(
-#     error: Exception,
-#     operation: str = "database operation",
-# ) -> tuple[dict, int]:
-#     """Create response for database errors"""
-#     error_message = f"Database error during {operation}"
-
-#     # Check for specific database error types
-#     error_str = str(error).lower()
-
-#     if "unique constraint" in error_str or "duplicate" in error_str:
-#         return error_response(
-#             message="Resource already exists",
-#             status=409,
-#             code=ErrorCodes.ALREADY_EXISTS,
-#             details=[
-#                 ValidationErrorItem(
-#                     type="value_error.duplicate",
-#                     loc=["database"],
-#                     msg="A resource with these values already exists",
-#                 )
-#             ],
-#         )
-#     elif "foreign key" in error_str:
-#         return error_response(
-#             message="Referenced resource not found",
-#             status=400,
-#             code=ErrorCodes.VALIDATION_ERROR,
-#             details=[
-#                 ValidationErrorItem(
-#                     type="value_error.foreign_key",
-#                     loc=["database"],
-#                     msg="One or more referenced resources do not exist",
-#                 )
-#             ],
-#         )
-#     elif "not null" in error_str:
-#         return error_response(
-#             message="Required field missing",
-#             status=400,
-#             code=ErrorCodes.MISSING_FIELD,
-#             details=[
-#                 ValidationErrorItem(
-#                     type="value_error.missing",
-#                     loc=["database"],
-#                     msg="A required field is missing or null",
-#                 )
-#             ],
-#         )
-#     else:
-#         return error_response(
-#             message=error_message,
-#             status=500,
-#             code=ErrorCodes.DATABASE_ERROR,
-#         )

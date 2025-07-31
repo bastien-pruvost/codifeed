@@ -1,16 +1,30 @@
-import { QueryCache, QueryClient } from "@tanstack/react-query"
+import type { MutationState, QueryState } from "@tanstack/react-query"
+import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-import { ApiError, getErrorMessage } from "@/utils/errors"
+import type { Meta } from "@/types/tanstack-query"
+import { ApiError, getErrorMessage, isNetworkError } from "@/utils/errors"
 
-export const QUERY_KEYS = {
-  authUser: "auth-user",
-  users: "users",
-  posts: "posts",
-  comments: "comments",
-}
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: shouldRetry,
+      retryDelay: 1000, // 1 second
+    },
+  },
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      displayGlobalErrorFromMeta(error, query.meta, query.state)
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (error, _variables, _context, mutation) => {
+      displayGlobalErrorFromMeta(error, mutation.meta, mutation.state)
+    },
+  }),
+})
 
-// Helper function to determine if we should retry with type safety
+// Helper function to determine if we should retry the request
 function shouldRetry(failureCount: number, error: unknown): boolean {
   // Don't retry in development
   if (import.meta.env.DEV) return false
@@ -28,44 +42,35 @@ function shouldRetry(failureCount: number, error: unknown): boolean {
   }
 
   // Handle network errors
-  if (
-    error instanceof Error &&
-    (error.message?.includes("fetch") || error.name === "NetworkError")
-  ) {
+  if (isNetworkError(error)) {
     return failureCount < 3
   }
 
   return false
 }
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retryDelay: 1000,
-      retry: shouldRetry,
-    },
-  },
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      console.log("Query error:", { query, error })
+function displayGlobalErrorFromMeta(
+  error: unknown,
+  meta: Meta | undefined,
+  state:
+    | QueryState<unknown, unknown>
+    | MutationState<unknown, unknown, unknown, unknown>
+    | undefined,
+) {
+  // Don't display global error if disabled in meta data
+  if (meta?.disableDefaultGlobalError) return
 
-      // Only show background error toasts if we have stale data
-      if (query.state.data !== undefined) {
-        toast.error(`Background update failed: ${getErrorMessage(error)}`)
-        return
-      }
+  // Use custom global error message if provided, otherwise use default error message
+  const errorMessage = meta?.globalError
+    ? meta.globalError
+    : getErrorMessage(error)
 
-      // Handle specific query error messages from meta
-      if (
-        query.meta?.errorMessage &&
-        typeof query.meta.errorMessage === "string"
-      ) {
-        toast.error(query.meta.errorMessage)
-        return
-      }
+  // Only show background error toasts if we have stale data
+  if (state?.data !== undefined) {
+    toast.error(`Background update failed: ${errorMessage}`)
+    return
+  }
 
-      // Default error handling for initial loads
-      toast.error(getErrorMessage(error))
-    },
-  }),
-})
+  // Display global error message
+  toast.error(errorMessage)
+}

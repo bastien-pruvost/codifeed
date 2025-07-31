@@ -1,14 +1,8 @@
-from typing import List, Optional
-
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.info import Info
 from flask_openapi3.openapi import OpenAPI
 from flask_openapi3.types import SecuritySchemesDict
-from pydantic import BaseModel, Field
-
-from app.utils.responses import ErrorResponse
 
 
 def create_app(env: str = "development"):
@@ -16,8 +10,8 @@ def create_app(env: str = "development"):
 
     from app.config import get_config
     from app.database.initialization import init_db
-    from app.exceptions import register_error_handlers
-    from app.middlewares.refresh_expiring_tokens import auto_refresh_expiring_tokens
+    from app.middlewares.auto_refresh import auto_refresh_expiring_tokens
+    from app.middlewares.exceptions import register_error_handlers
     from app.routes.auth import auth_router
     from app.routes.posts import posts_router
     from app.routes.users import users_router

@@ -9,13 +9,12 @@ import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 
 import type { UserRead } from "@/types/generated/api.gen"
+import { Spinner } from "@/components/ui/spinner"
 import { reportWebVitals } from "@/reportWebVitals"
 import { routeTree } from "@/routeTree.gen"
 import { queryClient } from "@/services/query-client"
 
 import "@/styles/global.css"
-
-import { Spinner } from "@/components/ui/spinner"
 
 export interface RouterContext {
   queryClient: QueryClient
@@ -47,9 +46,8 @@ const router = createRouter({
   defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
 })
 
-// Wrap the Router in all the providers / contexts
+// Wrap the Router with all providers
 function App() {
-  console.log("App mount")
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
@@ -60,7 +58,6 @@ function App() {
 // Render the app
 const rootElement = document.getElementById("app")
 if (rootElement && !rootElement.innerHTML) {
-  console.log("React render app")
   const root = createRoot(rootElement)
   root.render(
     <StrictMode>

@@ -3,7 +3,7 @@ from typing import Optional
 from sqlmodel import select
 
 from app.database.session import get_session
-from app.extensions.hashing import hash_password, verify_password
+from app.extensions.hashing import hash_password
 from app.models.users import User, UserCreate
 
 
@@ -35,14 +35,6 @@ class UserService:
             session.commit()
             session.refresh(user)
             return user
-
-    @staticmethod
-    def verify_credentials(email: str, password: str) -> Optional[User]:
-        """Verify user credentials and return user if valid."""
-        user = UserService.get_by_email(email)
-        if user and verify_password(password, user.hashed_password):
-            return user
-        return None
 
     @staticmethod
     def email_exists(email: str) -> bool:

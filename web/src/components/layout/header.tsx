@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from "react"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { LogOutIcon, MessageSquareCode } from "lucide-react"
+import { LogOutIcon, MessageSquareCodeIcon } from "lucide-react"
 
 import type { UserRead } from "@/types/generated/api.gen"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -26,7 +26,7 @@ export function Header({ user }: HeaderProps) {
     <div className="sticky top-0 right-0 left-0 z-50 border-b">
       <Wrapper className="flex items-center justify-between py-3">
         <Link to="/home" className="flex items-center gap-2.5 text-primary">
-          <MessageSquareCode className="size-7" />
+          <MessageSquareCodeIcon className="size-7" />
           <span className="mb-1 text-2xl font-semibold">Codifeed</span>
         </Link>
 

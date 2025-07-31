@@ -9,7 +9,6 @@ export const Route = createFileRoute("/_authenticated/home")({
 })
 
 function RouteComponent() {
-  console.log("Home load")
   const { auth } = Route.useRouteContext()
 
   // const postsQuery = useSuspenseQuery(postsQueryOptions)

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
+import { authQueryKeys } from "@/features/auth/api/query-keys"
 import { setShouldBeAuthenticated } from "@/features/auth/services/auth-flag-storage"
-import { api } from "@/services/fetch-client"
-import { QUERY_KEYS } from "@/services/query-client"
+import { api } from "@/services/http-client"
 
 export function useLogoutMutation() {
   const queryClient = useQueryClient()
@@ -14,7 +14,7 @@ export function useLogoutMutation() {
     },
     onSuccess: async () => {
       setShouldBeAuthenticated(false)
-      queryClient.setQueryData<null>([QUERY_KEYS.authUser], null)
+      queryClient.setQueryData<null>(authQueryKeys.user(), null)
     },
   })
 }

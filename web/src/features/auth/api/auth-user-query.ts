@@ -1,24 +1,27 @@
 import { queryOptions } from "@tanstack/react-query"
 
-import { shouldBeAuthenticated } from "@/features/auth/services/auth-flag-storage"
-import { api } from "@/services/fetch-client"
-import { QUERY_KEYS } from "@/services/query-client"
+import { authQueryKeys } from "@/features/auth/api/query-keys"
+import {
+  setShouldBeAuthenticated,
+  shouldBeAuthenticated,
+} from "@/features/auth/services/auth-flag-storage"
+import { api } from "@/services/http-client"
 
 export function authUserQueryOptions(options?: { forceEnabled?: boolean }) {
   return queryOptions({
-    queryKey: [QUERY_KEYS.authUser],
+    queryKey: authQueryKeys.user(),
     queryFn: async () => {
-      return shouldBeAuthenticated()
-        ? api.GET("/users/me", {}).then((res) => {
-            console.log({ res })
-            return res.data ?? null
-          })
-        : null
+      if (!shouldBeAuthenticated() && !options?.forceEnabled) {
+        return null
+      }
+      const userResponse = await api.GET("/users/me", {}).catch(() => {
+        console.error("Failed to load user data")
+        setShouldBeAuthenticated(false)
+        return null
+      })
+      return userResponse?.data ?? null
     },
-    enabled: shouldBeAuthenticated() ?? options?.forceEnabled,
-    meta: {
-      errorMessage: "You are not authenticated",
-    },
+    enabled: shouldBeAuthenticated() || options?.forceEnabled,
     staleTime: 0, // delete
     refetchInterval: 1000 * 60 * 5, // 5 minutes - periodic check for long sessions
     refetchOnWindowFocus: true, // Check when user returns to tab

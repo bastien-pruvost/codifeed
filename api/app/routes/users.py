@@ -1,11 +1,12 @@
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 from werkzeug.exceptions import NotFound
 
 from app.database.models import BaseModel
 from app.models.users import UserRead
-from app.services.user_service import UserService
+from app.services.users import UserService
+from app.utils.jwt import login_required
 from app.utils.responses import success_response
 
 users_tag = Tag(name="User", description="User routes")
@@ -22,13 +23,14 @@ class GetUserPath(BaseModel):
     description="Get the current user",
     security=[{"cookieAuth": []}],
 )
-@jwt_required()
+@login_required
 def me():
     user_id = get_jwt_identity()
     user = UserService.get_by_id(user_id)
     if not user:
         raise NotFound(description="User not found")
-    return success_response(user.to_read_model().model_dump())
+    response_data = user.to_read_model()
+    return success_response(response_data.model_dump())
 
 
 @users_router.get(
@@ -40,4 +42,5 @@ def get_user(path: GetUserPath):
     user = UserService.get_by_id(path.user_id)
     if not user:
         raise NotFound(description="User not found")
-    return success_response(user.to_read_model().model_dump())
+    response_data = user.to_read_model()
+    return success_response(response_data.model_dump())

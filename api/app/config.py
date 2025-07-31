@@ -25,6 +25,10 @@ class Config:
     JWT_COOKIE_SECURE = True
     JWT_COOKIE_SAMESITE = "Strict"
 
+    # Error messages
+    JWT_ERROR_MESSAGE_KEY = "message"
+    ERROR_MESSAGE_KEY = "message"
+
     # SWAGGER Config
     SWAGGER_CONFIG = {
         "docExpansion": "list",
@@ -36,8 +40,8 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False
-    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=1)
-    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(seconds=1)
+    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=15)
+    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(seconds=10)
 
 
 class ProductionConfig(Config):
