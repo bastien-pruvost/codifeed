@@ -1,5 +1,9 @@
 [tools]
-python = "3.12"
+poetry = { version = "2", pyproject = "{{ config_root }}/pyproject.toml" }
+# python must be after poetry so the poetry bin is first in PATH
+python = "3.13"
 
 [env]
-_.python.venv = { path = ".venv", create = true }
+# _.python.venv = { path = ".venv", create = true }
+MISE_POETRY_AUTO_INSTALL = 1
+MISE_POETRY_VENV_AUTO = 1

@@ -1,8 +1,34 @@
+[project]
+name = "codifeed-api"
+version = "0.1.0"
+description = "Codifeed API"
+authors = [{ name = "Bastien Pruvost", email = "bastien.mory@gmail.com" }]
+requires-python = ">=3.13,<4.0"
+dependencies = [
+    "argon2-cffi (>=25.1.0,<26.0.0)",
+    "flask-cors (>=6.0.1,<7.0.0)",
+    "flask-jwt-extended (>=4.7.1,<5.0.0)",
+    "flask-openapi3[swagger] (>=4.2.1,<5.0.0)",
+    "pyright (>=1.1.403,<2.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "ruff (>=0.12.7,<0.13.0)",
+    "sqlmodel (>=0.0.24,<0.0.25)",
+    "alembic (>=1.16.4,<2.0.0)",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
 [tool.ruff]
 # Enable common linters
 select = ["E", "F", "B", "I", "W"]
 line-length = 100
-target-version = "py312"
+target-version = "py313"
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -22,13 +48,12 @@ quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
 
-
 [tool.ruff.isort]
 known-first-party = ["app"]
 
 [tool.pyright]
 # Specify Python version
-pythonVersion = "3.12"
+pythonVersion = "3.13"
 # Include source files
 include = ["app"]
 # Exclude directories

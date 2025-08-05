@@ -1,9 +1,9 @@
 {
-  "name": "@codifeed/web",
-  "version": "1.0.0-alpha.1",
-  "description": "A social network for developers, built as a full-stack project featuring a Flask REST API and a TypeScript-based React frontend.",
+  "name": "codifeed-web",
+  "version": "0.1.0",
+  "description": "Codifeed frontend web app",
   "keywords": [],
-  "author": "Bastien Pruvost",
+  "author": "Bastien Pruvost <bastien.mory@gmail.com>",
   "license": "MIT",
   "private": true,
   "type": "module",
