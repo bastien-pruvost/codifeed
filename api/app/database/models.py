@@ -13,16 +13,8 @@ class BaseModel(SQLModel):
 
 
 class BaseModelWithId(BaseModel):
-    id: str = Field(default_factory=uuid4, primary_key=True)
-
-
-# class SuccessResponse(BaseModel):
-#     """Standard success response format"""
-
-#     data: Optional[Any] = Field(default=None, description="Response data")
+    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
 
 
 class MessageResponse(BaseModel):
-    """Standard message response format"""
-
     message: str = Field(description="Main message")

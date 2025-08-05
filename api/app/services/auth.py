@@ -58,6 +58,6 @@ class AuthService:
     def get_current_user_id() -> str:
         """Get current authenticated user ID from JWT."""
         user_id = get_jwt_identity()
-        if not user_id:
+        if not user_id or not isinstance(user_id, str):
             raise Unauthorized("No valid token found")
         return user_id
