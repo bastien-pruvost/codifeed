@@ -3,7 +3,7 @@ from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 from werkzeug.exceptions import NotFound
 
-from app.database.models import BaseModel
+from app.database.models import ApiBaseModel
 from app.models.users import UserRead
 from app.services.users import UserService
 from app.utils.jwt import login_required
@@ -13,7 +13,7 @@ users_tag = Tag(name="User", description="User routes")
 users_router = APIBlueprint("user", __name__, abp_tags=[users_tag])
 
 
-class GetUserPath(BaseModel):
+class GetUserPath(ApiBaseModel):
     user_id: str
 
 

@@ -1,20 +1,23 @@
 from uuid import uuid4
 
+from pydantic import BaseModel, ConfigDict
+from pydantic.alias_generators import to_camel
 from sqlmodel import Field, SQLModel
 
 
-class BaseModel(SQLModel):
-    class Config:
-        pass
-        # alias_generator = AliasGenerator(
-        #     validation_alias=to_camel,
-        #     serialization_alias=to_pascal,
-        # )
+class ApiBaseModel(BaseModel):
+    """Base model to be used for all API models (Converts snake_case to camelCase)"""
+
+    model_config = ConfigDict(
+        alias_generator=to_camel,
+        from_attributes=True,
+        validate_by_name=True,
+        validate_by_alias=True,
+        serialize_by_alias=True,
+    )
 
 
-class BaseModelWithId(BaseModel):
+class SQLModelWithId(SQLModel):
+    """Base model to be used for all SQL models with an id field."""
+
     id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
-
-
-class MessageResponse(BaseModel):
-    message: str = Field(description="Main message")

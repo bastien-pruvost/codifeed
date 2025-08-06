@@ -1,31 +1,26 @@
-from app.database.models import BaseModel, MessageResponse
+from app.database.models import ApiBaseModel
 from app.models.users import UserRead
 
 
-class LoginCredentials(BaseModel):
+class LoginCredentials(ApiBaseModel):
     email: str
     password: str
 
 
-class TokenPair(BaseModel):
-    access_token: str
-    refresh_token: str
-
-
-class SignupResponse(BaseModel):
+class SignupResponse(ApiBaseModel):
     user: UserRead
     message: str = "Account created successfully."
 
 
-class LoginResponse(BaseModel):
+class LoginResponse(ApiBaseModel):
     user: UserRead
     message: str = "Logged in successfully."
 
 
-class RefreshResponse(BaseModel):
+class RefreshResponse(ApiBaseModel):
     user: UserRead
     message: str = "Token refreshed successfully."
 
 
-class LogoutResponse(MessageResponse):
+class LogoutResponse(ApiBaseModel):
     message: str = "Logged out successfully."

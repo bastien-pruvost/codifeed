@@ -1,5 +1,4 @@
 from argon2 import exceptions as argon_exceptions
-from flask import make_response
 from flask_jwt_extended import (
     set_access_cookies,
     set_refresh_cookies,
@@ -99,6 +98,6 @@ def refresh():
 )
 def logout():
     response_data = LogoutResponse()
-    response = make_response(response_data.model_dump())
+    response = success_response(response_data.model_dump())
     unset_jwt_cookies(response)
     return response
