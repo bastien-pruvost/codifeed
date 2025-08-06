@@ -72,23 +72,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/posts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get all posts */
-        get: operations["posts_get_posts_posts_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/users/me": {
         parameters: {
             query?: never;
@@ -176,17 +159,6 @@ export interface components {
              */
             message: string;
         };
-        /**
-         * MessageResponse
-         * @description Standard message response format
-         */
-        MessageResponse: {
-            /**
-             * Message
-             * @description Main message
-             */
-            message: string;
-        };
         /** RefreshResponse */
         RefreshResponse: {
             /**
@@ -220,6 +192,11 @@ export interface components {
             lastname: string;
             /** Password */
             password: string;
+            /**
+             * Testfield
+             * @default test
+             */
+            testField: string;
         };
         /** UserRead */
         UserRead: {
@@ -236,6 +213,11 @@ export interface components {
             id: string;
             /** Lastname */
             lastname: string;
+            /**
+             * Testfield
+             * @default test
+             */
+            testField: string;
         };
         /**
          * ValidationErrorItem
@@ -310,7 +292,6 @@ export type ErrorResponse = components['schemas']['ErrorResponse'];
 export type LoginCredentials = components['schemas']['LoginCredentials'];
 export type LoginResponse = components['schemas']['LoginResponse'];
 export type LogoutResponse = components['schemas']['LogoutResponse'];
-export type MessageResponse = components['schemas']['MessageResponse'];
 export type RefreshResponse = components['schemas']['RefreshResponse'];
 export type SignupResponse = components['schemas']['SignupResponse'];
 export type UserCreate = components['schemas']['UserCreate'];
@@ -341,7 +322,7 @@ export interface operations {
                     "application/json": components["schemas"]["LoginResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -386,7 +367,7 @@ export interface operations {
                     "application/json": components["schemas"]["LogoutResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -431,7 +412,7 @@ export interface operations {
                     "application/json": components["schemas"]["RefreshResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -480,7 +461,7 @@ export interface operations {
                     "application/json": components["schemas"]["SignupResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -503,37 +484,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    posts_get_posts_posts_get: {
-        parameters: {
-            query?: {
-                user_id?: number | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MessageResponse"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationErrorModel"][];
                 };
             };
         };
@@ -563,6 +513,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                userId: string;
                 user_id: string;
             };
             cookie?: never;
@@ -578,7 +529,7 @@ export interface operations {
                     "application/json": components["schemas"]["UserRead"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -595,7 +546,6 @@ export enum ApiPaths {
     auth_logout_auth_logout_post = "/auth/logout",
     auth_refresh_auth_refresh_post = "/auth/refresh",
     auth_signup_auth_signup_post = "/auth/signup",
-    posts_get_posts_posts_get = "/posts",
     user_me_users_me_get = "/users/me",
     user_get_user_users__string_user_id__get = "/users/{user_id}"
 }
