@@ -19,11 +19,11 @@ class AuthService:
     """Service layer for authentication operations."""
 
     @staticmethod
-    def create_tokens(user_id: str) -> TokenPair:
+    def create_tokens(user_id: str) -> tuple[str, str]:
         """Create access and refresh tokens for a user."""
         access_token = create_access_token(identity=user_id)
         refresh_token = create_refresh_token(identity=user_id)
-        return TokenPair(access_token=access_token, refresh_token=refresh_token)
+        return access_token, refresh_token
 
     @staticmethod
     def should_auto_refresh_token() -> bool:

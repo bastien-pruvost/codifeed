@@ -53,10 +53,10 @@ def login(body: LoginCredentials):
 
         # Create response with tokens
         response_data = LoginResponse(user=user.to_read_model())
-        tokens = AuthService.create_tokens(user.id)
-        response = make_response(response_data.model_dump())
-        set_access_cookies(response, tokens.access_token)
-        set_refresh_cookies(response, tokens.refresh_token)
+        access_token, refresh_token = AuthService.create_tokens(user.id)
+        response = success_response(response_data.model_dump())
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
         return response
     except (
         argon_exceptions.VerifyMismatchError,
@@ -81,13 +81,13 @@ def refresh():
         raise Unauthorized(description="User not found")
 
     # Generate new tokens
-    tokens = AuthService.create_tokens(user_id)
+    access_token, refresh_token = AuthService.create_tokens(user_id)
     response_data = RefreshResponse(user=user.to_read_model())
 
     # Create response with new tokens
-    response = make_response(response_data.model_dump())
-    set_access_cookies(response, tokens.access_token)
-    set_refresh_cookies(response, tokens.refresh_token)
+    response = success_response(response_data.model_dump())
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
 
     return response
 
