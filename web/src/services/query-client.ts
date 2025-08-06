@@ -24,24 +24,18 @@ export const queryClient = new QueryClient({
   }),
 })
 
-// Helper function to determine if we should retry the request
 function shouldRetry(failureCount: number, error: unknown): boolean {
-  // Don't retry in development
   if (import.meta.env.DEV) return false
 
-  // Handle ApiError
   if (error instanceof ApiError) {
-    // Don't retry client errors (4xx)
     if (error.status >= 400 && error.status < 500) {
       return false
     }
-    // Retry server errors (5xx) up to 3 times
     if (error.status >= 500) {
       return failureCount < 3
     }
   }
 
-  // Handle network errors
   if (isNetworkError(error)) {
     return failureCount < 3
   }

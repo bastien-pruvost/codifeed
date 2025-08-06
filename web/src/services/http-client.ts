@@ -7,8 +7,6 @@ import { setShouldBeAuthenticated } from "@/features/auth/services/auth-flag-sto
 import { getCookie } from "@/utils/cookies"
 import { ApiError } from "@/utils/errors"
 
-// import type { Middleware } from "openapi-fetch"
-
 export const api = createFetchClient<paths>({
   baseUrl: import.meta.env.VITE_API_URL,
   headers: {
@@ -19,7 +17,6 @@ export const api = createFetchClient<paths>({
 })
 
 const addCsrfTokenMiddleware: Middleware = {
-  // If refresh route add csrf_refresh_token else add csrf_access_token
   async onRequest({ request }) {
     if (request.url.includes("/auth/refresh")) {
       request.headers.set("X-CSRF-TOKEN", getCookie("csrf_refresh_token") ?? "")
@@ -35,7 +32,6 @@ const errorMiddleware: Middleware = {
     if (!response.ok) {
       let responseData: ApiErrorData = null
 
-      // Try to parse response based on content type
       const contentType = response.headers.get("content-type")
 
       try {
@@ -45,7 +41,6 @@ const errorMiddleware: Middleware = {
           responseData = await response.text()
         }
       } catch {
-        // If parsing fails, responseData remains null
         responseData = null
       }
 
@@ -66,7 +61,6 @@ let refreshPromise: ReturnType<typeof refreshToken> | null = null
 
 const refreshTokenMiddleware: Middleware = {
   async onResponse({ request, response }) {
-    // Only handle 401 errors
     if (response.status !== 401) {
       return response
     }
@@ -106,16 +100,15 @@ const refreshTokenMiddleware: Middleware = {
         // Retry the original request
         return fetch(clonedRequest)
       } else {
-        // Logout
+        // Token refresh failed, throw error to logout user
         throw new Error("Refresh failed")
       }
     } catch (error) {
       console.error("Token refresh failed", error)
-      // Logout user
+      // Token refresh failed, logout user
       await api.POST("/auth/logout").catch((error) => {
         console.error("Logout failed", error)
       })
-      // Refresh failed, user needs to login again
       setShouldBeAuthenticated(false)
       return response
     }

@@ -30,7 +30,7 @@ export class ApiError extends Error {
       return this.getDefaultMessage()
     }
 
-    // Handle MessageResponse type
+    // Handle responses with a message field
     if (
       typeof this.data === "object" &&
       "message" in this.data &&
@@ -90,7 +90,6 @@ export class ApiError extends Error {
 
 // Helper function to extract meaningful error messages with type safety
 export function getErrorMessage(error: unknown): string {
-  // Handle ApiError with type safety
   if (error instanceof ApiError) {
     return error.getUserMessage()
   }
