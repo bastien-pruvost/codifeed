@@ -93,13 +93,10 @@ export function getErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
     return error.getUserMessage()
   }
-
-  // Handle generic Error objects
+  if (isNetworkError(error)) {
+    return "Network error. Please check your connection"
+  }
   if (error instanceof Error) {
-    // Handle network errors
-    if (isNetworkError(error)) {
-      return "Network error. Please check your connection"
-    }
     return error.message
   }
 
