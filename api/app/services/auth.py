@@ -9,10 +9,9 @@ from flask_jwt_extended import (
 )
 from werkzeug.exceptions import Unauthorized
 
-from app.extensions.hashing import verify_password
-from app.models.auth import TokenPair
 from app.models.users import User
 from app.services.users import UserService
+from app.utils.hashing import verify_password
 from app.utils.logging import logger
 
 

@@ -1,8 +1,8 @@
 from sqlmodel import SQLModel, select
 
 from app.database.session import get_session
-from app.extensions.hashing import hash_password
 from app.models.users import User
+from app.utils.hashing import hash_password
 
 from .engine import engine
 
@@ -14,7 +14,7 @@ def init_db():
     # Generate a default user if no users exist
     default_user = {
         "email": "test-1@test.com",
-        "hashed_password": hash_password("test-1"),
+        "hashed_password": hash_password("password"),
         "firstname": "John",
         "lastname": "Doe",
     }

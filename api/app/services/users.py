@@ -3,8 +3,8 @@ from typing import Optional
 from sqlmodel import select
 
 from app.database.session import get_session
-from app.extensions.hashing import hash_password
 from app.models.users import User, UserCreate
+from app.utils.hashing import hash_password
 
 
 class UserService:
