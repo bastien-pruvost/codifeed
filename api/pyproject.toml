@@ -41,6 +41,7 @@ exclude = [
     ".venv",
     "__pypackages__",
     "venv",
+    "migrations/versions",
 ]
 
 [tool.ruff.format]
