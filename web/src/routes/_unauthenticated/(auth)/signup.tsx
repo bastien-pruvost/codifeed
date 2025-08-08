@@ -19,11 +19,12 @@ function SignupPage() {
     try {
       const formData = new FormData(e.currentTarget)
       await signup({
-        firstName: formData.get("firstname")?.toString() ?? "",
-        lastName: formData.get("lastname")?.toString() ?? "",
+        firstname: formData.get("firstname")?.toString() ?? "",
+        lastname: formData.get("lastname")?.toString() ?? "",
         email: formData.get("email")?.toString() ?? "",
         password: formData.get("password")?.toString() ?? "",
         avatar: null,
+        testField: "test",
       })
     } catch (error) {
       console.error("Signup failed:", error)
