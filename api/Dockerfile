@@ -19,4 +19,4 @@ RUN poetry install --no-root
 
 # Run the web service on container startup.
 
-CMD ["sleep", "5", ";", "poetry", "run", "gunicorn", "wsgi:app"]
+CMD ["poetry", "run", "gunicorn", "wsgi:app"]
