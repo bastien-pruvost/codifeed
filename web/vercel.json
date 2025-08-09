@@ -8,6 +8,5 @@
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "cleanUrls": true,
   "trailingSlash": false,
-  "regions": ["fra1"],
-  "functionFailoverRegions": ["cdg1", "dub1"]
+  "regions": ["fra1"]
 }
