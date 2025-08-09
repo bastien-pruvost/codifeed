@@ -31,6 +31,7 @@ class Config:
     JWT_COOKIE_HTTPONLY = True
     JWT_COOKIE_SECURE = True
     JWT_COOKIE_SAMESITE = "None"
+    JWT_COOKIE_DOMAIN = None
 
     # Error messages
     JWT_ERROR_MESSAGE_KEY = "message"
@@ -51,8 +52,6 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False
-    # JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=15)
-    # JWT_REFRESH_TOKEN_EXPIRES = timedelta(seconds=10)
 
 
 class ProductionConfig(Config):
