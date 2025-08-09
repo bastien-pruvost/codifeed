@@ -30,8 +30,7 @@ class Config:
     JWT_TOKEN_LOCATION = ["cookies"]
     JWT_COOKIE_HTTPONLY = True
     JWT_COOKIE_SECURE = True
-    JWT_COOKIE_SAMESITE = "None"
-    JWT_COOKIE_DOMAIN = "vercel.app"
+    JWT_COOKIE_SAMESITE = "Strict"
 
     # Error messages
     JWT_ERROR_MESSAGE_KEY = "message"
