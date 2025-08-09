@@ -13,6 +13,7 @@ def create_app(env: str = "development"):
     from app.middlewares.auto_refresh import auto_refresh_expiring_tokens
     from app.middlewares.exceptions import register_error_handlers
     from app.routes.auth import auth_router
+    from app.routes.healthcheck import healthcheck_router
     from app.routes.posts import posts_router
     from app.routes.users import users_router
 
@@ -65,8 +66,9 @@ def create_app(env: str = "development"):
 
     # Initialize routes
     app.register_api(auth_router)
-    app.register_api(users_router)
+    app.register_api(healthcheck_router)
     app.register_api(posts_router)
+    app.register_api(users_router)
 
     # Initialize database
     init_db()
