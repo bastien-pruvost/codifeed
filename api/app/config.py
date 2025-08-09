@@ -17,8 +17,11 @@ class Config:
     API_PREFIX = "/api"
 
     # CORS Config
-    CORS_ORIGINS = ["http://localhost:3000"]
+    CORS_ORIGINS = [
+        origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+    ]
     CORS_SUPPORTS_CREDENTIALS = True
+    CORS_ALLOW_HEADERS = ["Content-Type", "Authorization", "X-CSRF-TOKEN"]
 
     # JWT Config
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
@@ -27,7 +30,7 @@ class Config:
     JWT_TOKEN_LOCATION = ["cookies"]
     JWT_COOKIE_HTTPONLY = True
     JWT_COOKIE_SECURE = True
-    JWT_COOKIE_SAMESITE = "Strict"
+    JWT_COOKIE_SAMESITE = "None"
 
     # Error messages
     JWT_ERROR_MESSAGE_KEY = "message"
