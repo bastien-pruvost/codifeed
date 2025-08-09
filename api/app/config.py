@@ -31,6 +31,7 @@ class Config:
     JWT_COOKIE_HTTPONLY = True
     JWT_COOKIE_SECURE = True
     JWT_COOKIE_SAMESITE = "Strict"
+    JWT_COOKIE_DOMAIN = os.getenv("JWT_COOKIE_DOMAIN")
 
     # Error messages
     JWT_ERROR_MESSAGE_KEY = "message"
