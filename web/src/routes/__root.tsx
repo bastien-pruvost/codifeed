@@ -1,4 +1,8 @@
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Outlet,
+} from "@tanstack/react-router"
 import { lazy, Suspense } from "react"
 
 import type { RouterContext } from "@/main"
@@ -25,6 +29,7 @@ function RootComponent() {
 
   return (
     <>
+      <HeadContent />
       <Header user={auth.user} />
       <Outlet />
       <Toaster position="top-center" richColors />

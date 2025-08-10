@@ -18,6 +18,15 @@ const rootSearchSchema = z.object({
 
 export const Route = createFileRoute("/_unauthenticated/(auth)/login")({
   validateSearch: zodValidator(rootSearchSchema),
+  head: () => {
+    return {
+      meta: [
+        {
+          title: "Login",
+        },
+      ],
+    }
+  },
   component: LoginPage,
 })
 
