@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/healthcheck": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Check if the server is running */
+        get: operations["healthcheck_healthcheck_healthcheck_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/me": {
         parameters: {
             query?: never;
@@ -134,6 +151,11 @@ export interface components {
              * @description Main error message
              */
             message: string;
+        };
+        /** HealthcheckResponse */
+        HealthcheckResponse: {
+            /** Status */
+            status: string;
         };
         /** LoginCredentials */
         LoginCredentials: {
@@ -289,6 +311,7 @@ export interface components {
     pathItems: never;
 }
 export type ErrorResponse = components['schemas']['ErrorResponse'];
+export type HealthcheckResponse = components['schemas']['HealthcheckResponse'];
 export type LoginCredentials = components['schemas']['LoginCredentials'];
 export type LoginResponse = components['schemas']['LoginResponse'];
 export type LogoutResponse = components['schemas']['LogoutResponse'];
@@ -488,6 +511,51 @@ export interface operations {
             };
         };
     };
+    healthcheck_healthcheck_healthcheck_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthcheckResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     user_me_users_me_get: {
         parameters: {
             query?: never;
@@ -546,6 +614,7 @@ export enum ApiPaths {
     auth_logout_auth_logout_post = "/auth/logout",
     auth_refresh_auth_refresh_post = "/auth/refresh",
     auth_signup_auth_signup_post = "/auth/signup",
+    healthcheck_healthcheck_healthcheck_get = "/healthcheck",
     user_me_users_me_get = "/users/me",
     user_get_user_users__string_user_id__get = "/users/{user_id}"
 }
