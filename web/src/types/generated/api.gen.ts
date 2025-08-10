@@ -82,7 +82,8 @@ export interface paths {
         /** @description Check if the server is running */
         get: operations["healthcheck_healthcheck_healthcheck_get"];
         put?: never;
-        post?: never;
+        /** @description Check if the server is working with a POST request */
+        post: operations["healthcheck_healthcheck_test_healthcheck_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -556,6 +557,51 @@ export interface operations {
             };
         };
     };
+    healthcheck_healthcheck_test_healthcheck_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthcheckResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     user_me_users_me_get: {
         parameters: {
             query?: never;
@@ -615,6 +661,7 @@ export enum ApiPaths {
     auth_refresh_auth_refresh_post = "/auth/refresh",
     auth_signup_auth_signup_post = "/auth/signup",
     healthcheck_healthcheck_healthcheck_get = "/healthcheck",
+    healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
     user_me_users_me_get = "/users/me",
     user_get_user_users__string_user_id__get = "/users/{user_id}"
 }

@@ -18,3 +18,13 @@ healthcheck_router = APIBlueprint(
 def healthcheck():
     response = HealthcheckResponse(status="ok")
     return success_response(response.model_dump(), 200)
+
+
+@healthcheck_router.post(
+    "/healthcheck",
+    responses={200: HealthcheckResponse},
+    description="Check if the server is working with a POST request",
+)
+def healthcheck_test():
+    response = HealthcheckResponse(status="ok")
+    return success_response(response.model_dump(), 200)
