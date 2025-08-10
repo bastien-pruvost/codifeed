@@ -8,5 +8,12 @@
   "ignoreCommand": "git diff HEAD^ HEAD --quiet -- ./",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "trailingSlash": false,
-  "regions": ["fra1"]
+  "regions": ["fra1"],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "codifeed.vercel.app" }],
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    }
+  ]
 }
