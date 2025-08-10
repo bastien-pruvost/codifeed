@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 
 from sqlmodel import select
 
@@ -11,7 +12,7 @@ class UserService:
     """Service layer for user operations."""
 
     @staticmethod
-    def get_by_id(user_id: str) -> Optional[User]:
+    def get_by_id(user_id: UUID) -> Optional[User]:
         """Get user by ID."""
         with get_session() as session:
             return session.get(User, user_id)

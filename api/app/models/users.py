@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlmodel import Field
 
 from app.database.models import ApiBaseModel, SQLModelWithId
@@ -20,7 +22,7 @@ class UserUpdate(UserBase):
 
 
 class UserRead(UserBase):
-    id: str
+    id: UUID
 
 
 class User(UserBase, SQLModelWithId, table=True):

@@ -117,7 +117,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get a user by id */
-        get: operations["user_get_user_users__string_user_id__get"];
+        get: operations["user_get_user_users__uuid_user_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -232,7 +232,10 @@ export interface components {
             email: string;
             /** Firstname */
             firstname: string;
-            /** Id */
+            /**
+             * Id
+             * Format: uuid
+             */
             id: string;
             /** Lastname */
             lastname: string;
@@ -622,7 +625,7 @@ export interface operations {
             };
         };
     };
-    user_get_user_users__string_user_id__get: {
+    user_get_user_users__uuid_user_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -663,5 +666,5 @@ export enum ApiPaths {
     healthcheck_healthcheck_healthcheck_get = "/healthcheck",
     healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
     user_me_users_me_get = "/users/me",
-    user_get_user_users__string_user_id__get = "/users/{user_id}"
+    user_get_user_users__uuid_user_id__get = "/users/{user_id}"
 }

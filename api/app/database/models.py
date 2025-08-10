@@ -1,4 +1,4 @@
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
@@ -20,4 +20,4 @@ class ApiBaseModel(BaseModel):
 class SQLModelWithId(SQLModel):
     """Base model to be used for all SQL models with an id field."""
 
-    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from flask_jwt_extended import get_jwt_identity
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
@@ -14,7 +16,7 @@ users_router = APIBlueprint("user", __name__, abp_tags=[users_tag])
 
 
 class GetUserPath(ApiBaseModel):
-    user_id: str
+    user_id: UUID
 
 
 @users_router.get(
@@ -34,7 +36,7 @@ def me():
 
 
 @users_router.get(
-    "/users/<string:user_id>",
+    "/users/<uuid:user_id>",
     responses={200: UserRead},
     description="Get a user by id",
 )
