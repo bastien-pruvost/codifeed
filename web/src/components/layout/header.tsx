@@ -24,8 +24,11 @@ export function Header({ user }: HeaderProps) {
 
   return (
     <div className="sticky top-0 right-0 left-0 z-50 border-b">
-      <Wrapper className="flex items-center justify-between py-3">
-        <Link to="/home" className="flex items-center gap-2.5 text-primary">
+      <Wrapper className="flex items-center justify-between bg-background/90 py-3 backdrop-blur-lg">
+        <Link
+          to={user ? "/home" : "/"}
+          className="flex items-center gap-2.5 text-primary"
+        >
           <MessageSquareCodeIcon className="size-7" />
           <span className="mb-1 text-2xl font-semibold">Codifeed</span>
         </Link>
@@ -54,17 +57,17 @@ export function Header({ user }: HeaderProps) {
                 }}
               >
                 <LogOutIcon />
-                Logout
+                Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <div className="flex items-center gap-2">
             <Button asChild variant="outline">
-              <Link to="/login">Login</Link>
+              <Link to="/login">Log in</Link>
             </Button>
             <Button asChild>
-              <Link to="/signup">Signup</Link>
+              <Link to="/signup">Sign up</Link>
             </Button>
           </div>
         )}

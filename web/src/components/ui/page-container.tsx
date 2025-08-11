@@ -2,17 +2,14 @@ import type { ComponentPropsWithoutRef } from "react"
 
 import { cn } from "@/utils/classnames"
 
-export function Wrapper({
+export function PageContainer({
   children,
   className,
   ...props
 }: ComponentPropsWithoutRef<"div">) {
   return (
     <div
-      className={cn(
-        "mx-auto max-w-7xl px-3 sm:px-4 md:px-5 lg:px-6",
-        className,
-      )}
+      className={cn("py-4 min-h-(--page-container-min-height)", className)}
       {...props}
     >
       {children}
