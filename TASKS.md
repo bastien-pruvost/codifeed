@@ -1,139 +1,365 @@
-# Codifeed - Roadmap
+# Codifeed - Development Tasks
 
-This document outlines the development plan for Codifeed, a full-stack social network for developers.
+## 📋 Project Setup & Configuration
 
-## Phase 1: MVP Foundation - Backend & Frontend Setup
+### Initial Setup
 
-### Backend (Flask API - `api/`)
+- [x] Initialize Git repository
+- [x] Setup project structure (api/, web/, database/)
+- [x] Configure Poetry for Python dependencies
+- [x] Configure pnpm workspace for frontend
+- [x] Setup development environment files
+- [x] Create README.md documentation
 
-- [x] Set up initial Flask project structure ([api/app/**init**.py](mdc:api/app/__init__.py), [api/run.py](mdc:api/run.py)).
-- [ ] Integrate **SQLModel** as the ORM with an **SQLite** database.
-- [ ] Implement database migrations (e.g., Alembic, or manual SQLModel sync for early dev).
-- [ ] Create User model (id, username, email, hashed_password, created_at, **role** (admin, user, guest)) in [api/app/models](mdc:api/app/models).
-- [ ] Implement JWT-based authentication (e.g., Flask-JWT-Extended):
-  - [ ] Signup endpoint (`/auth/signup`) in [api/app/routes](mdc:api/app/routes).
-  - [ ] Login endpoint (`/auth/login`) in [api/app/routes](mdc:api/app/routes).
-- [ ] Implement role-based access control for API endpoints.
-- [ ] Set up OpenAPI specification generation.
-- [ ] Basic User Profile model (linked to User, bio, **avatar_url (S3)**, location, **skills string/list**) in [api/app/models](mdc:api/app/models).
-- [ ] CRUD API endpoints for User Profiles (`/profiles/{username}`) in [api/app/routes](mdc:api/app/routes).
-- [ ] Set up AWS S3 bucket and credentials for image uploads.
-- [ ] Implement avatar upload endpoint (receives image, uploads to S3, stores URL in profile).
+### Database Setup
 
-### Frontend (React + TanStack Router - `web/`)
+- [x] Setup PostgreSQL with Docker Compose
+- [x] Configure Alembic migrations
+- [x] Create database models structure
+- [x] Setup Neon PostgreSQL for production
+- [ ] Configure connection pooling
 
-- [ ] Set up React project with Vite ([web/src/main.tsx](mdc:web/src/main.tsx)).
-- [ ] Integrate TanStack Router and define basic route structure in [web/src/routes](mdc:web/src/routes).
-- [ ] Set up **Tailwind CSS** for styling.
-- [ ] Integrate **shadcn/ui** for UI components (e.g., in [web/src/components](mdc:web/src/components)).
-- [ ] Create basic layout components (Navbar, Footer, Sidebar if needed) in [web/src/components](mdc:web/src/components).
-- [ ] Implement pages:
-  - [ ] Login page.
-  - [ ] Signup page.
-  - [ ] User Profile page (display only for now, including avatar, bio, skills).
-  - [ ] Settings page for profile updates.
-- [ ] Set up `openapi-typescript` to generate types ([web/src/types/api.gen.ts](mdc:web/src/types/api.gen.ts)).
-- [ ] Set up `openapi-fetch` for type-safe API calls (likely in [web/src/services/api](mdc:web/src/services/api)).
-- [ ] Implement authentication flow (login, signup, storing JWT, handling roles).
-- [ ] Implement protected routes/pages based on user roles (guest, user, admin).
-- [ ] Implement UI for profile editing, including avatar upload to the backend.
-- [ ] Basic state management for user session (e.g., Zustand, Jotai, or React Context).
+### Development Tools
 
-## Phase 2: MVP Core Social - Posts & Interactions
+- [x] Setup Ruff for Python linting/formatting
+- [x] Setup Pyright for Python type checking
+- [x] Setup ESLint for TypeScript linting
+- [x] Setup Prettier for code formatting
+- [x] Configure IDE settings (VSCode)
+- [ ] Add scripts to run ruff and pyright in the project
+- [ ] Add scripts to run tests in the project
+- [ ] Add CI/CD pipeline for the project with GitHub Actions
 
-### Backend
+---
 
-- [ ] Create Post model (id, user_id, content (Markdown), created_at, updated_at) in [api/app/models](mdc:api/app/models).
-- [ ] API endpoint to create a post.
-- [ ] API endpoint to read a post.
-- [ ] API endpoint to update a post.
-- [ ] API endpoint to delete a post.
-- [ ] API endpoint for a chronological feed (`/feed`).
-- [ ] API endpoint to get posts by a specific user (`/users/{username}/posts`).
-- [ ] Create Like model (user_id, post_id, created_at) in [api/app/models](mdc:api/app/models).
-- [ ] API endpoint to like/vote a post.
-- [ ] API endpoint to unlike/unvote a post.
-- [ ] Create Comment model (id, user_id, post_id, content (Markdown), created_at, updated_at) in [api/app/models](mdc:api/app/models).
-- [ ] API endpoint to create a comment on a post.
-- [ ] API endpoint to read comments for a post.
-- [ ] API endpoint to update a comment.
-- [ ] API endpoint to delete a comment.
-      All new API endpoints will be in [api/app/routes](mdc:api/app/routes).
+## 🔧 Backend Development (Flask API)
 
-### Frontend
+### Core Infrastructure
 
-- [ ] Component to display a single post in [web/src/components](mdc:web/src/components).
-- [ ] Implement a **Markdown editor** for creating/editing posts and comments.
-- [ ] UI for creating a new post.
-- [ ] Display user's posts on their profile page.
-- [ ] Create a Feed page (`/feed`) in [web/src/routes](mdc:web/src/routes).
-- [ ] Implement like/vote functionality on posts.
-- [ ] Display like counts on posts.
-- [ ] UI for viewing comments on a post.
-- [ ] UI for creating new comments on a post.
+- [x] Flask-OpenAPI3 application setup
+- [x] Database engine and session configuration
+- [x] Auto-refresh middleware
+- [x] Exception handling middleware
+- [x] CORS configuration
+- [x] Logging utilities
 
-## Phase 3: MVP Social Dynamics & Discovery
+### Authentication System
 
-### Backend
+- [x] JWT utilities (create, verify, refresh tokens)
+- [x] Password hashing with Argon2
+- [x] User model with SQLModel
+- [x] Auth routes (login, signup, refresh, logout)
+- [x] Auth service layer
+- [ ] OAuth integration (GitHub, Google)
+- [ ] Email verification system
+- [ ] Password reset functionality
+- [ ] Rate limiting for auth endpoints
 
-- [ ] Create Follow model (follower_id, followed_id, created_at) in [api/app/models](mdc:api/app/models).
-- [ ] API endpoint to follow a user.
-- [ ] API endpoint to unfollow a user.
-- [ ] API endpoint to list a user's followers.
-- [ ] API endpoint to list users a user is following.
-- [ ] Update feed logic (`/feed`).
-- [ ] Basic search API:
-  - [ ] Endpoint to search users.
-  - [ ] Endpoint to search posts.
-- [ ] Create Notification model (recipient_id, actor_id, type, post_id, read_status, created_at) in [api/app/models](mdc:api/app/models).
-- [ ] Logic to create notifications.
-- [ ] API endpoint to get a user's notifications.
-- [ ] API endpoint to mark notifications as read.
-      All new API endpoints will be in [api/app/routes](mdc:api/app/routes).
+### User Management
 
-### Frontend
+- [x] User model and database schema
+- [x] User routes (get profile, update profile)
+- [x] User service layer
+- [ ] Profile picture upload
+- [ ] User search functionality
+- [ ] User follow/unfollow system
+- [ ] User privacy settings
 
-- [ ] Add follow/unfollow buttons to user profiles.
-- [ ] Display follower/following counts on profiles.
-- [ ] (Optional) Pages to list followers/following.
-- [ ] Update Feed page.
-- [ ] Basic search UI.
-- [ ] Search results page.
-- [ ] UI for displaying notifications.
-- [ ] Indicate unread notifications.
+### Posts System
 
-## Phase 4: Developer-Specific Features (Post-MVP)
+- [ ] Post model and database schema
+- [ ] Posts routes (CRUD operations)
+- [ ] Rich text/Markdown support
+- [ ] Image upload for posts
+- [ ] Code snippet support with syntax highlighting
+- [ ] Post categories/tags
+- [ ] Post draft functionality
+- [ ] Post versioning
 
-### Projects Showcase
+### Social Features
 
-- [ ] **Backend**: Project model in [api/app/models](mdc:api/app/models). CRUD APIs, Like/Comment models for Projects in [api/app/routes](mdc:api/app/routes) and [api/app/models](mdc:api/app/models).
-- [ ] **Frontend**: UI for projects on profile, add/edit projects, view/like/comment on projects in [web/src/components](mdc:web/src/components) and [web/src/routes](mdc:web/src/routes).
+- [ ] Like system (posts, comments)
+- [ ] Comment system with threading
+- [ ] Repost/Share functionality
+- [ ] Follow/Following relationships
+- [ ] Activity feed generation
+- [ ] Notification system
 
-### Stacks and Technologies
+### Content & Discovery
 
-- [ ] **Backend**: Technology/Stack model, UserInterestInTechnology model in [api/app/models](mdc:api/app/models). APIs in [api/app/routes](mdc:api/app/routes). Like/Comment models for Stacks/Technologies.
-- [ ] **Frontend**: UI for Stacks/Technologies in [web/src/components](mdc:web/src/components) and [web/src/routes](mdc:web/src/routes).
+- [ ] Search functionality (users, posts, tags)
+- [ ] Feed algorithms (explore, following)
+- [ ] Trending content detection
+- [ ] Tag system and filtering
+- [ ] Content recommendation engine
 
-### Code Snippets
+### API Documentation
 
-- [ ] **Backend**: CodeSnippet model in [api/app/models](mdc:api/app/models). CRUD APIs in [api/app/routes](mdc:api/app/routes).
-- [ ] **Frontend**: UI for Code Snippets in [web/src/components](mdc:web/src/components) and [web/src/routes](mdc:web/src/routes).
+- [x] OpenAPI schema generation
+- [x] Swagger UI integration
+- [ ] API versioning strategy
+- [ ] Request/Response examples
+- [ ] Error code documentation
 
-## Phase 5: Polish, Testing & Deployment Prep
+---
 
-- [ ] **General Polish**
-  - [ ] Refine UI/UX.
-  - [ ] Improve error handling.
-  - [ ] Accessibility review.
-  - [ ] Performance optimizations.
-- [ ] **Testing**
-  - [ ] Backend: Unit and integration tests (pytest).
-  - [ ] Frontend: Component tests (Vitest/Jest), E2E tests (Cypress/Playwright).
-- [ ] **Deployment**
-  - [ ] Dockerize backend and frontend.
-  - [ ] Set up CI/CD pipelines.
-  - [ ] Deploy backend.
-  - [ ] Deploy frontend.
-  - [ ] Set up database for production.
-  - [ ] Configure S3 for production.
-  - [ ] Domain name and SSL setup.
+## 🎨 Frontend Development (React/TypeScript)
+
+### Core Setup
+
+- [x] Vite configuration
+- [x] TypeScript configuration
+- [x] TailwindCSS setup
+- [x] Shadcn/ui components integration
+- [x] TanStack Router setup
+- [x] TanStack Query setup
+
+### Type Safety
+
+- [x] OpenAPI TypeScript generation
+- [x] API client with openapi-fetch
+- [ ] Zod schemas for form validation
+- [ ] Runtime type validation
+- [ ] Error boundary components
+
+### Authentication Flow
+
+- [x] Login page
+- [x] Signup page
+- [x] Auth hooks (useAuthUser)
+- [x] Auth mutations (login, logout, signup, refresh)
+- [x] Protected routes
+- [x] Auth flag storage
+- [ ] OAuth login buttons
+- [ ] Password reset form
+- [ ] Email verification flow
+
+### Layout & Navigation
+
+- [x] Header component
+- [x] Wrapper/Container components
+- [x] Page container component
+- [x] Responsive design
+- [ ] Sidebar navigation
+- [ ] Mobile menu
+- [ ] Breadcrumb navigation
+- [ ] Footer component
+
+### User Interface
+
+- [x] Landing page
+- [x] Basic UI components (Button, Input, Card, etc.)
+- [ ] Profile page
+- [ ] Settings page
+- [ ] Dashboard/Home feed
+- [ ] User profile customization
+- [ ] Dark/Light theme toggle
+
+### Posts & Content
+
+- [ ] Post creation form
+- [ ] Post display components
+- [ ] Post editing interface
+- [ ] Image upload component
+- [ ] Markdown editor/renderer
+- [ ] Code syntax highlighting
+- [ ] Post filtering and search
+
+### Social Features
+
+- [ ] Like/Unlike buttons
+- [ ] Comment components
+- [ ] Follow/Unfollow buttons
+- [ ] User avatar and profile links
+- [ ] Activity feed
+- [ ] Notification dropdown
+
+### Performance & UX
+
+- [ ] Loading skeletons
+- [ ] Infinite scrolling
+- [ ] Image optimization
+- [ ] Caching strategies
+- [ ] Error handling UI
+- [ ] Toast notifications
+
+---
+
+## 🔒 Security & Infrastructure
+
+### Security Implementation
+
+- [x] JWT token management
+- [x] Password hashing (Argon2)
+- [ ] CSRF protection
+- [ ] Rate limiting
+- [ ] Input validation and sanitization
+- [ ] SQL injection prevention
+- [ ] XSS protection
+- [ ] Security headers
+
+### Type Safety
+
+- [x] Python type hints
+- [x] TypeScript strict mode
+- [x] Pydantic validation
+- [x] OpenAPI schema generation
+- [ ] Runtime validation
+- [ ] End-to-end type testing
+
+### API Integration
+
+- [x] HTTP client configuration
+- [x] Query key management
+- [x] Error handling
+- [ ] Retry mechanisms
+- [ ] Caching strategies
+- [ ] Real-time features (WebSocket/SSE)
+
+---
+
+## 🌐 Deployment & DevOps
+
+### Development Environment
+
+- [x] Local development setup
+- [x] Database Docker configuration
+- [x] Environment variables
+- [ ] Development SSL certificates
+- [ ] Hot reload optimization
+
+### Production Deployment
+
+- [x] Railway configuration (backend)
+- [x] Vercel configuration (frontend)
+- [ ] Neon PostgreSQL setup
+- [ ] Cloudflare R2 storage
+- [ ] Environment secrets management
+- [ ] Health checks
+- [ ] Monitoring and logging
+
+### CI/CD Pipeline
+
+- [ ] GitHub Actions setup
+- [ ] Automated testing
+- [ ] Type checking in CI
+- [ ] Security scanning
+- [ ] Automated deployments
+- [ ] Database migration in CI
+
+---
+
+## 🧪 Testing & Quality
+
+### Backend Testing
+
+- [ ] Unit tests for services
+- [ ] Integration tests for API routes
+- [ ] Database migration tests
+- [ ] Authentication flow tests
+- [ ] API validation tests
+
+### Frontend Testing
+
+- [ ] Component unit tests
+- [ ] Hook testing
+- [ ] API integration tests
+- [ ] E2E tests with Playwright
+- [ ] Accessibility testing
+
+### Quality Assurance
+
+- [ ] Code coverage reports
+- [ ] Performance testing
+- [ ] Load testing
+- [ ] Security audits
+- [ ] Accessibility audits
+
+---
+
+## 📱 Advanced Features
+
+### Real-time Features
+
+- [ ] WebSocket integration
+- [ ] Real-time notifications
+- [ ] Live chat/messaging
+- [ ] Real-time feed updates
+- [ ] Online user status
+
+### Mobile Experience
+
+- [ ] PWA configuration
+- [ ] Mobile-first responsive design
+- [ ] Touch gestures
+- [ ] Offline functionality
+- [ ] Push notifications
+
+### Analytics & Insights
+
+- [ ] User analytics
+- [ ] Performance monitoring
+- [ ] Error tracking
+- [ ] Usage statistics
+- [ ] A/B testing framework
+
+### Admin Features
+
+- [ ] Admin dashboard
+- [ ] Content moderation tools
+- [ ] User management
+- [ ] Analytics dashboard
+- [ ] System health monitoring
+
+---
+
+## 🎯 Future Enhancements
+
+### Developer Experience
+
+- [ ] API playground
+- [ ] Component documentation
+- [ ] Development guide
+- [ ] Contributing guidelines
+- [ ] Code generation tools
+
+### Platform Features
+
+- [ ] Multi-language support
+- [ ] Plugin system
+- [ ] API rate limiting per user
+- [ ] Content export/import
+- [ ] Advanced search filters
+
+### Performance Optimizations
+
+- [ ] Database query optimization
+- [ ] Frontend bundle optimization
+- [ ] CDN integration
+- [ ] Image optimization
+- [ ] Caching strategies
+
+---
+
+## 📊 Progress Tracking
+
+### Overall Progress
+
+- **Setup & Configuration**: 80% ✅
+- **Backend Development**: 40% 🚧
+- **Frontend Development**: 30% 🚧
+- **Security & Infrastructure**: 50% 🚧
+- **Deployment & DevOps**: 40% 🚧
+- **Testing & Quality**: 5% ❌
+- **Advanced Features**: 0% ❌
+
+### Legend
+
+- ✅ Completed
+- 🚧 In Progress
+- ❌ Not Started
+- [ ] Task Checkbox
+
+---
+
+_Last updated: $(date)_
