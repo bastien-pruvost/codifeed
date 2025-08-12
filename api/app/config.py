@@ -7,12 +7,22 @@ load_dotenv(".env.local")
 
 
 class Config:
-    # APP Config
+    # App Config
     APP_NAME = "Codifeed - REST API"
     APP_VERSION = "1.0.0"
     APP_DESCRIPTION = "Flask REST API for Codifeed app."
 
-    # FLASK Config
+    # Database Config
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+
+    # First User Config
+    FIRST_ADMIN_NAME = os.getenv("FIRST_ADMIN_NAME")
+    FIRST_ADMIN_USERNAME = os.getenv("FIRST_ADMIN_USERNAME")
+    FIRST_ADMIN_EMAIL = os.getenv("FIRST_ADMIN_EMAIL")
+    FIRST_ADMIN_PASSWORD = os.getenv("FIRST_ADMIN_PASSWORD")
+
+    # Flask Config
     SECRET_KEY = os.getenv("SECRET_KEY")
     API_PREFIX = "/api"
 
@@ -32,21 +42,14 @@ class Config:
     JWT_COOKIE_SECURE = True
     JWT_COOKIE_SAMESITE = "Strict"
     JWT_COOKIE_DOMAIN = os.getenv("JWT_COOKIE_DOMAIN")
-
-    # Error messages
     JWT_ERROR_MESSAGE_KEY = "message"
-    ERROR_MESSAGE_KEY = "message"
 
-    # SWAGGER Config
+    # Swagger Config
     SWAGGER_CONFIG = {
         "docExpansion": "list",
         "tryItOutEnabled": False,
         "persistAuthorization": True,
     }
-
-    # Database Config
-    DATABASE_URL = os.getenv("DATABASE_URL")
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
 
 class DevelopmentConfig(Config):
