@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { Button } from "@/components/ui/button"
 import { useRefreshTokenMutation } from "@/features/auth/api/refresh-token-mutation"
 
 export const Route = createFileRoute("/_authenticated/home")({
@@ -17,7 +18,8 @@ function RouteComponent() {
   const { mutateAsync: refreshToken } = useRefreshTokenMutation()
   return (
     <div className="text-center">
-      <h1>Home</h1>
+      <h1>HOME - FEED</h1>
+
       <br />
 
       {user ? (
@@ -32,13 +34,16 @@ function RouteComponent() {
         </>
       )}
 
-      <button
+      <br />
+
+      <Button
+        variant="outline"
         onClick={() => {
           refreshToken()
         }}
       >
         Refresh token
-      </button>
+      </Button>
     </div>
   )
 }

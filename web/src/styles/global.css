@@ -22,7 +22,7 @@
 
 :root {
   /* Custom variables */
-  --header-height: 3.5rem;
+  --header-height: calc(--spacing(14));
   --page-container-min-height: calc(100vh - var(--header-height) - 1px);
 
   /* Shadcn UI variables */
@@ -159,5 +159,14 @@
   button:not([disabled]),
   [role="button"]:not([disabled]) {
     cursor: pointer;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

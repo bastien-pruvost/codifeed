@@ -33,7 +33,7 @@ function SignupPage() {
   }
 
   return (
-    <PageContainer className="flex items-center justify-center bg-muted">
+    <PageContainer className="flex items-center justify-center">
       <Wrapper className="max-w-4xl">
         <Card className="overflow-hidden p-0">
           <CardContent className="grid p-0 md:grid-cols-2">
