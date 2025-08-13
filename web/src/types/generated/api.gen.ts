@@ -107,7 +107,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/username/{username}": {
+    "/users/profile/{username}": {
         parameters: {
             query?: never;
             header?: never;
@@ -116,8 +116,8 @@ export interface paths {
             };
             cookie?: never;
         };
-        /** @description Get a user by username */
-        get: operations["user_get_user_by_username_users_username__string_username__get"];
+        /** @description Get a user with their profile by username */
+        get: operations["user_get_user_profile_by_username_users_profile__string_username__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -660,7 +660,7 @@ export interface operations {
             };
         };
     };
-    user_get_user_by_username_users_username__string_username__get: {
+    user_get_user_profile_by_username_users_profile__string_username__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -700,5 +700,5 @@ export enum ApiPaths {
     healthcheck_healthcheck_healthcheck_get = "/healthcheck",
     healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
     user_me_users_me_get = "/users/me",
-    user_get_user_by_username_users_username__string_username__get = "/users/username/{username}"
+    user_get_user_profile_by_username_users_profile__string_username__get = "/users/profile/{username}"
 }

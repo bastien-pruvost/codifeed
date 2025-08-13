@@ -33,12 +33,26 @@ class UsernamePath(BaseModel):
     username: str
 
 
+# @users_router.get(
+#     "/users/<string:username>",
+#     responses={200: UserRead},
+#     description="Get a user by username",
+# )
+# def get_user_by_username(path: UsernamePath):
+#     with get_session() as session:
+#         query = select(User).where(User.username == path.username)
+#         user = session.exec(query).first()
+#         if not user:
+#             raise NotFound(description="User not found")
+#         return success_response(UserRead.model_validate(user).model_dump())
+
+
 @users_router.get(
-    "/users/username/<string:username>",
+    "/users/profile/<string:username>",
     responses={200: UserReadWithProfile},
-    description="Get a user by username",
+    description="Get a user with their profile by username",
 )
-def get_user_by_username(path: UsernamePath):
+def get_user_profile_by_username(path: UsernamePath):
     with get_session() as session:
         query = select(User).where(User.username == path.username)
         user = session.exec(query).first()
