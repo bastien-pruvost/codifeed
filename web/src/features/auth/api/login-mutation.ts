@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 
 import type { LoginCredentials, UserRead } from "@/types/generated/api.gen"
-import { authQueryKeys } from "@/features/auth/api/query-keys"
+import { authKeys } from "@/features/auth/api/_auth-keys"
 import { setShouldBeAuthenticated } from "@/features/auth/services/auth-flag-storage"
 import { api } from "@/services/http-client"
 
@@ -17,7 +17,7 @@ export function useLoginMutation() {
     },
     onSuccess: async (data) => {
       setShouldBeAuthenticated(true)
-      queryClient.setQueryData<UserRead>(authQueryKeys.user(), data?.user)
+      queryClient.setQueryData<UserRead>(authKeys.currentUser(), data?.user)
       navigate({ to: "/" })
     },
     meta: {

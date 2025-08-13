@@ -6,31 +6,27 @@ import {
 import { lazy, Suspense } from "react"
 
 import type { RouterContext } from "@/main"
-import { Header } from "@/components/layout/header"
 import { Toaster } from "@/components/ui/sonner"
-import { authUserQueryOptions } from "@/features/auth/api/auth-user-query"
+import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
 import { shouldBeAuthenticated } from "@/features/auth/services/auth-flag-storage"
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context }) => {
     const user = shouldBeAuthenticated()
-      ? await context.queryClient.ensureQueryData(authUserQueryOptions())
+      ? await context.queryClient.ensureQueryData(currentUserQueryOptions())
       : null
     return { auth: { user } }
   },
-  component: RootComponent,
+  component: RootRouteComponent,
   notFoundComponent: () => (
     <div className="p-8 text-center text-destructive">Not found</div>
   ),
 })
 
-function RootComponent() {
-  const { auth } = Route.useRouteContext()
-
+function RootRouteComponent() {
   return (
     <>
       <HeadContent />
-      <Header user={auth.user} />
       <Outlet />
       <Toaster position="top-center" richColors />
 

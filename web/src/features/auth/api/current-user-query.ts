@@ -1,15 +1,15 @@
 import { queryOptions } from "@tanstack/react-query"
 
-import { authQueryKeys } from "@/features/auth/api/query-keys"
+import { authKeys } from "@/features/auth/api/_auth-keys"
 import {
   setShouldBeAuthenticated,
   shouldBeAuthenticated,
 } from "@/features/auth/services/auth-flag-storage"
 import { api } from "@/services/http-client"
 
-export function authUserQueryOptions(options?: { forceEnabled?: boolean }) {
+export function currentUserQueryOptions(options?: { forceEnabled?: boolean }) {
   return queryOptions({
-    queryKey: [...authQueryKeys.user(), options],
+    queryKey: [...authKeys.currentUser(), options],
     queryFn: async () => {
       if (!shouldBeAuthenticated() && !options?.forceEnabled) {
         return null
