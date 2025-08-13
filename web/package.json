@@ -22,7 +22,7 @@
     "typecheck": "tsc",
     "check": "prettier --write . && eslint --fix && tsc",
     "openapi-ts": "openapi-typescript http://localhost:8000/openapi/openapi.json -o ./src/types/generated/api.gen.ts --root-types --root-types-no-schema-prefix --make-paths-enum --generate-path-params",
-    "openapi-ts:watch": "chokidar '../api/**/*.py' -c 'pnpm run openapi-ts'"
+    "openapi-ts:watch": "chokidar '../api/**/*.py' -c 'pnpm run openapi-ts' --initial"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
