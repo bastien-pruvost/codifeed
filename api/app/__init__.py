@@ -9,7 +9,7 @@ def create_app(env: str = "development"):
     """Create a new Flask application instance"""
 
     from app.config import get_config
-    from app.database.initialization import init_db
+    from app.database import init_db
     from app.middlewares.auto_refresh import auto_refresh_expiring_tokens
     from app.middlewares.exceptions import register_error_handlers
     from app.routes.auth import auth_router

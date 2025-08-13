@@ -107,17 +107,17 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{user_id}": {
+    "/users/username/{username}": {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                user_id: string;
+                username: string;
             };
             cookie?: never;
         };
-        /** @description Get a user by id */
-        get: operations["user_get_user_users__uuid_user_id__get"];
+        /** @description Get a user by username */
+        get: operations["user_get_user_by_username_users_username__string_username__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -182,6 +182,29 @@ export interface components {
              */
             message: string;
         };
+        /** ProfileBase */
+        ProfileBase: {
+            /**
+             * Bio
+             * @default null
+             */
+            bio: string | null;
+            /**
+             * Birthdate
+             * @default null
+             */
+            birthdate: string | null;
+            /**
+             * Location
+             * @default null
+             */
+            location: string | null;
+            /**
+             * Website
+             * @default null
+             */
+            website: string | null;
+        };
         /** RefreshResponse */
         RefreshResponse: {
             /**
@@ -209,17 +232,12 @@ export interface components {
             avatar: string | null;
             /** Email */
             email: string;
-            /** Firstname */
-            firstname: string;
-            /** Lastname */
-            lastname: string;
+            /** Name */
+            name: string;
             /** Password */
             password: string;
-            /**
-             * Testfield
-             * @default test
-             */
-            testField: string;
+            /** Username */
+            username: string;
         };
         /** UserRead */
         UserRead: {
@@ -230,20 +248,35 @@ export interface components {
             avatar: string | null;
             /** Email */
             email: string;
-            /** Firstname */
-            firstname: string;
             /**
              * Id
              * Format: uuid
              */
             id: string;
-            /** Lastname */
-            lastname: string;
+            /** Name */
+            name: string;
+            /** Username */
+            username: string;
+        };
+        /** UserReadWithProfile */
+        UserReadWithProfile: {
             /**
-             * Testfield
-             * @default test
+             * Avatar
+             * @default null
              */
-            testField: string;
+            avatar: string | null;
+            /** Email */
+            email: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            profile: components["schemas"]["ProfileBase"];
+            /** Username */
+            username: string;
         };
         /**
          * ValidationErrorItem
@@ -319,10 +352,12 @@ export type HealthcheckResponse = components['schemas']['HealthcheckResponse'];
 export type LoginCredentials = components['schemas']['LoginCredentials'];
 export type LoginResponse = components['schemas']['LoginResponse'];
 export type LogoutResponse = components['schemas']['LogoutResponse'];
+export type ProfileBase = components['schemas']['ProfileBase'];
 export type RefreshResponse = components['schemas']['RefreshResponse'];
 export type SignupResponse = components['schemas']['SignupResponse'];
 export type UserCreate = components['schemas']['UserCreate'];
 export type UserRead = components['schemas']['UserRead'];
+export type UserReadWithProfile = components['schemas']['UserReadWithProfile'];
 export type ValidationErrorItem = components['schemas']['ValidationErrorItem'];
 export type ValidationErrorModel = components['schemas']['ValidationErrorModel'];
 export type $defs = Record<string, never>;
@@ -625,13 +660,12 @@ export interface operations {
             };
         };
     };
-    user_get_user_users__uuid_user_id__get: {
+    user_get_user_by_username_users_username__string_username__get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                userId: string;
-                user_id: string;
+                username: string;
             };
             cookie?: never;
         };
@@ -643,7 +677,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserRead"];
+                    "application/json": components["schemas"]["UserReadWithProfile"];
                 };
             };
             /** @description Unprocessable Content */
@@ -666,5 +700,5 @@ export enum ApiPaths {
     healthcheck_healthcheck_healthcheck_get = "/healthcheck",
     healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
     user_me_users_me_get = "/users/me",
-    user_get_user_users__uuid_user_id__get = "/users/{user_id}"
+    user_get_user_by_username_users_username__string_username__get = "/users/username/{username}"
 }

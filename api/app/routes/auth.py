@@ -6,20 +6,23 @@ from flask_jwt_extended import (
 )
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
+from sqlmodel import select
 from werkzeug.exceptions import BadRequest, Unauthorized
 
-from app.models.auth import (
+from app.database import get_session
+from app.models import (
     LoginCredentials,
     LoginResponse,
     LogoutResponse,
     RefreshResponse,
     SignupResponse,
+    User,
+    UserCreate,
+    UserRead,
 )
-from app.models.users import UserCreate
-from app.services.auth import AuthService
-from app.services.users import UserService
-from app.utils.jwt import refresh_required
-from app.utils.responses import abp_responses, success_response
+from app.utils.jwt import create_tokens, get_current_user_id, refresh_required
+from app.utils.password import hash_password, verify_password
+from app.utils.response import abp_responses, success_response
 
 auth_tag = Tag(name="Auth", description="Authentication routes")
 auth_router = APIBlueprint("auth", __name__, abp_tags=[auth_tag], abp_responses=abp_responses)
@@ -31,12 +34,23 @@ auth_router = APIBlueprint("auth", __name__, abp_tags=[auth_tag], abp_responses=
     description="Create a new user account",
 )
 def signup(body: UserCreate):
-    if UserService.email_exists(body.email):
-        raise BadRequest(description="A user with this email already exists")
+    with get_session() as session:
+        if session.exec(select(User).where(User.email == body.email)).first():
+            raise BadRequest(description="A user with this email already exists")
 
-    user = UserService.create_user(body)
-    response_data = SignupResponse(user=user.to_read_model())
-    return success_response(response_data.model_dump(), 201)
+        user = User.model_validate(body, update={"hashed_password": hash_password(body.password)})
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+
+    response_data = SignupResponse(user=UserRead.model_validate(user))
+    response = success_response(response_data.model_dump(), 201)
+
+    access_token, refresh_token = create_tokens(user.id)
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
+
+    return response
 
 
 @auth_router.post(
@@ -46,16 +60,18 @@ def signup(body: UserCreate):
 )
 def login(body: LoginCredentials):
     try:
-        user = AuthService.verify_credentials(body.email, body.password)
-        if not user:
+        with get_session() as session:
+            user = session.exec(select(User).where(User.email == body.email)).first()
+        if not user or not verify_password(body.password, user.hashed_password):
             raise BadRequest(description="Invalid email or password")
 
-        # Create response with tokens
-        response_data = LoginResponse(user=user.to_read_model())
-        access_token, refresh_token = AuthService.create_tokens(user.id)
+        response_data = LoginResponse(user=UserRead.model_validate(user))
         response = success_response(response_data.model_dump())
+
+        access_token, refresh_token = create_tokens(user.id)
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
+
         return response
     except (
         argon_exceptions.VerifyMismatchError,
@@ -72,19 +88,17 @@ def login(body: LoginCredentials):
 )
 @refresh_required
 def refresh():
-    # Get user from token
-    user_id = AuthService.get_current_user_id()
-    user = UserService.get_by_id(user_id)
+    user_id = get_current_user_id()
+    with get_session() as session:
+        user = session.get(User, user_id)
 
     if not user:
         raise Unauthorized(description="User not found")
 
-    # Generate new tokens
-    access_token, refresh_token = AuthService.create_tokens(user_id)
-    response_data = RefreshResponse(user=user.to_read_model())
-
-    # Create response with new tokens
+    response_data = RefreshResponse(user=UserRead.model_validate(user))
     response = success_response(response_data.model_dump())
+
+    access_token, refresh_token = create_tokens(user_id)
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
 

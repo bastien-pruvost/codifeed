@@ -21,12 +21,11 @@ function SignupPage() {
     try {
       const formData = new FormData(e.currentTarget)
       await signup({
-        firstname: formData.get("firstname")?.toString() ?? "",
-        lastname: formData.get("lastname")?.toString() ?? "",
         email: formData.get("email")?.toString() ?? "",
         password: formData.get("password")?.toString() ?? "",
+        name: formData.get("name")?.toString() ?? "",
+        username: formData.get("username")?.toString() ?? "",
         avatar: null,
-        testField: "test",
       })
     } catch (error) {
       console.error("Signup failed:", error)
@@ -47,27 +46,25 @@ function SignupPage() {
               </p>
 
               <div className="mt-8 flex flex-col gap-6">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="grid gap-3">
-                    <Label htmlFor="firstname">First name</Label>
-                    <Input
-                      id="firstname"
-                      name="firstname"
-                      type="text"
-                      placeholder="John"
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="lastname">Last name</Label>
-                    <Input
-                      id="lastname"
-                      name="lastname"
-                      type="text"
-                      placeholder="Doe"
-                      required
-                    />
-                  </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    name="username"
+                    type="text"
+                    placeholder="john_doe"
+                    required
+                  />
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
@@ -75,7 +72,7 @@ function SignupPage() {
                     id="email"
                     name="email"
                     type="email"
-                    placeholder="me@example.com"
+                    placeholder="john@example.com"
                     required
                   />
                 </div>
@@ -89,6 +86,7 @@ function SignupPage() {
                     required
                   />
                 </div>
+
                 <Button type="submit" className="w-full">
                   Sign up
                 </Button>

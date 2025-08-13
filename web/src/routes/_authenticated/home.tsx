@@ -23,9 +23,7 @@ function RouteComponent() {
       {user ? (
         <>
           <p>You are authenticated ✅</p>
-          <p>
-            Welcome back {user.firstname} {user.lastname}
-          </p>
+          <p>Welcome back {user.name}</p>
         </>
       ) : (
         <>

@@ -1,48 +1,47 @@
-from uuid import UUID
-
 from flask_jwt_extended import get_jwt_identity
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
+from pydantic import BaseModel
+from sqlmodel import select
 from werkzeug.exceptions import NotFound
 
-from app.database.models import ApiBaseModel
-from app.models.users import UserRead
-from app.services.users import UserService
+from app.database import get_session
+from app.models import User, UserRead, UserReadWithProfile
 from app.utils.jwt import login_required
-from app.utils.responses import success_response
+from app.utils.response import success_response
 
 users_tag = Tag(name="User", description="User routes")
 users_router = APIBlueprint("user", __name__, abp_tags=[users_tag])
-
-
-class GetUserPath(ApiBaseModel):
-    user_id: UUID
 
 
 @users_router.get(
     "/users/me",
     responses={200: UserRead},
     description="Get the current user",
-    security=[{"cookieAuth": []}],
 )
 @login_required
 def me():
     user_id = get_jwt_identity()
-    user = UserService.get_by_id(user_id)
+    with get_session() as session:
+        user = session.get(User, user_id)
     if not user:
         raise NotFound(description="User not found")
-    response_data = user.to_read_model()
-    return success_response(response_data.model_dump())
+    return success_response(UserRead.model_validate(user).model_dump())
+
+
+class UsernamePath(BaseModel):
+    username: str
 
 
 @users_router.get(
-    "/users/<uuid:user_id>",
-    responses={200: UserRead},
-    description="Get a user by id",
+    "/users/username/<string:username>",
+    responses={200: UserReadWithProfile},
+    description="Get a user by username",
 )
-def get_user(path: GetUserPath):
-    user = UserService.get_by_id(path.user_id)
-    if not user:
-        raise NotFound(description="User not found")
-    response_data = user.to_read_model()
-    return success_response(response_data.model_dump())
+def get_user_by_username(path: UsernamePath):
+    with get_session() as session:
+        query = select(User).where(User.username == path.username)
+        user = session.exec(query).first()
+        if not user:
+            raise NotFound(description="User not found")
+        return success_response(UserReadWithProfile.model_validate(user).model_dump())

@@ -4,7 +4,7 @@ from sqlalchemy import exc as sqlalchemy_exc
 from werkzeug import exceptions
 
 from app.utils.logging import logger
-from app.utils.responses import (
+from app.utils.response import (
     ErrorCodes,
     error_response,
     pydantic_validation_error_response,

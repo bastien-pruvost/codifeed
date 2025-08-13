@@ -2,11 +2,13 @@ from typing import Any, List, Optional
 
 from flask import Response, make_response
 from flask_openapi3.types import ResponseDict
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import Field, ValidationError
+
+from app.models import ApiBaseModel
 
 
 # Unified validation error model for all validation errors
-class ValidationErrorItem(BaseModel):
+class ValidationErrorItem(ApiBaseModel):
     """Validation error item matching Pydantic v2 format - used for all validation errors"""
 
     type: str = Field(description="Error type (e.g., 'missing', 'string_too_short')")
@@ -17,7 +19,7 @@ class ValidationErrorItem(BaseModel):
 
 
 # Standard API error models
-class ErrorResponse(BaseModel):
+class ErrorResponse(ApiBaseModel):
     """Standard error response format"""
 
     message: str = Field(description="Main error message")
@@ -66,7 +68,7 @@ abp_responses = ResponseDict(
 
 
 def success_response(
-    data: dict,
+    data: dict | list,
     status: int = 200,
 ) -> Response:
     """Create a standardized success response"""
