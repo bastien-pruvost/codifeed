@@ -1,18 +1,30 @@
+import type { VariantProps } from "class-variance-authority"
 import type { ComponentPropsWithoutRef } from "react"
+import { cva } from "class-variance-authority"
 
 import { cn } from "@/utils/classnames"
+
+const wrapperVariants = cva("mx-auto px-3 sm:px-4 md:px-5 lg:px-6", {
+  variants: {
+    width: {
+      default: "max-w-7xl",
+      full: "max-w-full",
+    },
+  },
+  defaultVariants: {
+    width: "default",
+  },
+})
 
 export function Wrapper({
   children,
   className,
+  width,
   ...props
-}: ComponentPropsWithoutRef<"div">) {
+}: ComponentPropsWithoutRef<"div"> & VariantProps<typeof wrapperVariants>) {
   return (
     <div
-      className={cn(
-        "mx-auto max-w-7xl px-3 sm:px-4 md:px-5 lg:px-6",
-        className,
-      )}
+      className={cn(wrapperVariants({ width, className }), className)}
       {...props}
     >
       {children}

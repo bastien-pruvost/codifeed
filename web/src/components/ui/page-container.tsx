@@ -9,7 +9,7 @@ export function PageContainer({
 }: ComponentPropsWithoutRef<"div">) {
   return (
     <div
-      className={cn("py-4 min-h-(--page-container-min-height)", className)}
+      className={cn("h-[calc(100vh-var(--header-height)-1px)] py-4", className)}
       {...props}
     >
       {children}
