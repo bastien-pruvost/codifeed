@@ -9,10 +9,7 @@ from app.utils.password import generate_password, hash_password
 
 database_url = Config.DATABASE_URL or ""
 
-engine = create_engine(
-    database_url,
-    echo=False,
-)
+engine = create_engine(database_url, echo=False)
 
 
 @contextmanager
