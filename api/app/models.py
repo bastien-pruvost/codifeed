@@ -74,8 +74,7 @@ class User(UserBase, table=True):
     hashed_password: str = Field(max_length=255)
     profile: Profile = Relationship(
         back_populates="user",
-        # cascade_delete=True,
-        sa_relationship_kwargs={"uselist": False},
+        cascade_delete=True,
     )
 
 

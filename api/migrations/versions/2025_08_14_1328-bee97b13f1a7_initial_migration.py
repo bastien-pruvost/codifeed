@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 3540d4be7cb8
+Revision ID: bee97b13f1a7
 Revises: 
-Create Date: 2025-08-14 13:05:06.506143
+Create Date: 2025-08-14 13:28:20.507423
 
 """
 
@@ -14,7 +14,7 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3540d4be7cb8'
+revision: str = 'bee97b13f1a7'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
