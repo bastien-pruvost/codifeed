@@ -2,17 +2,17 @@
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-import TailwindCssVite from "@tailwindcss/vite"
+import tailwindcss from "@tailwindcss/vite"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
-import ReactVite from "@vitejs/plugin-react"
+import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
-    ReactVite(),
-    TailwindCssVite(),
+    react(),
+    tailwindcss(),
   ],
   test: {
     globals: true,
