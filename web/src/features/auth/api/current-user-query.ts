@@ -9,7 +9,7 @@ import { api } from "@/services/http-client"
 
 export function currentUserQueryOptions(options?: { forceEnabled?: boolean }) {
   return queryOptions({
-    queryKey: [...authKeys.currentUser(), options],
+    queryKey: authKeys.currentUser(options),
     queryFn: async () => {
       if (!shouldBeAuthenticated() && !options?.forceEnabled) {
         return null

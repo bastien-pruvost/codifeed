@@ -9,7 +9,7 @@ import { Wrapper } from "@/components/ui/wrapper"
 import { useSignupMutation } from "@/features/auth/api/signup-mutation"
 import signupImg from "@/features/auth/assets/signup-illustration.webp"
 
-export const Route = createFileRoute("/_unauthenticated/(auth)/signup")({
+export const Route = createFileRoute("/_unauthenticated/signup")({
   component: SignupPage,
 })
 

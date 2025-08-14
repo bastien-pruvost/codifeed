@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useNavigate } from "@tanstack/react-router"
+import { useRouter, useSearch } from "@tanstack/react-router"
 
 import type { LoginCredentials, UserRead } from "@/types/generated/api.gen"
 import { authKeys } from "@/features/auth/api/_auth-keys"
@@ -8,7 +8,8 @@ import { api } from "@/services/http-client"
 
 export function useLoginMutation() {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const search = useSearch({ strict: false })
+  const router = useRouter()
 
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
@@ -18,7 +19,7 @@ export function useLoginMutation() {
     onSuccess: async (data) => {
       setShouldBeAuthenticated(true)
       queryClient.setQueryData<UserRead>(authKeys.currentUser(), data?.user)
-      navigate({ to: "/" })
+      router.history.push(search.redirect ?? "/home")
     },
     meta: {
       disableDefaultGlobalError: true,

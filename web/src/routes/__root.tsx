@@ -12,10 +12,9 @@ import { shouldBeAuthenticated } from "@/features/auth/services/auth-flag-storag
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context }) => {
-    const user = shouldBeAuthenticated()
-      ? await context.queryClient.ensureQueryData(currentUserQueryOptions())
-      : null
-    return { auth: { user } }
+    if (shouldBeAuthenticated()) {
+      await context.queryClient.ensureQueryData(currentUserQueryOptions())
+    }
   },
   component: RootRouteComponent,
   notFoundComponent: () => (

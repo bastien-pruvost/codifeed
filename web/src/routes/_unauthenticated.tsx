@@ -1,13 +1,15 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 
 import { GuestHeader } from "@/components/layout/guest-header"
+import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
 
 export const Route = createFileRoute("/_unauthenticated")({
   beforeLoad: async ({ context }) => {
-    if (context.auth.user) {
-      throw redirect({
-        to: "/home",
-      })
+    const user = await context.queryClient.ensureQueryData(
+      currentUserQueryOptions(),
+    )
+    if (user) {
+      throw redirect({ to: "/home" })
     }
   },
   component: UnauthenticatedLayout,

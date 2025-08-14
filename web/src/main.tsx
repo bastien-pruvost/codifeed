@@ -8,7 +8,6 @@ import {
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 
-import type { UserRead } from "@/types/generated/api.gen"
 import { Spinner } from "@/components/ui/spinner"
 import { reportWebVitals } from "@/reportWebVitals"
 import { routeTree } from "@/routeTree.gen"
@@ -18,15 +17,10 @@ import "@/styles/global.css"
 
 export interface RouterContext {
   queryClient: QueryClient
-  auth: {
-    user: UserRead
-    isAuthenticated: boolean
-  }
 }
 
 const defaultRouterContext: RouterContext = {
   queryClient,
-  auth: undefined!,
 }
 
 // Create a new router instance

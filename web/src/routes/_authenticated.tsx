@@ -3,11 +3,15 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import { AppHeader } from "@/components/layout/app-header"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { useAuthUser } from "@/features/auth/hooks/use-auth-user"
+import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
+import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ context, location }) => {
-    if (!context.auth.user) {
+    const user = await context.queryClient.ensureQueryData(
+      currentUserQueryOptions(),
+    )
+    if (!user) {
       throw redirect({
         to: "/login",
         search: { redirect: location.href },
@@ -18,7 +22,7 @@ export const Route = createFileRoute("/_authenticated")({
 })
 
 function AuthenticatedLayout() {
-  const user = useAuthUser()
+  const user = useCurrentUser()
 
   if (!user) {
     return null

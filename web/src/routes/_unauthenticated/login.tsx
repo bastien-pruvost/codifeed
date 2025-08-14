@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { zodValidator } from "@tanstack/zod-adapter"
 import { AlertCircleIcon } from "lucide-react"
 import { z } from "zod"
@@ -18,24 +18,13 @@ const rootSearchSchema = z.object({
   redirect: z.string().optional(),
 })
 
-export const Route = createFileRoute("/_unauthenticated/(auth)/login")({
+export const Route = createFileRoute("/_unauthenticated/login")({
   validateSearch: zodValidator(rootSearchSchema),
-  head: () => {
-    return {
-      meta: [
-        {
-          title: "Login",
-        },
-      ],
-    }
-  },
+  head: () => ({ meta: [{ title: "Login" }] }),
   component: LoginPage,
 })
 
 function LoginPage() {
-  const router = useRouter()
-  const search = Route.useSearch()
-
   const loginMutation = useLoginMutation()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,9 +35,6 @@ function LoginPage() {
       email: formData.get("email")?.toString() ?? "",
       password: formData.get("password")?.toString() ?? "",
     })
-
-    // Navigate to redirect URL or home
-    router.history.push(search.redirect ?? "/home")
   }
 
   return (

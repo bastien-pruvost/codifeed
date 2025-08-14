@@ -2,19 +2,14 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { useRefreshTokenMutation } from "@/features/auth/api/refresh-token-mutation"
+import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
 
 export const Route = createFileRoute("/_authenticated/home")({
   component: RouteComponent,
-  // loader: ({ context: { queryClient } }) =>
-  //   queryClient.ensureQueryData(postsQueryOptions),
 })
 
 function RouteComponent() {
-  const { auth } = Route.useRouteContext()
-
-  // const postsQuery = useSuspenseQuery(postsQueryOptions)
-  // const posts = postsQuery.data
-  const user = auth.user
+  const user = useCurrentUser()
   const { mutateAsync: refreshToken } = useRefreshTokenMutation()
   return (
     <div className="text-center">

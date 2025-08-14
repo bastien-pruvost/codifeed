@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { ChevronDownIcon, LogOutIcon, UserIcon } from "lucide-react"
 
 import type { UserRead } from "@/types/generated/api.gen"
@@ -15,7 +15,6 @@ import {
 import { useLogoutMutation } from "@/features/auth/api/logout-mutation"
 
 export function UserMenu({ user }: { user: UserRead }) {
-  const navigate = useNavigate()
   const { mutateAsync: logout } = useLogoutMutation()
 
   return (
@@ -53,11 +52,7 @@ export function UserMenu({ user }: { user: UserRead }) {
           </Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          onSelect={() => {
-            logout().then(() => navigate({ to: "/" }))
-          }}
-        >
+        <DropdownMenuItem onSelect={() => logout()}>
           <LogOutIcon />
           Log out
         </DropdownMenuItem>
