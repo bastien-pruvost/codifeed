@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button"
 import { useRefreshTokenMutation } from "@/features/auth/api/refresh-token-mutation"
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
 
-export const Route = createFileRoute("/_authenticated/home")({
+export const Route = createFileRoute("/_app/home")({
   component: RouteComponent,
 })
 
 function RouteComponent() {
   const user = useCurrentUser()
-  const { mutateAsync: refreshToken } = useRefreshTokenMutation()
+  const { mutate: refreshToken } = useRefreshTokenMutation()
   return (
     <div className="text-center">
       <h1>HOME - FEED</h1>
@@ -31,12 +31,7 @@ function RouteComponent() {
 
       <br />
 
-      <Button
-        variant="outline"
-        onClick={() => {
-          refreshToken()
-        }}
-      >
+      <Button variant="default" onClick={() => refreshToken()}>
         Refresh token
       </Button>
     </div>

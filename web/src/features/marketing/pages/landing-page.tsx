@@ -11,9 +11,7 @@ import landingIllustration from "@/features/marketing/assets/landing-illustratio
 export function LandingPage() {
   return (
     <>
-      {/* <LandingPageBackground /> */}
-
-      <PageContainer className="z-10 flex items-center justify-center">
+      <PageContainer className="flex items-center justify-center">
         <Wrapper className="flex flex-col items-center justify-center gap-12 lg:flex-row">
           <div className="grow basis-2/3">
             <Badge className="rounded-full border-none bg-gradient-to-br from-primary via-primary/60 via-70% to-primary py-1">
@@ -34,7 +32,7 @@ export function LandingPage() {
                   Get Started <ArrowUpRightIcon className="size-5" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button asChild size="lg" variant="destructive">
                 <a
                   href="https://github.com/codifeed/codifeed"
                   target="_blank"
@@ -52,7 +50,7 @@ export function LandingPage() {
             </div>
           </div>
           <img
-            className="w-xs sm:w-sm xl:w-md"
+            className="dark-filter w-xs sm:w-sm xl:w-md"
             src={landingIllustration}
             alt="Réseau social pour développeurs"
           />

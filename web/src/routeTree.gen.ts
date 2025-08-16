@@ -9,71 +9,71 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UnauthenticatedRouteImport } from './routes/_unauthenticated'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as UnauthenticatedIndexRouteImport } from './routes/_unauthenticated/index'
-import { Route as UnauthenticatedSignupRouteImport } from './routes/_unauthenticated/signup'
-import { Route as UnauthenticatedLoginRouteImport } from './routes/_unauthenticated/login'
-import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedUsernameRouteImport } from './routes/_authenticated/$username'
+import { Route as PublicRouteImport } from './routes/_public'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as PublicSignupRouteImport } from './routes/_public/signup'
+import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as AppHomeRouteImport } from './routes/_app/home'
+import { Route as AppUsernameRouteImport } from './routes/_app/$username'
 
-const UnauthenticatedRoute = UnauthenticatedRouteImport.update({
-  id: '/_unauthenticated',
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UnauthenticatedIndexRoute = UnauthenticatedIndexRouteImport.update({
+const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => UnauthenticatedRoute,
+  getParentRoute: () => PublicRoute,
 } as any)
-const UnauthenticatedSignupRoute = UnauthenticatedSignupRouteImport.update({
+const PublicSignupRoute = PublicSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => UnauthenticatedRoute,
+  getParentRoute: () => PublicRoute,
 } as any)
-const UnauthenticatedLoginRoute = UnauthenticatedLoginRouteImport.update({
+const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => UnauthenticatedRoute,
+  getParentRoute: () => PublicRoute,
 } as any)
-const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+const AppHomeRoute = AppHomeRouteImport.update({
   id: '/home',
   path: '/home',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => AppRoute,
 } as any)
-const AuthenticatedUsernameRoute = AuthenticatedUsernameRouteImport.update({
+const AppUsernameRoute = AppUsernameRouteImport.update({
   id: '/$username',
   path: '/$username',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/$username': typeof AuthenticatedUsernameRoute
-  '/home': typeof AuthenticatedHomeRoute
-  '/login': typeof UnauthenticatedLoginRoute
-  '/signup': typeof UnauthenticatedSignupRoute
-  '/': typeof UnauthenticatedIndexRoute
+  '/$username': typeof AppUsernameRoute
+  '/home': typeof AppHomeRoute
+  '/login': typeof PublicLoginRoute
+  '/signup': typeof PublicSignupRoute
+  '/': typeof PublicIndexRoute
 }
 export interface FileRoutesByTo {
-  '/$username': typeof AuthenticatedUsernameRoute
-  '/home': typeof AuthenticatedHomeRoute
-  '/login': typeof UnauthenticatedLoginRoute
-  '/signup': typeof UnauthenticatedSignupRoute
-  '/': typeof UnauthenticatedIndexRoute
+  '/$username': typeof AppUsernameRoute
+  '/home': typeof AppHomeRoute
+  '/login': typeof PublicLoginRoute
+  '/signup': typeof PublicSignupRoute
+  '/': typeof PublicIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/_unauthenticated': typeof UnauthenticatedRouteWithChildren
-  '/_authenticated/$username': typeof AuthenticatedUsernameRoute
-  '/_authenticated/home': typeof AuthenticatedHomeRoute
-  '/_unauthenticated/login': typeof UnauthenticatedLoginRoute
-  '/_unauthenticated/signup': typeof UnauthenticatedSignupRoute
-  '/_unauthenticated/': typeof UnauthenticatedIndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_public': typeof PublicRouteWithChildren
+  '/_app/$username': typeof AppUsernameRoute
+  '/_app/home': typeof AppHomeRoute
+  '/_public/login': typeof PublicLoginRoute
+  '/_public/signup': typeof PublicSignupRoute
+  '/_public/': typeof PublicIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -82,107 +82,104 @@ export interface FileRouteTypes {
   to: '/$username' | '/home' | '/login' | '/signup' | '/'
   id:
     | '__root__'
-    | '/_authenticated'
-    | '/_unauthenticated'
-    | '/_authenticated/$username'
-    | '/_authenticated/home'
-    | '/_unauthenticated/login'
-    | '/_unauthenticated/signup'
-    | '/_unauthenticated/'
+    | '/_app'
+    | '/_public'
+    | '/_app/$username'
+    | '/_app/home'
+    | '/_public/login'
+    | '/_public/signup'
+    | '/_public/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  UnauthenticatedRoute: typeof UnauthenticatedRouteWithChildren
+  AppRoute: typeof AppRouteWithChildren
+  PublicRoute: typeof PublicRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_unauthenticated': {
-      id: '/_unauthenticated'
+    '/_public': {
+      id: '/_public'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof UnauthenticatedRouteImport
+      preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated': {
-      id: '/_authenticated'
+    '/_app': {
+      id: '/_app'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_unauthenticated/': {
-      id: '/_unauthenticated/'
+    '/_public/': {
+      id: '/_public/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof UnauthenticatedIndexRouteImport
-      parentRoute: typeof UnauthenticatedRoute
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRoute
     }
-    '/_unauthenticated/signup': {
-      id: '/_unauthenticated/signup'
+    '/_public/signup': {
+      id: '/_public/signup'
       path: '/signup'
       fullPath: '/signup'
-      preLoaderRoute: typeof UnauthenticatedSignupRouteImport
-      parentRoute: typeof UnauthenticatedRoute
+      preLoaderRoute: typeof PublicSignupRouteImport
+      parentRoute: typeof PublicRoute
     }
-    '/_unauthenticated/login': {
-      id: '/_unauthenticated/login'
+    '/_public/login': {
+      id: '/_public/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof UnauthenticatedLoginRouteImport
-      parentRoute: typeof UnauthenticatedRoute
+      preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRoute
     }
-    '/_authenticated/home': {
-      id: '/_authenticated/home'
+    '/_app/home': {
+      id: '/_app/home'
       path: '/home'
       fullPath: '/home'
-      preLoaderRoute: typeof AuthenticatedHomeRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      preLoaderRoute: typeof AppHomeRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/_authenticated/$username': {
-      id: '/_authenticated/$username'
+    '/_app/$username': {
+      id: '/_app/$username'
       path: '/$username'
       fullPath: '/$username'
-      preLoaderRoute: typeof AuthenticatedUsernameRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      preLoaderRoute: typeof AppUsernameRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
-interface AuthenticatedRouteChildren {
-  AuthenticatedUsernameRoute: typeof AuthenticatedUsernameRoute
-  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+interface AppRouteChildren {
+  AppUsernameRoute: typeof AppUsernameRoute
+  AppHomeRoute: typeof AppHomeRoute
 }
 
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedUsernameRoute: AuthenticatedUsernameRoute,
-  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+const AppRouteChildren: AppRouteChildren = {
+  AppUsernameRoute: AppUsernameRoute,
+  AppHomeRoute: AppHomeRoute,
 }
 
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren,
-)
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
-interface UnauthenticatedRouteChildren {
-  UnauthenticatedLoginRoute: typeof UnauthenticatedLoginRoute
-  UnauthenticatedSignupRoute: typeof UnauthenticatedSignupRoute
-  UnauthenticatedIndexRoute: typeof UnauthenticatedIndexRoute
+interface PublicRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute
+  PublicSignupRoute: typeof PublicSignupRoute
+  PublicIndexRoute: typeof PublicIndexRoute
 }
 
-const UnauthenticatedRouteChildren: UnauthenticatedRouteChildren = {
-  UnauthenticatedLoginRoute: UnauthenticatedLoginRoute,
-  UnauthenticatedSignupRoute: UnauthenticatedSignupRoute,
-  UnauthenticatedIndexRoute: UnauthenticatedIndexRoute,
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+  PublicSignupRoute: PublicSignupRoute,
+  PublicIndexRoute: PublicIndexRoute,
 }
 
-const UnauthenticatedRouteWithChildren = UnauthenticatedRoute._addFileChildren(
-  UnauthenticatedRouteChildren,
-)
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  UnauthenticatedRoute: UnauthenticatedRouteWithChildren,
+  AppRoute: AppRouteWithChildren,
+  PublicRoute: PublicRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

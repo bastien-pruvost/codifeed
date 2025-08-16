@@ -14,7 +14,8 @@ export function userProfileQueryOptions(username: string) {
           },
         },
       })
-      return response?.data
+
+      return response.data ?? null
     },
   })
 }

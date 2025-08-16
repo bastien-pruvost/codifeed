@@ -15,6 +15,8 @@ import { queryClient } from "@/services/query-client"
 
 import "@/styles/global.css"
 
+import { ThemeProvider } from "@/hooks/use-theme"
+
 export interface RouterContext {
   queryClient: QueryClient
 }
@@ -44,7 +46,9 @@ const router = createRouter({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ThemeProvider defaultTheme="system">
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }
@@ -64,6 +68,12 @@ if (rootElement && !rootElement.innerHTML) {
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals()
+  .then(() => {
+    console.info("Web vitals reported")
+  })
+  .catch((error) => {
+    console.error("Error reporting web vitals", error)
+  })
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {

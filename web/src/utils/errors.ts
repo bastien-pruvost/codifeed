@@ -19,6 +19,7 @@ export class ApiError extends Error {
     this.url = response.url
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ApiError)
     }
@@ -107,7 +108,7 @@ export function getErrorMessage(error: unknown): string {
 export function isNetworkError(error: unknown): boolean {
   return (
     error instanceof Error &&
-    (error.message?.includes("fetch") ||
+    (error.message.includes("fetch") ||
       error.name === "NetworkError" ||
       !navigator.onLine)
   )

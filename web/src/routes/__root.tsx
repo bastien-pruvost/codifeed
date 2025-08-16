@@ -26,7 +26,9 @@ function RootRouteComponent() {
   return (
     <>
       <HeadContent />
+
       <Outlet />
+
       <Toaster position="top-center" richColors />
 
       {import.meta.env.DEV ? (

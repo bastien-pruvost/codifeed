@@ -2,6 +2,6 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { LandingPage } from "@/features/marketing/pages/landing-page"
 
-export const Route = createFileRoute("/_unauthenticated/")({
+export const Route = createFileRoute("/_public/")({
   component: LandingPage,
 })

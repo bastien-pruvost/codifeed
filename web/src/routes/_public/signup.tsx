@@ -8,23 +8,25 @@ import { PageContainer } from "@/components/ui/page-container"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useSignupMutation } from "@/features/auth/api/signup-mutation"
 import signupImg from "@/features/auth/assets/signup-illustration.webp"
+import { getFormDataString } from "@/utils/forms"
 
-export const Route = createFileRoute("/_unauthenticated/signup")({
+export const Route = createFileRoute("/_public/signup")({
   component: SignupPage,
 })
 
 function SignupPage() {
-  const { mutateAsync: signup } = useSignupMutation()
+  const { mutate: signup } = useSignupMutation()
 
-  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
       const formData = new FormData(e.currentTarget)
-      await signup({
-        email: formData.get("email")?.toString() ?? "",
-        password: formData.get("password")?.toString() ?? "",
-        name: formData.get("name")?.toString() ?? "",
-        username: formData.get("username")?.toString() ?? "",
+
+      signup({
+        email: getFormDataString(formData, "email"),
+        password: getFormDataString(formData, "password"),
+        name: getFormDataString(formData, "name"),
+        username: getFormDataString(formData, "username"),
         avatar: null,
       })
     } catch (error) {
@@ -103,7 +105,7 @@ function SignupPage() {
               <img
                 src={signupImg}
                 alt=""
-                className="h-full w-md border-l border-l-border object-contain p-8 dark:brightness-[0.2] dark:grayscale"
+                className="h-full w-md border-l border-l-border object-contain p-8 dark:brightness-[0.75] dark:grayscale"
               />
             </div>
           </CardContent>

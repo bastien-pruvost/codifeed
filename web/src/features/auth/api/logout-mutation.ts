@@ -17,7 +17,7 @@ export function useLogoutMutation() {
     onSuccess: async () => {
       setShouldBeAuthenticated(false)
       queryClient.setQueryData<null>(authKeys.currentUser(), null)
-      router.invalidate()
+      await router.invalidate()
     },
   })
 }

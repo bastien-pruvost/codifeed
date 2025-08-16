@@ -16,7 +16,7 @@ export function useLoginMutation() {
       const response = await api.POST("/auth/login", { body: credentials })
       return response.data
     },
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       setShouldBeAuthenticated(true)
       queryClient.setQueryData<UserRead>(authKeys.currentUser(), data?.user)
       router.history.push(search.redirect ?? "/home")

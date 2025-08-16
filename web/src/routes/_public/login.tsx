@@ -13,12 +13,13 @@ import { Wrapper } from "@/components/ui/wrapper"
 import { useLoginMutation } from "@/features/auth/api/login-mutation"
 import loginImg from "@/features/auth/assets/login-illustration.webp"
 import { getErrorMessage } from "@/utils/errors"
+import { getFormDataString } from "@/utils/forms"
 
 const rootSearchSchema = z.object({
   redirect: z.string().optional(),
 })
 
-export const Route = createFileRoute("/_unauthenticated/login")({
+export const Route = createFileRoute("/_public/login")({
   validateSearch: zodValidator(rootSearchSchema),
   head: () => ({ meta: [{ title: "Login" }] }),
   component: LoginPage,
@@ -27,13 +28,13 @@ export const Route = createFileRoute("/_unauthenticated/login")({
 function LoginPage() {
   const loginMutation = useLoginMutation()
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
-    await loginMutation.mutateAsync({
-      email: formData.get("email")?.toString() ?? "",
-      password: formData.get("password")?.toString() ?? "",
+    loginMutation.mutate({
+      email: getFormDataString(formData, "email"),
+      password: getFormDataString(formData, "password"),
     })
   }
 
@@ -102,7 +103,7 @@ function LoginPage() {
               <img
                 src={loginImg}
                 alt=""
-                className="h-full w-md border-l border-l-border object-contain p-8 dark:brightness-[0.2] dark:grayscale"
+                className="h-full w-md border-l border-l-border object-contain p-8 dark:brightness-[0.75]"
               />
             </div>
           </CardContent>

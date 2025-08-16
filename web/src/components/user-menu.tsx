@@ -15,14 +15,14 @@ import {
 import { useLogoutMutation } from "@/features/auth/api/logout-mutation"
 
 export function UserMenu({ user }: { user: UserRead }) {
-  const { mutateAsync: logout } = useLogoutMutation()
+  const { mutate: logout } = useLogoutMutation()
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="hover:bg-transparent">
           <Avatar>
-            <AvatarImage src={user.avatar ?? ""} alt={user.name ?? ""} />
+            <AvatarImage src={user.avatar ?? ""} alt={user.name} />
             <AvatarFallback>
               {user.name
                 .split(" ")

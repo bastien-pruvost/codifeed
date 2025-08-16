@@ -7,8 +7,8 @@ import { setShouldBeAuthenticated } from "@/features/auth/services/auth-flag-sto
 import { getCookie } from "@/utils/cookies"
 import { ApiError } from "@/utils/errors"
 
-export const api = createFetchClient<paths>({
-  baseUrl: import.meta.env.VITE_API_URL,
+const api = createFetchClient<paths>({
+  baseUrl: String(import.meta.env.VITE_API_URL),
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -17,7 +17,7 @@ export const api = createFetchClient<paths>({
 })
 
 const addCsrfTokenMiddleware: Middleware = {
-  async onRequest({ request }) {
+  onRequest({ request }) {
     if (request.url.includes("/auth/refresh")) {
       request.headers.set("X-CSRF-TOKEN", getCookie("csrf_refresh_token") ?? "")
     } else {
@@ -36,7 +36,7 @@ const errorMiddleware: Middleware = {
 
       try {
         if (contentType?.includes("application/json")) {
-          responseData = await response.json()
+          responseData = (await response.json()) as ApiErrorData
         } else {
           responseData = await response.text()
         }
@@ -123,3 +123,5 @@ const refreshTokenMiddleware: Middleware = {
 api.use(addCsrfTokenMiddleware)
 api.use(errorMiddleware)
 api.use(refreshTokenMiddleware)
+
+export { api }

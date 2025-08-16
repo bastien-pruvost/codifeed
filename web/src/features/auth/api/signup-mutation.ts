@@ -16,7 +16,7 @@ export function useSignupMutation() {
       const response = await api.POST("/auth/signup", { body: user })
       return response.data
     },
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       setShouldBeAuthenticated(true)
       queryClient.setQueryData<UserRead>(authKeys.currentUser(), data?.user)
       router.history.push(search.redirect ?? "/home")

@@ -6,7 +6,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
 
-export const Route = createFileRoute("/_authenticated")({
+export const Route = createFileRoute("/_app")({
   beforeLoad: async ({ context, location }) => {
     const user = await context.queryClient.ensureQueryData(
       currentUserQueryOptions(),

@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router"
 
 import type { UserRead } from "@/types/generated/api.gen"
 import { CodifeedLogo } from "@/components/codifeed-logo"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Wrapper } from "@/components/ui/wrapper"
@@ -15,7 +16,7 @@ interface HeaderProps extends ComponentPropsWithoutRef<typeof Wrapper> {
 
 export function AppHeader({ user }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/80 shadow-sm shadow-muted/50 backdrop-blur-md">
+    <header className="sticky top-0 z-20 border-b bg-background/80 shadow-sm shadow-muted/50 backdrop-blur-md">
       <Wrapper
         width="full"
         className="flex h-(--header-height) w-full items-center justify-between gap-4"
@@ -31,14 +32,13 @@ export function AppHeader({ user }: HeaderProps) {
             <CodifeedLogo />
           </Link>
         </div>
-        <div className="flex grow items-center justify-end gap-2">
-          <SearchBar className="w-full max-w-xs" />
-
+        <SearchBar className="w-full max-w-xs" />
+        <div className="flex items-center justify-end gap-2">
+          <ThemeToggle />
           <Separator
             orientation="vertical"
             className="data-[orientation=vertical]:h-4"
           />
-
           <UserMenu user={user} />
         </div>
       </Wrapper>

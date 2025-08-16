@@ -12,7 +12,7 @@ export function useRefreshTokenMutation() {
       const response = await api.POST("/auth/refresh")
       return response.data
     },
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       queryClient.setQueryData<UserRead>(authKeys.currentUser(), data?.user)
     },
   })
