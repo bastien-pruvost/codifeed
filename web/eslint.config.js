@@ -47,7 +47,7 @@ export default tseslint.config(
         "@typescript-eslint/only-throw-error": [
           "error",
           {
-            allow: ["Redirect"],
+            allow: ["Redirect", "NotFoundError"],
             allowThrowingAny: false,
             allowThrowingUnknown: false,
           },
