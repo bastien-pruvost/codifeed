@@ -113,3 +113,10 @@ export function isNetworkError(error: unknown): boolean {
       !navigator.onLine)
   )
 }
+
+export class NotFoundPageError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "NotFoundPageError"
+  }
+}

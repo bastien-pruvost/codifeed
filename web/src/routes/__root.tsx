@@ -17,19 +17,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     }
   },
   component: RootRouteComponent,
-  notFoundComponent: () => (
-    <div className="p-8 text-center text-destructive">Not found</div>
-  ),
 })
 
 function RootRouteComponent() {
   return (
     <>
+      <Toaster position="top-center" richColors />
       <HeadContent />
 
       <Outlet />
-
-      <Toaster position="top-center" richColors />
 
       {import.meta.env.DEV ? (
         <Suspense fallback={null}>

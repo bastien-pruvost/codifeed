@@ -1,10 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query"
 import { QueryClientProvider } from "@tanstack/react-query"
-import {
-  createRouter,
-  ErrorComponent,
-  RouterProvider,
-} from "@tanstack/react-router"
+import { createRouter, RouterProvider } from "@tanstack/react-router"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 
@@ -15,6 +11,7 @@ import { queryClient } from "@/services/query-client"
 
 import "@/styles/global.css"
 
+import { ErrorComponent } from "@/components/error-component"
 import { ThemeProvider } from "@/hooks/use-theme"
 
 export interface RouterContext {
@@ -39,7 +36,12 @@ const router = createRouter({
       <Spinner />
     </div>
   ),
-  defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
+  defaultErrorComponent: ErrorComponent,
+  defaultNotFoundComponent: ({ data: _data }) => {
+    const message = "Please check the URL and try again"
+    const error = new Error(message)
+    return <ErrorComponent notFound error={error} reset={() => null} />
+  },
 })
 
 // Wrap the Router with all providers
