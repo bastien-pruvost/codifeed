@@ -14,10 +14,10 @@ export function useLogoutMutation() {
       const response = await api.POST("/auth/logout", {})
       return response.data
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       setShouldBeAuthenticated(false)
       queryClient.setQueryData<null>(authKeys.currentUser(), null)
-      await router.invalidate()
+      router.history.push("/")
     },
   })
 }

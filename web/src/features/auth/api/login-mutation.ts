@@ -7,9 +7,9 @@ import { setShouldBeAuthenticated } from "@/features/auth/services/auth-flag-sto
 import { api } from "@/services/http-client"
 
 export function useLoginMutation() {
-  const queryClient = useQueryClient()
-  const search = useSearch({ strict: false })
   const router = useRouter()
+  const search = useSearch({ strict: false })
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
