@@ -32,7 +32,7 @@ export function LandingPage() {
                   Get Started <ArrowUpRightIcon className="size-5" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="destructive">
+              <Button asChild size="lg" variant="outline">
                 <a
                   href="https://github.com/codifeed/codifeed"
                   target="_blank"
