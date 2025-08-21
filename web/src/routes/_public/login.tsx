@@ -1,83 +1,94 @@
+import { revalidateLogic } from "@tanstack/react-form"
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-adapter"
 import { AlertCircleIcon } from "lucide-react"
 import { z } from "zod"
 
+import { useAppForm } from "@/components/form"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { PageContainer } from "@/components/ui/page-container"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useLoginMutation } from "@/features/auth/api/login-mutation"
 import loginImg from "@/features/auth/assets/login-illustration.webp"
 import { getErrorMessage } from "@/utils/errors"
-import { getFormDataString } from "@/utils/forms"
 
-const rootSearchSchema = z.object({
-  redirect: z.string().optional(),
+const searchSchema = z.object({
+  redirect: z.string().optional().catch(undefined),
 })
 
 export const Route = createFileRoute("/_public/login")({
-  validateSearch: zodValidator(rootSearchSchema),
+  validateSearch: searchSchema,
   head: () => ({ meta: [{ title: "Login" }] }),
   component: LoginPage,
 })
 
+const loginFormSchema = z.object({
+  email: z.email({
+    error: ({ input }) =>
+      input
+        ? "Enter a valid email address: email@example.com"
+        : "Email is required",
+  }),
+  password: z.string().min(1, "Password is required"),
+})
+
+const loginDefaultValues: z.input<typeof loginFormSchema> = {
+  email: "",
+  password: "",
+}
+
 function LoginPage() {
   const loginMutation = useLoginMutation()
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    const formData = new FormData(e.currentTarget)
-    loginMutation.mutate({
-      email: getFormDataString(formData, "email"),
-      password: getFormDataString(formData, "password"),
-    })
-  }
+  const form = useAppForm({
+    defaultValues: loginDefaultValues,
+    validators: {
+      onDynamic: loginFormSchema,
+    },
+    validationLogic: revalidateLogic(),
+    onSubmit: ({ value }) => {
+      loginMutation.mutate(value)
+    },
+  })
 
   return (
     <PageContainer className="flex items-center justify-center">
       <Wrapper className="max-w-4xl">
         <Card className="overflow-hidden p-0">
           <CardContent className="grid p-0 md:grid-cols-2">
-            <form className="p-6 md:p-8" onSubmit={handleLogin}>
+            <form
+              className="p-6 md:p-8"
+              onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                void form.handleSubmit()
+              }}
+            >
               <h1 className="text-center text-2xl font-bold">Welcome back</h1>
               <p className="mt-2 text-center text-balance text-muted-foreground">
                 Login to your Codifeed account
               </p>
 
               <div className="mt-8 flex flex-col gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="me@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                  </div>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="********"
-                    required
-                  />
-                </div>
-                {/* <Link
-                    to="/forgot-password"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link> */}
+                <form.AppField
+                  name="email"
+                  children={(field) => <field.TextField label="Email" />}
+                />
+                <form.AppField
+                  name="password"
+                  children={(field) => (
+                    <field.TextField label="Password" type="password" />
+                  )}
+                />
+
+                <Link
+                  to="/home"
+                  className="ml-auto text-sm underline-offset-2 hover:underline"
+                >
+                  Forgot your password?
+                </Link>
+
                 <Button type="submit" className="w-full">
                   Log in
                 </Button>
