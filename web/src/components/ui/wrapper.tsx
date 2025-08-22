@@ -24,6 +24,7 @@ export function Wrapper({
 }: ComponentPropsWithoutRef<"div"> & VariantProps<typeof wrapperVariants>) {
   return (
     <div
+      data-slot="wrapper"
       className={cn(wrapperVariants({ width, className }), className)}
       {...props}
     >

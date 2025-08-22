@@ -4,7 +4,11 @@ import { cn } from "@/utils/classnames"
 
 function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   return (
-    <LoaderCircleIcon className={cn("animate-spin", className)} {...props} />
+    <LoaderCircleIcon
+      data-slot="spinner"
+      className={cn("animate-spin", className)}
+      {...props}
+    />
   )
 }
 
