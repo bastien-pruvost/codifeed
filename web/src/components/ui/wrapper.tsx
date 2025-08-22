@@ -1,5 +1,5 @@
 import type { VariantProps } from "class-variance-authority"
-import type { ComponentPropsWithoutRef } from "react"
+import type { ComponentProps } from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/utils/classnames"
@@ -21,7 +21,7 @@ export function Wrapper({
   className,
   width,
   ...props
-}: ComponentPropsWithoutRef<"div"> & VariantProps<typeof wrapperVariants>) {
+}: ComponentProps<"div"> & VariantProps<typeof wrapperVariants>) {
   return (
     <div
       data-slot="wrapper"

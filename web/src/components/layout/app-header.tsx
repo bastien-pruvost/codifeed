@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef } from "react"
+import type { ComponentProps } from "react"
 import { Link } from "@tanstack/react-router"
 
 import type { UserRead } from "@/types/generated/api.gen"
@@ -10,7 +10,7 @@ import { Wrapper } from "@/components/ui/wrapper"
 import { UserMenu } from "@/components/user-menu"
 import { SearchBar } from "@/features/search/components/search-bar"
 
-interface HeaderProps extends ComponentPropsWithoutRef<typeof Wrapper> {
+interface HeaderProps extends ComponentProps<typeof Wrapper> {
   user: UserRead
 }
 

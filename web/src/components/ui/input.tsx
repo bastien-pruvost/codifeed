@@ -1,8 +1,8 @@
-import type { ElementType } from "react"
+import type { ComponentProps, ElementType } from "react"
 
 import { cn } from "@/utils/classnames"
 
-interface InputProps extends React.ComponentProps<"input"> {
+interface InputProps extends ComponentProps<"input"> {
   startIcon?: ElementType
   endIcon?: ElementType
 }

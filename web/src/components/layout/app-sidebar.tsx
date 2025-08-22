@@ -1,5 +1,4 @@
-"use client"
-
+import type { ComponentProps } from "react"
 import {
   BookOpen,
   Bot,
@@ -16,7 +15,6 @@ import {
   SquareTerminal,
   Trash2,
 } from "lucide-react"
-import * as React from "react"
 
 import {
   Collapsible,
@@ -166,7 +164,7 @@ const navData = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const { isMobile } = useSidebar()
   return (
     <Sidebar

@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, ReactNode } from "react"
+import type { ComponentProps, ReactNode } from "react"
 import { Slot } from "@radix-ui/react-slot"
 import {
   createFormHook,
@@ -93,10 +93,7 @@ function FormItem({
   )
 }
 
-function FormLabel({
-  className,
-  ...props
-}: ComponentPropsWithoutRef<typeof Label>) {
+function FormLabel({ className, ...props }: ComponentProps<typeof Label>) {
   const { fieldId } = useFormItem()
   return (
     <Label
@@ -108,7 +105,7 @@ function FormLabel({
   )
 }
 
-function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
+function FormControl({ ...props }: ComponentProps<typeof Slot>) {
   const { errors, fieldId, fieldDescriptionId, fieldMessageId } = useFormItem()
 
   return (
@@ -126,10 +123,7 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   )
 }
 
-function FormDescription({
-  className,
-  ...props
-}: ComponentPropsWithoutRef<"p">) {
+function FormDescription({ className, ...props }: ComponentProps<"p">) {
   const { fieldDescriptionId } = useFormItem()
   return (
     <p
@@ -141,7 +135,7 @@ function FormDescription({
   )
 }
 
-function FormMessage({ className, ...props }: ComponentPropsWithoutRef<"p">) {
+function FormMessage({ className, ...props }: ComponentProps<"p">) {
   const { fieldMessageId, errors } = useFormItem()
 
   const fieldError = errors.length > 0 ? errors[0] : null
@@ -178,7 +172,7 @@ function FormMessage({ className, ...props }: ComponentPropsWithoutRef<"p">) {
 function FormSubmitButton({
   disabled,
   ...props
-}: ComponentPropsWithoutRef<typeof Button>) {
+}: ComponentProps<typeof Button>) {
   const form = useFormContext()
   return (
     <form.Subscribe
@@ -198,9 +192,7 @@ interface FieldProps {
   description?: ReactNode | null
 }
 
-interface TextFieldProps
-  extends FieldProps,
-    ComponentPropsWithoutRef<typeof Input> {}
+interface TextFieldProps extends FieldProps, ComponentProps<typeof Input> {}
 
 function TextField({ label, description, ...props }: TextFieldProps) {
   const field = useFieldContext<string>()
@@ -226,7 +218,7 @@ function TextField({ label, description, ...props }: TextFieldProps) {
 
 interface CheckboxFieldProps
   extends FieldProps,
-    ComponentPropsWithoutRef<typeof Checkbox> {}
+    ComponentProps<typeof Checkbox> {}
 
 function CheckboxField({ label, description, ...props }: CheckboxFieldProps) {
   const field = useFieldContext<boolean>()

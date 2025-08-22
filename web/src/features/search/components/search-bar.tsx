@@ -1,9 +1,10 @@
+import type { ComponentProps } from "react"
 import { SearchIcon } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export function SearchBar({ ...props }: React.ComponentProps<"form">) {
+export function SearchBar({ ...props }: ComponentProps<"form">) {
   return (
     <form {...props}>
       <div className="relative">

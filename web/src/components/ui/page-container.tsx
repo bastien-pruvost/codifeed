@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef } from "react"
+import type { ComponentProps } from "react"
 
 import { cn } from "@/utils/classnames"
 
@@ -6,7 +6,7 @@ export function PageContainer({
   children,
   className,
   ...props
-}: ComponentPropsWithoutRef<"div">) {
+}: ComponentProps<"div">) {
   return (
     <div
       data-slot="page-container"

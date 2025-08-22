@@ -1,8 +1,9 @@
+import type { ComponentProps } from "react"
 import { LoaderCircleIcon } from "lucide-react"
 
 import { cn } from "@/utils/classnames"
 
-function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+function Spinner({ className, ...props }: ComponentProps<"svg">) {
   return (
     <LoaderCircleIcon
       data-slot="spinner"
