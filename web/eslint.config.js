@@ -52,6 +52,19 @@ export default tseslint.config(
             allowThrowingUnknown: false,
           },
         ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            selector:
+              "ImportDeclaration[source.value='react'] > ImportNamespaceSpecifier",
+            message: "Avoid importing `* as React`. Prefer named imports.",
+          },
+          {
+            selector:
+              "ImportDeclaration[source.value='react'] > ImportDefaultSpecifier",
+            message: "Avoid importing `React`. Prefer named imports.",
+          },
+        ],
       },
     },
   ],
