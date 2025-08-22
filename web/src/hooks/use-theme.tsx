@@ -60,9 +60,9 @@ export function ThemeProvider({
   }
 
   return (
-    <ThemeContext.Provider {...props} value={value}>
+    <ThemeContext {...props} value={value}>
       {children}
-    </ThemeContext.Provider>
+    </ThemeContext>
   )
 }
 

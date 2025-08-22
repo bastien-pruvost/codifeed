@@ -60,11 +60,7 @@ function FormItemProvider({ children }: { children: ReactNode }) {
     errors,
   }
 
-  return (
-    <FormItemContext.Provider value={value}>
-      {children}
-    </FormItemContext.Provider>
-  )
+  return <FormItemContext value={value}>{children}</FormItemContext>
 }
 
 function useFormItem() {
