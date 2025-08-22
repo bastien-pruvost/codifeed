@@ -1,15 +1,15 @@
 import { MessageSquareCodeIcon } from "lucide-react"
 
-export function CodifeedLogo() {
+export function AppLogo() {
   return (
     <div className="flex items-center gap-2">
-      <CodifeedLogoIcon />
-      <CodifeedLogoText />
+      <AppLogoIcon />
+      <AppLogoText />
     </div>
   )
 }
 
-export function CodifeedLogoIcon() {
+export function AppLogoIcon() {
   return (
     <div className="flex aspect-square items-center justify-center rounded-lg bg-primary p-1.5 text-primary-foreground">
       <MessageSquareCodeIcon className="size-5" />
@@ -17,6 +17,6 @@ export function CodifeedLogoIcon() {
   )
 }
 
-export function CodifeedLogoText() {
+export function AppLogoText() {
   return <div className="flex-1 text-xl font-bold">Codifeed</div>
 }

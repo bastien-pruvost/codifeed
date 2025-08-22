@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router"
 
-import { CodifeedLogo } from "@/components/codifeed-logo"
+import { AppLogo } from "@/components/codifeed-logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -11,7 +11,7 @@ export function PublicHeader() {
     <header className="sticky top-0 z-50 bg-background/80 shadow-xs shadow-muted/20 backdrop-blur-md">
       <Wrapper className="flex h-(--header-height) items-center justify-between">
         <Link to="/">
-          <CodifeedLogo />
+          <AppLogo />
         </Link>
 
         <div className="flex items-center gap-4">

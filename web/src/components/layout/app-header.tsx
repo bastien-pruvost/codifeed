@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from "react"
 import { Link } from "@tanstack/react-router"
 
 import type { UserRead } from "@/types/generated/api.gen"
-import { CodifeedLogo } from "@/components/codifeed-logo"
+import { AppLogo } from "@/components/codifeed-logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -29,7 +29,7 @@ export function AppHeader({ user }: HeaderProps) {
           />
 
           <Link to="/home">
-            <CodifeedLogo />
+            <AppLogo />
           </Link>
         </div>
         <SearchBar className="w-full max-w-xs" />
