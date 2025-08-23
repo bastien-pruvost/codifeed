@@ -25,7 +25,7 @@ export function Wrapper({
   return (
     <div
       data-slot="wrapper"
-      className={cn(wrapperVariants({ width, className }), className)}
+      className={cn(wrapperVariants({ width, className }))}
       {...props}
     >
       {children}
