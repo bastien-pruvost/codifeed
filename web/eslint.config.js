@@ -40,7 +40,7 @@ export default tseslint.config(
             caughtErrorsIgnorePattern: "^_",
             destructuredArrayIgnorePattern: "^_",
             varsIgnorePattern: "^_",
-            ignoreRestSiblings: true,
+            ignoreRestSiblings: false,
           },
         ],
         "@typescript-eslint/no-unnecessary-condition": "error",
