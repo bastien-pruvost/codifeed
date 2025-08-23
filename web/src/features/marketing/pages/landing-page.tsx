@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router"
 import { ArrowUpRightIcon } from "lucide-react"
-import { SiGithub } from "react-icons/si"
+import { SiGithub as GithubIcon } from "react-icons/si"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
 import { Wrapper } from "@/components/ui/wrapper"
 import landingIllustration from "@/features/marketing/assets/landing-illustration.webp"
@@ -34,23 +35,23 @@ export function LandingPage() {
               </Button>
               <Button asChild size="lg" variant="outline">
                 <a
-                  href="https://github.com/codifeed/codifeed"
+                  href="https://github.com/bastien-pruvost/codifeed"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  GitHub <SiGithub className="size-5" />
+                  GitHub <GithubIcon className="size-5" />
                 </a>
               </Button>
             </div>
             <div className="mt-6 text-sm">
               Already have an account?{" "}
-              <Link to="/login" className="underline underline-offset-4">
-                Log in
-              </Link>
+              <InlineLink asChild>
+                <Link to="/login">Log in</Link>
+              </InlineLink>
             </div>
           </div>
           <img
-            className="dark-filter w-xs sm:w-sm xl:w-md"
+            className="w-xs dark-filter sm:w-sm xl:w-md"
             src={landingIllustration}
             alt="Réseau social pour développeurs"
           />

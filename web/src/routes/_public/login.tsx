@@ -7,6 +7,7 @@ import { useAppForm } from "@/components/form"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useLoginMutation } from "@/features/auth/api/login-mutation"
@@ -82,12 +83,9 @@ function LoginPage() {
                   )}
                 />
 
-                <Link
-                  to="/home"
-                  className="ml-auto text-sm underline-offset-2 hover:underline"
-                >
-                  Forgot your password?
-                </Link>
+                <InlineLink asChild className="ml-auto text-sm">
+                  <Link to="/home">Forgot your password?</Link>
+                </InlineLink>
 
                 <Button type="submit" className="w-full">
                   Log in
@@ -104,9 +102,9 @@ function LoginPage() {
 
                 <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
-                  <Link to="/signup" className="underline underline-offset-4">
-                    Sign up
-                  </Link>
+                  <InlineLink asChild>
+                    <Link to="/signup">Sign up</Link>
+                  </InlineLink>
                 </div>
               </div>
             </form>

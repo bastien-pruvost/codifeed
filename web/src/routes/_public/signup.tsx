@@ -7,6 +7,7 @@ import { useAppForm } from "@/components/form"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useSignupMutation } from "@/features/auth/api/signup-mutation"
@@ -112,9 +113,9 @@ function SignupPage() {
 
                 <div className="text-center text-sm">
                   Already have an account?{" "}
-                  <Link to="/login" className="underline underline-offset-4">
-                    Log in
-                  </Link>
+                  <InlineLink asChild>
+                    <Link to="/login">Log in</Link>
+                  </InlineLink>
                 </div>
               </div>
             </form>
