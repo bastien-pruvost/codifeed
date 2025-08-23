@@ -28,5 +28,8 @@
   // Files configuration
   "files.associations": {
     "*.css": "tailwindcss"
-  }
+  },
+
+  // Tailwind configuration
+  "tailwindCSS.classFunctions": ["cva", "cn", "clsx", "twMerge"]
 }
