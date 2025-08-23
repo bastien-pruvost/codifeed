@@ -8,7 +8,7 @@ const config = {
     "prettier-plugin-tailwindcss",
   ],
   tailwindStylesheet: "./src/styles/global.css",
-  tailwindFunctions: ["cva", "cn", "cs", "clsx", "twMerge"],
+  tailwindFunctions: ["cva", "cn", "cs", "clsx", "twMerge", "cx"],
   importOrder: [
     // Node built-ins (types and runtime together)
     "<TYPES>^(node:)",

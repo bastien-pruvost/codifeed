@@ -31,5 +31,5 @@
   },
 
   // Tailwind configuration
-  "tailwindCSS.classFunctions": ["cva", "cn", "clsx", "twMerge"]
+  "tailwindCSS.classFunctions": ["cva", "cn", "clsx", "twMerge", "cx"]
 }
