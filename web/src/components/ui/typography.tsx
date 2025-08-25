@@ -104,6 +104,22 @@ export function H4({ children, className, ...props }: ComponentProps<"h4">) {
   )
 }
 
+export function Ul({ children, className, ...props }: ComponentProps<"ul">) {
+  return (
+    <ul className={cn("ml-6 list-disc [&>li]:mt-2", className)} {...props}>
+      {children}
+    </ul>
+  )
+}
+
+export function Ol({ children, className, ...props }: ComponentProps<"ol">) {
+  return (
+    <ol className={cn("ml-6 list-decimal [&>li]:mt-2", className)} {...props}>
+      {children}
+    </ol>
+  )
+}
+
 export function Blockquote({
   children,
   className,
@@ -113,40 +129,6 @@ export function Blockquote({
     <blockquote className={cn("border-l-2 pl-6 italic", className)} {...props}>
       {children}
     </blockquote>
-  )
-}
-
-export function UList({ children, className, ...props }: ComponentProps<"ul">) {
-  return (
-    <ul className={cn("ml-6 list-disc [&>li]:mt-2", className)} {...props}>
-      {children}
-    </ul>
-  )
-}
-
-export function Olist({ children, className, ...props }: ComponentProps<"ol">) {
-  return (
-    <ol className={cn("ml-6 list-decimal [&>li]:mt-2", className)} {...props}>
-      {children}
-    </ol>
-  )
-}
-
-export function InlineCode({
-  children,
-  className,
-  ...props
-}: ComponentProps<"code">) {
-  return (
-    <code
-      className={cn(
-        "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </code>
   )
 }
 
@@ -168,5 +150,23 @@ export function Table({
     >
       <table className="w-full">{children}</table>
     </div>
+  )
+}
+
+export function Code({
+  children,
+  className,
+  ...props
+}: ComponentProps<"code">) {
+  return (
+    <code
+      className={cn(
+        "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </code>
   )
 }
