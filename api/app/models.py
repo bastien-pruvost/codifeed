@@ -39,6 +39,21 @@ class Profile(ProfileBase, table=True):
     user: "User" = Relationship(back_populates="profile")
 
 
+# ------ Post ------
+
+
+class PostBase(ApiBaseModel):
+    content: str = Field(max_length=255)
+
+
+class Post(PostBase, table=True):
+    id: UUID = Field(primary_key=True, default_factory=uuid4)
+    author_id: UUID | None = Field(foreign_key="user.id")
+    author: "User" = Relationship(back_populates="posts")
+    # created_at: datetime = Field(default_factory=datetime.now)
+    # updated_at: datetime | None = Field(default=None)
+
+
 # ------ User ------
 
 
