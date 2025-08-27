@@ -2,12 +2,14 @@
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 
+from app.utils.response import abp_responses
+
 # from app.database.models import ApiBaseModel
 # from app.utils.jwt import login_required
 # from app.utils.responses import success_response
 
 posts_tag = Tag(name="Posts", description="Posts routes")
-posts_router = APIBlueprint("posts", __name__, abp_tags=[posts_tag])
+posts_router = APIBlueprint("posts", __name__, abp_tags=[posts_tag], abp_responses=abp_responses)
 
 
 # class GetPostsQuery(ApiBaseModel):

@@ -19,41 +19,6 @@ class ApiBaseModel(SQLModel):
     }  # type: ignore
 
 
-# ------ Profile ------
-
-
-class ProfileBase(ApiBaseModel):
-    bio: str | None = Field(default=None, max_length=255)
-    location: str | None = Field(default=None, max_length=255)
-    website: str | None = Field(default=None, max_length=255)
-    birthdate: date | None = Field(default=None)
-
-
-class Profile(ProfileBase, table=True):
-    user_id: UUID | None = Field(
-        primary_key=True,
-        foreign_key="user.id",
-        unique=True,
-        default=None,
-    )
-    user: "User" = Relationship(back_populates="profile")
-
-
-# ------ Post ------
-
-
-class PostBase(ApiBaseModel):
-    content: str = Field(max_length=255)
-
-
-class Post(PostBase, table=True):
-    id: UUID = Field(primary_key=True, default_factory=uuid4)
-    author_id: UUID | None = Field(foreign_key="user.id")
-    author: "User" = Relationship(back_populates="posts")
-    # created_at: datetime = Field(default_factory=datetime.now)
-    # updated_at: datetime | None = Field(default=None)
-
-
 # ------ User ------
 
 
@@ -69,7 +34,7 @@ class UserRead(UserBase):
 
 
 class UserReadWithProfile(UserRead):
-    profile: ProfileBase
+    profile: "ProfileBase"
 
 
 class UserCreate(UserBase):
@@ -87,10 +52,50 @@ class User(UserBase, table=True):
         unique=True,
     )
     hashed_password: str = Field(max_length=255)
-    profile: Profile = Relationship(
+    profile: "Profile" = Relationship(
         back_populates="user",
         cascade_delete=True,
     )
+    posts: list["Post"] = Relationship(back_populates="author")
+
+    # ------ Profile ------
+
+
+class ProfileBase(ApiBaseModel):
+    bio: str | None = Field(default=None, max_length=255)
+    location: str | None = Field(default=None, max_length=255)
+    website: str | None = Field(default=None, max_length=255)
+    birthdate: date | None = Field(default=None)
+
+
+class Profile(ProfileBase, table=True):
+    user_id: UUID | None = Field(
+        primary_key=True,
+        foreign_key="user.id",
+        unique=True,
+        default=None,
+    )
+    user: User = Relationship(back_populates="profile")
+
+
+# ------ Post ------
+
+
+class PostBase(ApiBaseModel):
+    content: str = Field(max_length=255)
+
+
+class PostRead(PostBase):
+    id: UUID
+    author: "UserRead"
+
+
+class Post(PostBase, table=True):
+    id: UUID = Field(primary_key=True, default_factory=uuid4)
+    author_id: UUID | None = Field(foreign_key="user.id")
+    author: User = Relationship(back_populates="posts")
+    # created_at: datetime = Field(default_factory=datetime.now)
+    # updated_at: datetime | None = Field(default=None)
 
 
 # ------ Auth ------

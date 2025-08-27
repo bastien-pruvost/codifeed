@@ -8,10 +8,10 @@ from werkzeug.exceptions import NotFound
 from app.database import get_session
 from app.models import User, UserRead, UserReadWithProfile
 from app.utils.jwt import login_required
-from app.utils.response import success_response
+from app.utils.response import abp_responses, success_response
 
 users_tag = Tag(name="User", description="User routes")
-users_router = APIBlueprint("user", __name__, abp_tags=[users_tag])
+users_router = APIBlueprint("user", __name__, abp_tags=[users_tag], abp_responses=abp_responses)
 
 
 @users_router.get(
