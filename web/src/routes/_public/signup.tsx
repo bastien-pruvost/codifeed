@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
+import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useSignupMutation } from "@/features/auth/api/signup-mutation"
 import signupImg from "@/features/auth/assets/signup-illustration.webp"
@@ -60,7 +61,7 @@ function SignupPage() {
 
   return (
     <PageContainer className="flex items-center justify-center">
-      <Wrapper className="max-w-4xl">
+      <Wrapper className="max-w-md md:max-w-4xl">
         <Card className="overflow-hidden p-0">
           <CardContent className="grid p-0 md:grid-cols-2">
             <form
@@ -71,12 +72,10 @@ function SignupPage() {
                 void form.handleSubmit()
               }}
             >
-              <h1 className="text-center text-2xl font-bold">
-                Create your account
-              </h1>
-              <p className="mt-2 text-center text-balance text-muted-foreground">
+              <H1 className="text-center text-2xl">Create your account</H1>
+              <P tone="muted" className="mt-2 text-center text-balance">
                 Join Codifeed and connect with developers
-              </p>
+              </P>
 
               <div className="mt-8 flex flex-col gap-6">
                 <form.AppField
@@ -119,20 +118,35 @@ function SignupPage() {
                 </div>
               </div>
             </form>
-            <div className="relative hidden md:block">
+
+            <div className="hidden border-l md:block">
               <img
                 src={signupImg}
-                alt=""
-                className="h-full w-md border-l border-l-border object-contain p-8 dark:brightness-[0.75] dark:grayscale"
+                alt="Someone signing up to Codifeed"
+                className="h-full w-full object-contain p-8 dark-filter"
               />
             </div>
           </CardContent>
         </Card>
 
-        <div className="mt-4 text-center text-xs text-balance text-muted-foreground *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary">
-          By clicking sign up, you agree to our{" "}
-          {/* <Link to="/terms-of-service">Terms of Service</Link> and{" "}
-            <Link to="/privacy-policy">Privacy Policy</Link>. */}
+        <div className="mt-4 text-center text-xs text-balance text-muted-foreground">
+          By clicking login, you agree to our{" "}
+          <InlineLink
+            asChild
+            underline="always"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <Link to="/">Terms of Service</Link>
+          </InlineLink>{" "}
+          and{" "}
+          <InlineLink
+            asChild
+            underline="always"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <Link to="/">Privacy Policy</Link>
+          </InlineLink>
+          .
         </div>
       </Wrapper>
     </PageContainer>

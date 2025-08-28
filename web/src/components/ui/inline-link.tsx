@@ -7,36 +7,31 @@ import { cn } from "@/utils/classnames"
 
 const inlineLinkVariants = cva(
   [
-    "inline-flex items-center gap-1 font-medium",
-    "underline decoration-transparent decoration-2 underline-offset-4 transition-colors",
+    "inline-flex items-center gap-1",
+    "text-primary",
+    "underline decoration-transparent decoration-1 underline-offset-4 transition-colors",
     "rounded-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
   ],
   {
     variants: {
-      tone: {
-        primary: "text-primary",
-        muted: "text-primary/70",
-        danger: "text-destructive",
-      },
       underline: {
         hover: "hover:decoration-current",
         always: "decoration-current",
         none: "no-underline",
       },
     },
-    defaultVariants: { tone: "primary", underline: "hover" },
+    defaultVariants: { underline: "hover" },
   },
 )
 
 interface InlineLinkProps
-  extends ComponentProps<"a">,
+  extends Omit<ComponentProps<"a">, "color">,
     VariantProps<typeof inlineLinkVariants> {
   asChild?: boolean
 }
 
 export function InlineLink({
   asChild,
-  tone,
   underline,
   className,
   ...props
@@ -45,7 +40,7 @@ export function InlineLink({
   return (
     <Comp
       data-slot="inline-link"
-      className={cn(inlineLinkVariants({ tone, underline, className }))}
+      className={cn(inlineLinkVariants({ underline, className }))}
       {...props}
     />
   )

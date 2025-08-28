@@ -168,5 +168,7 @@
 }
 
 @utility dark-filter {
-  filter: brightness(0.98) grayscale(0.02);
+  @variant dark {
+    filter: brightness(0.95) grayscale(0.05);
+  }
 }

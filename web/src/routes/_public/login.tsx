@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
+import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useLoginMutation } from "@/features/auth/api/login-mutation"
 import loginImg from "@/features/auth/assets/login-illustration.webp"
@@ -55,7 +56,7 @@ function LoginPage() {
 
   return (
     <PageContainer className="flex items-center justify-center">
-      <Wrapper className="max-w-4xl">
+      <Wrapper className="max-w-md md:max-w-4xl">
         <Card className="overflow-hidden p-0">
           <CardContent className="grid p-0 md:grid-cols-2">
             <form
@@ -66,26 +67,40 @@ function LoginPage() {
                 void form.handleSubmit()
               }}
             >
-              <h1 className="text-center text-2xl font-bold">Welcome back</h1>
-              <p className="mt-2 text-center text-balance text-muted-foreground">
+              <H1 className="text-center text-2xl">Welcome back</H1>
+              <P tone="muted" className="mt-2 text-center text-balance">
                 Login to your Codifeed account
-              </p>
+              </P>
 
               <div className="mt-8 flex flex-col gap-6">
                 <form.AppField
                   name="email"
-                  children={(field) => <field.TextField label="Email" />}
-                />
-                <form.AppField
-                  name="password"
                   children={(field) => (
-                    <field.TextField label="Password" type="password" />
+                    <field.TextField
+                      type="text"
+                      label="Email"
+                      autoComplete="email"
+                    />
                   )}
                 />
-
-                <InlineLink asChild className="ml-auto text-sm">
-                  <Link to="/home">Forgot your password?</Link>
-                </InlineLink>
+                <div>
+                  <form.AppField
+                    name="password"
+                    children={(field) => (
+                      <field.TextField
+                        type="password"
+                        label="Password"
+                        autoComplete="current-password"
+                      />
+                    )}
+                  />
+                  <InlineLink
+                    asChild
+                    className="mt-2 ml-auto block w-fit text-xs text-foreground"
+                  >
+                    <Link to="/home">Forgot your password?</Link>
+                  </InlineLink>
+                </div>
 
                 <Button type="submit" className="w-full">
                   Log in
@@ -108,20 +123,35 @@ function LoginPage() {
                 </div>
               </div>
             </form>
-            <div className="relative hidden md:block">
+
+            <div className="hidden border-l md:block">
               <img
                 src={loginImg}
-                alt=""
-                className="h-full w-md border-l border-l-border object-contain p-8 dark:brightness-[0.75]"
+                alt="Someone logging in to Codifeed"
+                className="h-full w-full object-contain p-8 dark-filter"
               />
             </div>
           </CardContent>
         </Card>
 
-        <div className="mt-4 text-center text-xs text-balance text-muted-foreground *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary">
+        <div className="mt-4 text-center text-xs text-balance text-muted-foreground">
           By clicking login, you agree to our{" "}
-          {/* <Link to="/terms-of-service">Terms of Service</Link> and{" "}
-            <Link to="/privacy-policy">Privacy Policy</Link>. */}
+          <InlineLink
+            asChild
+            underline="always"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <Link to="/">Terms of Service</Link>
+          </InlineLink>{" "}
+          and{" "}
+          <InlineLink
+            asChild
+            underline="always"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <Link to="/">Privacy Policy</Link>
+          </InlineLink>
+          .
         </div>
       </Wrapper>
     </PageContainer>
