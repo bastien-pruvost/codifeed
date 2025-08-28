@@ -4,7 +4,6 @@ import { AppHeader } from "@/components/layout/app-header"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
-import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: async ({ context, location }) => {
@@ -17,16 +16,14 @@ export const Route = createFileRoute("/_app")({
         search: { redirect: location.href },
       })
     }
+    return { user }
   },
-  component: AuthenticatedLayout,
+  component: AppLayout,
 })
 
-function AuthenticatedLayout() {
-  const user = useCurrentUser()
-
-  if (!user) {
-    return null
-  }
+function AppLayout() {
+  // const { data: user } = useSuspenseQuery(currentUserQueryOptions())
+  const { user } = Route.useRouteContext()
 
   return (
     <div className="">

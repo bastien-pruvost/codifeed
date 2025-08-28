@@ -1,8 +1,26 @@
-import { useQuery } from "@tanstack/react-query"
+// import {
+//   useLocation,
+//   useNavigate,
+//   useParentMatches,
+//   useRouteContext,
+//   useRouter,
+// } from "@tanstack/react-router"
 
-import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
+// export function useCurrentUser() {
+//   const router = useRouter()
 
-export function useCurrentUser() {
-  const { data } = useQuery(currentUserQueryOptions())
-  return data
-}
+//   const location = useLocation()
+//   const user = useRouteContext({
+//     from: "__root__",
+//     select: (context) => context.user,
+//   })
+
+//   // if (!user) {
+//   //   router.history.push("/login", {
+//   //     search: { redirect: location.href },
+//   //   })
+//   //   return null
+//   // }
+
+//   return user
+// }

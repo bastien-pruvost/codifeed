@@ -5,7 +5,7 @@ import {
   setShouldBeAuthenticated,
   shouldBeAuthenticated,
 } from "@/features/auth/services/auth-flag-storage"
-import { api } from "@/services/http-client"
+import { api, getData } from "@/services/http-client"
 
 export function currentUserQueryOptions(options?: { forceEnabled?: boolean }) {
   return queryOptions({
@@ -14,15 +14,13 @@ export function currentUserQueryOptions(options?: { forceEnabled?: boolean }) {
       if (!shouldBeAuthenticated() && !options?.forceEnabled) {
         return null
       }
-      const userResponse = await api.GET("/users/me", {}).catch(() => {
-        console.error("Failed to load user data")
+      const userResponse = await api.GET("/users/me", {}).catch((error) => {
         setShouldBeAuthenticated(false)
-        return null
+        throw error
       })
-      return userResponse?.data ?? null
+      return getData(userResponse)
     },
     enabled: shouldBeAuthenticated() || options?.forceEnabled,
-    staleTime: 0, // delete
     refetchInterval: 1000 * 60 * 5, // 5 minutes - periodic check for long sessions
     refetchOnWindowFocus: true, // Check when user returns to tab
     refetchOnMount: true, // Refetch on every component mount

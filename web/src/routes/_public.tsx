@@ -11,11 +11,12 @@ export const Route = createFileRoute("/_public")({
     if (user) {
       throw redirect({ to: "/home" })
     }
+    return { user }
   },
-  component: UnauthenticatedLayout,
+  component: PublicLayout,
 })
 
-function UnauthenticatedLayout() {
+function PublicLayout() {
   return (
     <div className="relative min-h-screen">
       <DotsBackground />

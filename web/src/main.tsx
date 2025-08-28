@@ -11,15 +11,18 @@ import { queryClient } from "@/services/query-client"
 
 import "@/styles/global.css"
 
+import type { UserRead } from "@/types/generated/api.gen"
 import { ErrorComponent } from "@/components/error-component"
 import { ThemeProvider } from "@/hooks/use-theme"
 
 export interface RouterContext {
   queryClient: QueryClient
+  user: UserRead | null
 }
 
 const defaultRouterContext: RouterContext = {
   queryClient,
+  user: null,
 }
 
 // Create a new router instance

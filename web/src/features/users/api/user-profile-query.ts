@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query"
 
 import { userKeys } from "@/features/users/api/_user-keys"
-import { api } from "@/services/http-client"
+import { api, getData } from "@/services/http-client"
 
 export function userProfileQueryOptions(username: string) {
   return queryOptions({
@@ -15,7 +15,7 @@ export function userProfileQueryOptions(username: string) {
         },
       })
 
-      return response.data ?? null
+      return getData(response)
     },
   })
 }

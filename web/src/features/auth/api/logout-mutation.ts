@@ -3,7 +3,7 @@ import { useRouter } from "@tanstack/react-router"
 
 import { authKeys } from "@/features/auth/api/_auth-keys"
 import { setShouldBeAuthenticated } from "@/features/auth/services/auth-flag-storage"
-import { api } from "@/services/http-client"
+import { api, getData } from "@/services/http-client"
 
 export function useLogoutMutation() {
   const router = useRouter()
@@ -12,7 +12,7 @@ export function useLogoutMutation() {
   return useMutation({
     mutationFn: async () => {
       const response = await api.POST("/auth/logout", {})
-      return response.data
+      return getData(response)
     },
     onSuccess: () => {
       setShouldBeAuthenticated(false)

@@ -124,4 +124,29 @@ api.use(addCsrfTokenMiddleware)
 api.use(errorMiddleware)
 api.use(refreshTokenMiddleware)
 
-export { api }
+// Utility function to handle API response with proper error checking and type safety
+function getData<T>(response: {
+  data?: T
+  error?: ApiErrorData
+  response: Response
+}): T {
+  if (response.error) {
+    throw new ApiError(
+      `API request failed: ${response.response.status} ${response.response.statusText}`,
+      response.response,
+      response.error,
+    )
+  }
+
+  if (response.data === undefined) {
+    throw new ApiError(
+      `API request succeeded but returned no data: ${response.response.status} ${response.response.statusText}`,
+      response.response,
+      null,
+    )
+  }
+
+  return response.data
+}
+
+export { api, getData }
