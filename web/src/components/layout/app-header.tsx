@@ -2,7 +2,7 @@ import type { ComponentProps } from "react"
 import { Link } from "@tanstack/react-router"
 
 import type { UserRead } from "@/types/generated/api.gen"
-import { AppLogo } from "@/components/codifeed-logo"
+import { AppLogo } from "@/components/app-logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"

@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router"
 
-import { AppLogo } from "@/components/codifeed-logo"
+import { AppLogo } from "@/components/app-logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { Wrapper } from "@/components/ui/wrapper"
 
 export function PublicHeader() {
@@ -11,15 +10,15 @@ export function PublicHeader() {
     <header className="sticky top-0 z-50 bg-background/80 shadow-xs shadow-muted/20 backdrop-blur-md">
       <Wrapper className="flex h-(--header-height) items-center justify-between">
         <Link to="/">
-          <AppLogo />
+          <AppLogo className="**:data-[slot=app-logo-text]:hidden *:data-[slot=app-logo-text]:sm:block" />
         </Link>
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <Separator
+          {/* <Separator
             orientation="vertical"
             className="data-[orientation=vertical]:h-4"
-          />
+          /> */}
           <Button variant="outline" asChild>
             <Link to="/login">Log in</Link>
           </Button>
