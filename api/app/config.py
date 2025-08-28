@@ -38,9 +38,7 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     JWT_TOKEN_LOCATION = ["cookies"]
-    JWT_COOKIE_HTTPONLY = True
-    JWT_COOKIE_SECURE = True
-    JWT_COOKIE_SAMESITE = "Strict"
+
     JWT_COOKIE_DOMAIN = os.getenv("JWT_COOKIE_DOMAIN")
     JWT_ERROR_MESSAGE_KEY = "message"
 
@@ -52,18 +50,25 @@ class Config:
     }
 
 
-class DevelopmentConfig(Config):
-    DEBUG = True
-    TESTING = False
-
-
 class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
+    JWT_COOKIE_SAMESITE = "Strict"
+    JWT_COOKIE_SECURE = True
+    JWT_COOKIE_HTTPONLY = True
 
 
-def get_config(env):
+class DevelopmentConfig(Config):
+    DEBUG = True
+    TESTING = False
+    JWT_COOKIE_SAMESITE = "Lax"
+    JWT_COOKIE_SECURE = False
+    JWT_COOKIE_HTTPONLY = True
+
+
+def get_config():
+    env = os.getenv("FLASK_ENV", "production")
     return {
         "development": DevelopmentConfig,
         "production": ProductionConfig,
-    }.get(env, ProductionConfig)
+    }.get(env, Config)

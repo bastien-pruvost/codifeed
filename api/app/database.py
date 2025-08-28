@@ -3,11 +3,13 @@ from datetime import date
 
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from app.config import Config
+from app.config import get_config
 from app.models import Profile, User
 from app.utils.password import generate_password, hash_password
 
-database_url = Config.DATABASE_URL or ""
+config = get_config()
+
+database_url = config.DATABASE_URL
 
 engine = create_engine(database_url, echo=False)
 
@@ -24,19 +26,20 @@ def init_db():
     SQLModel.metadata.create_all(engine)
 
     default_user = {
-        "name": Config.FIRST_ADMIN_NAME,
-        "username": Config.FIRST_ADMIN_USERNAME,
-        "email": Config.FIRST_ADMIN_EMAIL,
+        "name": config.FIRST_ADMIN_NAME,
+        "username": config.FIRST_ADMIN_USERNAME,
+        "email": config.FIRST_ADMIN_EMAIL,
         "hashed_password": hash_password(
-            Config.FIRST_ADMIN_PASSWORD if Config.FIRST_ADMIN_PASSWORD else generate_password(),
+            config.FIRST_ADMIN_PASSWORD if config.FIRST_ADMIN_PASSWORD else generate_password(),
         ),
     }
 
     default_profile = {
-        "bio": "I am a test user.",
-        "location": "Toulouse, France",
-        "website": "https://bastienbuild.dev",
-        "birthdate": date(1995, 7, 8),
+        "bio": "Administrator of the Codifeed app.",
+        "location": "Paris, France",
+        "website": "https://codifeed.pruvostbastien.fr",
+        "avatar": "https://avatar.iran.liara.run/public/7",
+        "birthdate": date(1995, 6, 21),
     }
 
     with get_session() as session:

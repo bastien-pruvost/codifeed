@@ -1,20 +1,14 @@
-import os
-
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_openapi3.models.info import Info
 from flask_openapi3.openapi import OpenAPI
 from flask_openapi3.types import SecuritySchemesDict
 
-from app.config import get_config
-from app.utils.logging import configure_logging
-
-config = get_config(os.getenv("FLASK_ENV", "production"))
-
 
 def create_app():
     """Create a new Flask application instance"""
 
+    from app.config import get_config
     from app.database import init_db
     from app.middlewares.auto_refresh import auto_refresh_expiring_tokens
     from app.middlewares.exceptions import register_error_handlers
@@ -22,6 +16,9 @@ def create_app():
     from app.routes.healthcheck import healthcheck_router
     from app.routes.posts import posts_router
     from app.routes.users import users_router
+    from app.utils.logging import configure_logging
+
+    config = get_config()
 
     # Initialize app config
     app_info = Info(
