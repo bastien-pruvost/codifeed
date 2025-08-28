@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useLogoutMutation } from "@/features/auth/api/logout-mutation"
+import { getUserInitials } from "@/features/users/utils"
 
 export function UserMenu({ user }: { user: UserRead }) {
   const { mutate: logout } = useLogoutMutation()
@@ -23,15 +24,10 @@ export function UserMenu({ user }: { user: UserRead }) {
         <Button variant="ghost" className="hover:bg-transparent">
           <Avatar>
             <AvatarImage src={user.avatar ?? ""} alt={user.name} />
-            <AvatarFallback>
-              {user.name
-                .split(" ")
-                .map((name) => name[0])
-                .join("")}
-            </AvatarFallback>
+            <AvatarFallback>{getUserInitials(user)}</AvatarFallback>
           </Avatar>
-          <div className="text-sm font-medium">{user.name}</div>
-          <ChevronDownIcon className="size-4" />
+          <div className="hidden text-sm font-medium md:block">{user.name}</div>
+          <ChevronDownIcon className="hidden size-4 md:block" />
         </Button>
       </DropdownMenuTrigger>
 
