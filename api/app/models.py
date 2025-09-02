@@ -58,7 +58,8 @@ class User(UserBase, table=True):
     )
     posts: list["Post"] = Relationship(back_populates="author")
 
-    # ------ Profile ------
+
+# ------ Profile ------
 
 
 class ProfileBase(ApiBaseModel):
@@ -72,6 +73,7 @@ class Profile(ProfileBase, table=True):
     user_id: UUID | None = Field(
         primary_key=True,
         foreign_key="user.id",
+        ondelete="CASCADE",
         unique=True,
         default=None,
     )

@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta, timezone
 from functools import wraps
+from typing import Callable
 from uuid import UUID
 
+from dotenv.main import logger
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -10,6 +12,41 @@ from flask_jwt_extended import (
     verify_jwt_in_request,
 )
 from werkzeug.exceptions import Unauthorized
+
+# @jwt_manager.user_lookup_loader
+# def user_lookup_loader(_jwt_header, jwt_payload) -> User:
+#     user_id = jwt_payload["sub"]
+#     with get_session() as session:
+#         query = select(User).options(selectinload("*")).where(User.id == user_id)
+#         user = session.exec(query).one_or_none()
+#     if not user:
+#         raise Unauthorized("User not found")
+#     return user
+
+
+def login_required(func) -> Callable:
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            verify_jwt_in_request()
+            return func(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error verifying JWT: Login required: {e}", exc_info=True)
+            raise Unauthorized(description="Error verifying JWT: Login required") from e
+
+    return wrapper
+
+
+def refresh_required(func) -> Callable:
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            verify_jwt_in_request(refresh=True)
+        except Exception as e:
+            raise Unauthorized(description="Error verifying JWT: Refresh required") from e
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def get_current_user_id() -> UUID:
@@ -23,30 +60,6 @@ def create_tokens(user_id: UUID) -> tuple[str, str]:
     access_token = create_access_token(identity=user_id)
     refresh_token = create_refresh_token(identity=user_id)
     return access_token, refresh_token
-
-
-def login_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            verify_jwt_in_request()
-        except Exception as e:
-            raise Unauthorized(description="Error verifying JWT: Login required") from e
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
-def refresh_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            verify_jwt_in_request(refresh=True)
-        except Exception as e:
-            raise Unauthorized(description="Error verifying JWT: Refresh required") from e
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 def should_auto_refresh_token() -> bool:

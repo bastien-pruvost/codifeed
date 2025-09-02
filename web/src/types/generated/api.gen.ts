@@ -126,6 +126,25 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        /** @description Get a user by username */
+        get: operations["user_get_user_by_username_users__string_username__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -732,6 +751,53 @@ export interface operations {
             };
         };
     };
+    user_get_user_by_username_users__string_username__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRead"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
 }
 export enum ApiPaths {
     auth_login_auth_login_post = "/auth/login",
@@ -741,5 +807,6 @@ export enum ApiPaths {
     healthcheck_healthcheck_healthcheck_get = "/healthcheck",
     healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
     user_me_users_me_get = "/users/me",
-    user_get_user_profile_by_username_users_profile__string_username__get = "/users/profile/{username}"
+    user_get_user_profile_by_username_users_profile__string_username__get = "/users/profile/{username}",
+    user_get_user_by_username_users__string_username__get = "/users/{username}"
 }

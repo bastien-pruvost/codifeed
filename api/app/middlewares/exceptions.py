@@ -28,7 +28,7 @@ def register_error_handlers(app):
         else:
             code = ErrorCodes.UNAUTHORIZED
 
-        logger.warning(f"JWT error: {error_message}")
+        logger.error(f"JWT error: {error_message}")
         return error_response(message=error_message, status=401, code=code)
 
     # Validation errors
@@ -42,7 +42,7 @@ def register_error_handlers(app):
     @app.errorhandler(sqlalchemy_exc.IntegrityError)
     def integrity_error(e):
         """Handle database integrity errors"""
-        logger.warning(f"Database integrity error: {str(e)}")
+        logger.error(f"Database integrity error: {str(e)}")
         error_str = str(e).lower()
 
         if "unique constraint" in error_str or "duplicate" in error_str:
@@ -115,7 +115,7 @@ def register_error_handlers(app):
         status_code = e.code or 500
         default_message = default_messages.get(status_code, "HTTP error")
 
-        logger.warning(f"HTTP exception: {str(e)}")
+        logger.error(f"HTTP exception: {str(e)}")
 
         return error_response(
             message=str(e.description) or default_message,
