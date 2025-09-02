@@ -7,18 +7,14 @@ import { Wrapper } from "@/components/ui/wrapper"
 
 export function PublicHeader() {
   return (
-    <header className="sticky top-0 z-50 bg-background/80 shadow-xs shadow-muted/20 backdrop-blur-md">
-      <Wrapper className="flex h-(--header-height) items-center justify-between">
+    <header className="sticky top-0 z-20 border-b border-b-transparent bg-background/80 backdrop-blur-md">
+      <Wrapper className="flex h-(--header-height) items-center justify-between gap-2 sm:gap-3">
         <Link to="/">
           <AppLogo className="**:data-[slot=app-logo-text]:hidden *:data-[slot=app-logo-text]:sm:block" />
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
-          {/* <Separator
-            orientation="vertical"
-            className="data-[orientation=vertical]:h-4"
-          /> */}
           <Button variant="outline" asChild>
             <Link to="/login">Log in</Link>
           </Button>

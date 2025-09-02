@@ -21,7 +21,11 @@ export function UserMenu({ user }: { user: UserRead }) {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="hover:bg-transparent">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-auto w-fit hover:bg-transparent"
+        >
           <Avatar>
             <AvatarImage src={user.avatar ?? ""} alt={user.name} />
             <AvatarFallback>{getUserInitials(user)}</AvatarFallback>

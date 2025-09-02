@@ -20,7 +20,7 @@ export function AppLogoIcon() {
   return (
     <div
       data-slot="app-logo-icon"
-      className="flex aspect-square items-center justify-center rounded-lg bg-primary p-2 text-primary-foreground"
+      className="flex aspect-square items-center justify-center rounded-full bg-primary p-2 text-primary-foreground"
     >
       <MessageSquareCodeIcon className="size-5" />
     </div>

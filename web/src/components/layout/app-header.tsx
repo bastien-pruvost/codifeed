@@ -4,7 +4,6 @@ import { Link } from "@tanstack/react-router"
 import type { UserRead } from "@/types/generated/api.gen"
 import { AppLogo } from "@/components/app-logo"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Wrapper } from "@/components/ui/wrapper"
 import { UserMenu } from "@/components/user-menu"
@@ -19,26 +18,19 @@ export function AppHeader({ user }: HeaderProps) {
     <header className="sticky top-0 z-20 border-b bg-background/80 shadow-sm shadow-muted/50 backdrop-blur-md">
       <Wrapper
         width="full"
-        className="flex h-(--header-height) w-full items-center justify-between gap-4"
+        className="flex h-(--header-height) items-center justify-between gap-2 sm:gap-3"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:gap-3">
           <SidebarTrigger className="md:hidden" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4 md:hidden"
-          />
-
           <Link to="/home">
-            <AppLogo />
+            <AppLogo className="**:data-[slot=app-logo-text]:hidden *:data-[slot=app-logo-text]:sm:block" />
           </Link>
         </div>
+
         <SearchBar className="w-full max-w-xs" />
-        <div className="flex items-center justify-end gap-2">
+
+        <div className="flex items-center justify-end gap-2 sm:gap-3">
           <ThemeToggle />
-          <Separator
-            orientation="vertical"
-            className="data-[orientation=vertical]:h-4"
-          />
           <UserMenu user={user} />
         </div>
       </Wrapper>

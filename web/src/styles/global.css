@@ -22,7 +22,7 @@
 
 :root {
   /* Custom variables */
-  --header-height: calc(--spacing(14));
+  --header-height: calc(--spacing(15));
   --page-container-min-height: calc(100vh - var(--header-height) - 1px);
 
   /* Shadcn UI variables */
