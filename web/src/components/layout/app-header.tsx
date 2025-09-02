@@ -18,9 +18,9 @@ export function AppHeader({ user }: HeaderProps) {
     <header className="sticky top-0 z-20 border-b bg-background/80 shadow-sm shadow-muted/50 backdrop-blur-md">
       <Wrapper
         width="full"
-        className="flex h-(--header-height) items-center justify-between gap-2 sm:gap-3"
+        className="flex h-(--header-height) items-center justify-between gap-3 sm:gap-4"
       >
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-3 sm:gap-4">
           <SidebarTrigger className="md:hidden" />
           <Link to="/home">
             <AppLogo className="**:data-[slot=app-logo-text]:hidden *:data-[slot=app-logo-text]:sm:block" />
@@ -29,7 +29,7 @@ export function AppHeader({ user }: HeaderProps) {
 
         <SearchBar className="w-full max-w-xs" />
 
-        <div className="flex items-center justify-end gap-2 sm:gap-3">
+        <div className="flex items-center justify-end gap-3 sm:gap-4">
           <ThemeToggle />
           <UserMenu user={user} />
         </div>
