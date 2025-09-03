@@ -116,8 +116,27 @@ export interface paths {
             };
             cookie?: never;
         };
-        /** @description Get a user with their profile by username */
+        /** @description Get a user (with their profile) by username */
         get: operations["user_get_user_profile_by_username_users_profile__string_username__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/search/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        /** @description Search a user by username for search suggestions */
+        get: operations["user_search_user_by_username_users_search__string_username__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -139,7 +158,8 @@ export interface paths {
         get: operations["user_get_user_by_username_users__string_username__get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** @description Delete a user by username */
+        delete: operations["user_delete_user_by_username_users__string_username__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -751,7 +771,101 @@ export interface operations {
             };
         };
     };
+    user_search_user_by_username_users_search__string_username__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRead"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     user_get_user_by_username_users__string_username__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRead"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    user_delete_user_by_username_users__string_username__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -808,5 +922,7 @@ export enum ApiPaths {
     healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
     user_me_users_me_get = "/users/me",
     user_get_user_profile_by_username_users_profile__string_username__get = "/users/profile/{username}",
+    user_search_user_by_username_users_search__string_username__get = "/users/search/{username}",
+    user_delete_user_by_username_users__string_username__delete = "/users/{username}",
     user_get_user_by_username_users__string_username__get = "/users/{username}"
 }
