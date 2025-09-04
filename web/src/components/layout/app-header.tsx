@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react"
 import { Link } from "@tanstack/react-router"
 
-import type { UserRead } from "@/types/generated/api.gen"
+import type { UserPublic } from "@/types/generated/api.gen"
 import { AppLogo } from "@/components/app-logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -10,7 +10,7 @@ import { UserMenu } from "@/components/user-menu"
 import { SearchBar } from "@/features/search/components/search-bar"
 
 interface HeaderProps extends ComponentProps<typeof Wrapper> {
-  user: UserRead
+  user: UserPublic
 }
 
 export function AppHeader({ user }: HeaderProps) {

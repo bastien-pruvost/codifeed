@@ -7,18 +7,19 @@ from flask_jwt_extended import (
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 from sqlmodel import select
-from werkzeug.exceptions import BadRequest, Unauthorized
+from werkzeug.exceptions import BadRequest, InternalServerError, Unauthorized
 
 from app.database import get_session
 from app.models import (
     LoginCredentials,
     LoginResponse,
     LogoutResponse,
+    Profile,
     RefreshResponse,
     SignupResponse,
     User,
     UserCreate,
-    UserRead,
+    UserPublic,
 )
 from app.utils.jwt import create_tokens, get_current_user_id, refresh_required
 from app.utils.password import hash_password, verify_password
@@ -35,22 +36,31 @@ auth_router = APIBlueprint("auth", __name__, abp_tags=[auth_tag], abp_responses=
 )
 def signup(body: UserCreate):
     with get_session() as session:
-        if session.exec(select(User).where(User.email == body.email)).first():
+        statement = select(User).where(User.email == body.email)
+        existing_user = session.exec(statement).first()
+
+        if existing_user:
             raise BadRequest(description="A user with this email already exists")
 
         user = User.model_validate(body, update={"hashed_password": hash_password(body.password)})
+        profile = Profile.model_validate({})
+        user.profile = profile
+
         session.add(user)
         session.commit()
         session.refresh(user)
 
-    response_data = SignupResponse(user=UserRead.model_validate(user))
-    response = success_response(response_data.model_dump(), 201)
+        response_data = SignupResponse(user=UserPublic.model_validate(user))
+        response = success_response(response_data.model_dump(), 201)
 
-    access_token, refresh_token = create_tokens(user.id)
-    set_access_cookies(response, access_token)
-    set_refresh_cookies(response, refresh_token)
+        if not user.id:
+            raise InternalServerError(description="Failed to create user: missing id")
 
-    return response
+        access_token, refresh_token = create_tokens(user.id)
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+
+        return response
 
 
 @auth_router.post(
@@ -61,18 +71,23 @@ def signup(body: UserCreate):
 def login(body: LoginCredentials):
     try:
         with get_session() as session:
-            user = session.exec(select(User).where(User.email == body.email)).first()
-        if not user or not verify_password(body.password, user.hashed_password):
-            raise BadRequest(description="Invalid email or password")
+            statement = select(User).where(User.email == body.email)
+            user = session.exec(statement).first()
 
-        response_data = LoginResponse(user=UserRead.model_validate(user))
-        response = success_response(response_data.model_dump())
+            if not user or not verify_password(body.password, user.hashed_password):
+                raise BadRequest(description="Invalid email or password")
 
-        access_token, refresh_token = create_tokens(user.id)
-        set_access_cookies(response, access_token)
-        set_refresh_cookies(response, refresh_token)
+            response_data = LoginResponse(user=UserPublic.model_validate(user))
+            response = success_response(response_data.model_dump())
 
-        return response
+            if not user.id:
+                raise InternalServerError(description="Failed to login user: missing id")
+
+            access_token, refresh_token = create_tokens(user.id)
+            set_access_cookies(response, access_token)
+            set_refresh_cookies(response, refresh_token)
+
+            return response
     except (
         argon_exceptions.VerifyMismatchError,
         argon_exceptions.InvalidHashError,
@@ -92,17 +107,17 @@ def refresh():
     with get_session() as session:
         user = session.get(User, user_id)
 
-    if not user:
-        raise Unauthorized(description="User not found")
+        if not user:
+            raise Unauthorized(description="User not found")
 
-    response_data = RefreshResponse(user=UserRead.model_validate(user))
-    response = success_response(response_data.model_dump())
+        response_data = RefreshResponse(user=UserPublic.model_validate(user))
+        response = success_response(response_data.model_dump())
 
-    access_token, refresh_token = create_tokens(user_id)
-    set_access_cookies(response, access_token)
-    set_refresh_cookies(response, refresh_token)
+        access_token, refresh_token = create_tokens(user_id)
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
 
-    return response
+        return response
 
 
 @auth_router.post(

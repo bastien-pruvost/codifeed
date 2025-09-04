@@ -1,14 +1,16 @@
 from datetime import date, datetime, timezone
 from uuid import UUID, uuid4
 
+from pydantic import BaseModel, RootModel
 from pydantic.alias_generators import to_camel
-from sqlalchemy import func
-from sqlmodel import TIMESTAMP, Field, Relationship, SQLModel
+from sqlmodel import TIMESTAMP, Field, Relationship, SQLModel, col, func, select
 
-# ------ Base Model -------
+# ------ API Base Model -------
 
 
-class ApiBaseModel(SQLModel):
+class ApiBaseModel(
+    BaseModel
+):  # Keep BaseModel from pydantic (not SQLModel) to avoid breaking camelCase
     """Base model to be used for all API models (Converts snake_case to camelCase)"""
 
     model_config = {
@@ -17,14 +19,14 @@ class ApiBaseModel(SQLModel):
         "validate_by_name": True,
         "validate_by_alias": True,
         "serialize_by_alias": True,
-    }  # type: ignore
+    }
 
 
 # ------ Mixins -------
 
 
 class IdMixin(ApiBaseModel):
-    id: UUID = Field(
+    id: UUID | None = Field(
         primary_key=True,
         unique=True,
         default_factory=uuid4,
@@ -44,12 +46,11 @@ class TimestampsMixin(ApiBaseModel):
     )
 
 
-class SoftDeletableMixin(ApiBaseModel):
+class SoftDeleteMixin(ApiBaseModel):
     """Base model with soft delete support"""
 
     deleted_at: datetime | None = Field(
         default=None,
-        sa_column_kwargs={"nullable": True},
         index=True,
     )
 
@@ -66,37 +67,20 @@ class SoftDeletableMixin(ApiBaseModel):
         """Check if this record is soft-deleted"""
         return self.deleted_at is not None
 
-
-# Utility functions for soft delete queries
-def add_soft_delete_queries(model_class):
-    """Add soft delete query methods to a soft-deletable model class"""
-
     @classmethod
-    def active_only(cls, session):
+    def select_active(cls):
         """Query only non-deleted records"""
-        from sqlmodel import select
-
-        return session.exec(select(cls).where(cls.deleted_at.is_(None)))
+        return select(cls).where(col(cls.deleted_at).is_(None))
 
     @classmethod
-    def deleted_only(cls, session):
+    def select_deleted(cls):
         """Query only soft-deleted records"""
-        from sqlmodel import select
-
-        return session.exec(select(cls).where(cls.deleted_at.isnot(None)))
+        return select(cls).where(col(cls.deleted_at).is_not(None))
 
     @classmethod
-    def include_deleted(cls, session):
-        """Query all records (including soft-deleted)"""
-        from sqlmodel import select
-
-        return session.exec(select(cls))
-
-    # Add methods to the model class
-    model_class.active_only = active_only
-    model_class.deleted_only = deleted_only
-    model_class.include_deleted = include_deleted
-    return model_class
+    def select_all(cls):
+        """Query all records"""
+        return select(cls)
 
 
 # ------ User ------
@@ -107,14 +91,23 @@ class UserBase(ApiBaseModel):
     username: str = Field(unique=True, index=True, max_length=255)
     name: str = Field(max_length=255)
     avatar: str | None = Field(default=None, max_length=255)
+    # test_field: str | None = Field(default=None, max_length=255)
 
 
-class UserRead(UserBase):
-    id: UUID
+class UserPublic(UserBase, TimestampsMixin, IdMixin):
+    pass
 
 
-class UserReadWithProfile(UserRead):
+class UserDetail(UserPublic):
     profile: "ProfileBase"
+
+
+class UsersPublic(RootModel[list[UserPublic]]):
+    pass
+
+
+class UsersDetails(RootModel[list[UserDetail]]):
+    pass
 
 
 class UserCreate(UserBase):
@@ -125,8 +118,7 @@ class UserUpdate(UserBase):
     pass
 
 
-@add_soft_delete_queries
-class User(UserBase, SoftDeletableMixin, TimestampsMixin, IdMixin, table=True):
+class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
     hashed_password: str = Field(max_length=255)
     profile: "Profile" = Relationship(
         back_populates="user",
@@ -145,13 +137,13 @@ class ProfileBase(ApiBaseModel):
     birthdate: date | None = Field(default=None)
 
 
-class Profile(ProfileBase, table=True):
-    user_id: UUID | None = Field(
+class Profile(ProfileBase, SQLModel, table=True):
+    user_id: UUID = Field(
         primary_key=True,
+        unique=True,
         foreign_key="user.id",
         ondelete="CASCADE",
-        unique=True,
-        default=None,
+        # default=None, # TODO: Check if this is needed
     )
     user: User = Relationship(back_populates="profile")
 
@@ -163,14 +155,12 @@ class PostBase(ApiBaseModel):
     content: str = Field(max_length=255)
 
 
-class PostRead(PostBase):
-    id: UUID
-    author: "UserRead"
+class PostPublic(PostBase, IdMixin):
+    author: "UserPublic"
 
 
-# @add_soft_delete_queries
-class Post(PostBase, TimestampsMixin, IdMixin, table=True):
-    author_id: UUID | None = Field(foreign_key="user.id")
+class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
+    author_id: UUID = Field(foreign_key="user.id")
     author: User = Relationship(back_populates="posts")
 
 
@@ -183,17 +173,17 @@ class LoginCredentials(ApiBaseModel):
 
 
 class SignupResponse(ApiBaseModel):
-    user: UserRead
+    user: UserPublic
     message: str = "Account created successfully."
 
 
 class LoginResponse(ApiBaseModel):
-    user: UserRead
+    user: UserPublic
     message: str = "Logged in successfully."
 
 
 class RefreshResponse(ApiBaseModel):
-    user: UserRead
+    user: UserPublic
     message: str = "Token refreshed successfully."
 
 

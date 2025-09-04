@@ -29,10 +29,10 @@ def login_required(func) -> Callable:
     def wrapper(*args, **kwargs):
         try:
             verify_jwt_in_request()
-            return func(*args, **kwargs)
         except Exception as e:
             logger.error(f"Error verifying JWT: Login required: {e}", exc_info=True)
             raise Unauthorized(description="Error verifying JWT: Login required") from e
+        return func(*args, **kwargs)
 
     return wrapper
 
@@ -65,6 +65,7 @@ def create_tokens(user_id: UUID) -> tuple[str, str]:
 def should_auto_refresh_token() -> bool:
     try:
         jwt = get_jwt()
+
         if not jwt:
             return False
 
@@ -73,5 +74,6 @@ def should_auto_refresh_token() -> bool:
         time_until_expiry = exp_time - now
 
         return time_until_expiry <= timedelta(minutes=15)
-    except Exception:
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return False so the token is not auto-refreshed
         return False

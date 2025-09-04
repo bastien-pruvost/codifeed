@@ -1,6 +1,6 @@
 from flask_jwt_extended.exceptions import JWTExtendedException
 from pydantic import ValidationError
-from sqlalchemy import exc as sqlalchemy_exc
+from sqlalchemy import exc as sa_exception
 from werkzeug import exceptions
 
 from app.utils.logging import logger
@@ -39,7 +39,7 @@ def register_error_handlers(app):
         return pydantic_validation_error_response(e)
 
     # Database errors - consolidated and simplified
-    @app.errorhandler(sqlalchemy_exc.IntegrityError)
+    @app.errorhandler(sa_exception.IntegrityError)
     def integrity_error(e):
         """Handle database integrity errors"""
         logger.error(f"Database integrity error: {str(e)}")
@@ -60,11 +60,11 @@ def register_error_handlers(app):
                 message="Database integrity error", status=409, code=ErrorCodes.INTEGRITY_ERROR
             )
 
-    @app.errorhandler(sqlalchemy_exc.NoResultFound)
+    @app.errorhandler(sa_exception.NoResultFound)
     def no_result_found(e):
         return error_response(message="Resource not found", status=404, code=ErrorCodes.NOT_FOUND)
 
-    @app.errorhandler(sqlalchemy_exc.SQLAlchemyError)
+    @app.errorhandler(sa_exception.SQLAlchemyError)
     def sqlalchemy_error(e):
         """Handle all other database errors"""
         logger.error(f"Database error: {str(e)}")

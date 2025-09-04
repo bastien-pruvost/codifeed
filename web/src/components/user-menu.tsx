@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { ChevronDownIcon, LogOutIcon, UserIcon } from "lucide-react"
 
-import type { UserRead } from "@/types/generated/api.gen"
+import type { UserPublic } from "@/types/generated/api.gen"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,7 +15,7 @@ import {
 import { useLogoutMutation } from "@/features/auth/api/logout-mutation"
 import { getUserInitials } from "@/features/users/utils"
 
-export function UserMenu({ user }: { user: UserRead }) {
+export function UserMenu({ user }: { user: UserPublic }) {
   const { mutate: logout } = useLogoutMutation()
 
   return (
