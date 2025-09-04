@@ -18,7 +18,6 @@ dependencies = [
     "gunicorn (>=23.0.0,<24.0.0)",
 ]
 
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
@@ -27,14 +26,8 @@ build-backend = "poetry.core.masonry.api"
 package-mode = false
 
 [tool.ruff]
-# Enable common linters
-select = ["E", "F", "B", "I", "W"]
 line-length = 100
 target-version = "py313"
-
-# Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-
 # Exclude a variety of commonly ignored directories.
 exclude = [
     ".git",
@@ -46,13 +39,17 @@ exclude = [
     "migrations/versions",
 ]
 
+[tool.ruff.lint]
+fixable = ["ALL"]
+select = ["E", "F", "B", "I", "W"]
+isort.known-first-party = ["app"]
+
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
 
-[tool.ruff.isort]
-known-first-party = ["app"]
 
 [tool.pyright]
 # Specify Python version
