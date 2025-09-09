@@ -4,941 +4,941 @@
  */
 
 export interface paths {
-  "/auth/login": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** @description Login a user with email and password */
-    post: operations["auth_login_auth_login_post"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/auth/logout": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** @description Logout a user by clearing cookies */
-    post: operations["auth_logout_auth_logout_post"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/auth/refresh": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** @description Refresh a user's tokens (access and refresh) */
-    post: operations["auth_refresh_auth_refresh_post"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/auth/signup": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** @description Create a new user account */
-    post: operations["auth_signup_auth_signup_post"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/healthcheck": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** @description Check if the server is running */
-    get: operations["healthcheck_healthcheck_healthcheck_get"]
-    put?: never
-    /** @description Check if the server is working with a POST request */
-    post: operations["healthcheck_healthcheck_test_healthcheck_post"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/users/me": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** @description Get the current user */
-    get: operations["user_me_users_me_get"]
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/users/profile/{username}": {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        username: string
-      }
-      cookie?: never
-    }
-    /** @description Get a user (with their profile) by username */
-    get: operations["user_get_user_profile_by_username_users_profile__string_username__get"]
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/users/search": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** @description Search users by name or username */
-    get: operations["user_search_user_by_username_users_search_get"]
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/users/{username}": {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        username: string
-      }
-      cookie?: never
-    }
-    /** @description Get a user by username */
-    get: operations["user_get_user_by_username_users__string_username__get"]
-    put?: never
-    post?: never
-    /** @description Delete a user by username */
-    delete: operations["user_delete_user_by_username_users__string_username__delete"]
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
+    "/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Login a user with email and password */
+        post: operations["auth_login_auth_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Logout a user by clearing cookies */
+        post: operations["auth_logout_auth_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Refresh a user's tokens (access and refresh) */
+        post: operations["auth_refresh_auth_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Create a new user account */
+        post: operations["auth_signup_auth_signup_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/healthcheck": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Check if the server is running */
+        get: operations["healthcheck_healthcheck_healthcheck_get"];
+        put?: never;
+        /** @description Check if the server is working with a POST request */
+        post: operations["healthcheck_healthcheck_test_healthcheck_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get the current user */
+        get: operations["user_me_users_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/profile/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        /** @description Get a user (with their profile) by username */
+        get: operations["user_get_user_profile_by_username_users_profile__string_username__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Search users by name or username */
+        get: operations["user_search_user_by_username_users_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        /** @description Get a user by username */
+        get: operations["user_get_user_by_username_users__string_username__get"];
+        put?: never;
+        post?: never;
+        /** @description Delete a user by username */
+        delete: operations["user_delete_user_by_username_users__string_username__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
-export type webhooks = Record<string, never>
+export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    /**
-     * ErrorResponse
-     * @description Standard error response format
-     */
-    ErrorResponse: {
-      /**
-       * Code
-       * @description Error code for programmatic handling
-       * @default null
-       */
-      code: string | null
-      /**
-       * Details
-       * @description Detailed validation errors
-       * @default null
-       */
-      details: components["schemas"]["ValidationErrorItem"][] | null
-      /**
-       * Message
-       * @description Main error message
-       */
-      message: string
-    }
-    /** HealthcheckResponse */
-    HealthcheckResponse: {
-      /** Status */
-      status: string
-    }
-    /** LoginCredentials */
-    LoginCredentials: {
-      /** Email */
-      email: string
-      /** Password */
-      password: string
-    }
-    /** LoginResponse */
-    LoginResponse: {
-      /**
-       * Message
-       * @default Logged in successfully.
-       */
-      message: string
-      user: components["schemas"]["UserPublic"]
-    }
-    /** LogoutResponse */
-    LogoutResponse: {
-      /**
-       * Message
-       * @default Logged out successfully.
-       */
-      message: string
-    }
-    /** ProfileBase */
-    ProfileBase: {
-      /**
-       * Bio
-       * @default null
-       */
-      bio: string | null
-      /**
-       * Birthdate
-       * @default null
-       */
-      birthdate: string | null
-      /**
-       * Location
-       * @default null
-       */
-      location: string | null
-      /**
-       * Website
-       * @default null
-       */
-      website: string | null
-    }
-    /** RefreshResponse */
-    RefreshResponse: {
-      /**
-       * Message
-       * @default Token refreshed successfully.
-       */
-      message: string
-      user: components["schemas"]["UserPublic"]
-    }
-    /** SignupResponse */
-    SignupResponse: {
-      /**
-       * Message
-       * @default Account created successfully.
-       */
-      message: string
-      user: components["schemas"]["UserPublic"]
-    }
-    /** UserCreate */
-    UserCreate: {
-      /**
-       * Avatar
-       * @default null
-       */
-      avatar: string | null
-      /** Email */
-      email: string
-      /** Name */
-      name: string
-      /** Password */
-      password: string
-      /** Username */
-      username: string
-    }
-    /** UserDetail */
-    UserDetail: {
-      /**
-       * Avatar
-       * @default null
-       */
-      avatar: string | null
-      /**
-       * Createdat
-       * @default null
-       */
-      createdAt: string | null
-      /** Email */
-      email: string
-      /** Id */
-      id?: string | null
-      /** Name */
-      name: string
-      profile: components["schemas"]["ProfileBase"]
-      /**
-       * Updatedat
-       * @default null
-       */
-      updatedAt: string | null
-      /** Username */
-      username: string
-    }
-    /** UserPublic */
-    UserPublic: {
-      /**
-       * Avatar
-       * @default null
-       */
-      avatar: string | null
-      /**
-       * Createdat
-       * @default null
-       */
-      createdAt: string | null
-      /** Email */
-      email: string
-      /** Id */
-      id?: string | null
-      /** Name */
-      name: string
-      /**
-       * Updatedat
-       * @default null
-       */
-      updatedAt: string | null
-      /** Username */
-      username: string
-    }
-    /** UsersPublic */
-    UsersPublic: components["schemas"]["UserPublic"][]
-    /**
-     * ValidationErrorItem
-     * @description Validation error item matching Pydantic v2 format - used for all validation errors
-     */
-    ValidationErrorItem: {
-      /**
-       * Input
-       * @description Input value that caused the error
-       * @default null
-       */
-      input: unknown | null
-      /**
-       * Loc
-       * @description Location of the error (field path)
-       */
-      loc: string[]
-      /**
-       * Msg
-       * @description Human-readable error message
-       */
-      msg: string
-      /**
-       * Type
-       * @description Error type (e.g., 'missing', 'string_too_short')
-       */
-      type: string
-      /**
-       * Url
-       * @description URL to Pydantic error documentation
-       * @default null
-       */
-      url: string | null
-    }
-    /** ValidationErrorModel */
-    ValidationErrorModel: {
-      /**
-       * Error context
-       * @description an optional object which contains values required to render the error message.
-       * @default null
-       */
-      ctx: {
-        [key: string]: unknown
-      } | null
-      /**
-       * Location
-       * @description the error's location as a list.
-       * @default null
-       */
-      loc: string[] | null
-      /**
-       * Message
-       * @description a computer-readable identifier of the error type.
-       * @default null
-       */
-      msg: string | null
-      /**
-       * Error Type
-       * @description a human readable explanation of the error.
-       * @default null
-       */
-      type_: string | null
-    }
-  }
-  responses: never
-  parameters: never
-  requestBodies: never
-  headers: never
-  pathItems: never
+    schemas: {
+        /**
+         * ErrorResponse
+         * @description Standard error response format
+         */
+        ErrorResponse: {
+            /**
+             * Code
+             * @description Error code for programmatic handling
+             * @default null
+             */
+            code: string | null;
+            /**
+             * Details
+             * @description Detailed validation errors
+             * @default null
+             */
+            details: components["schemas"]["ValidationErrorItem"][] | null;
+            /**
+             * Message
+             * @description Main error message
+             */
+            message: string;
+        };
+        /** HealthcheckResponse */
+        HealthcheckResponse: {
+            /** Status */
+            status: string;
+        };
+        /** LoginCredentials */
+        LoginCredentials: {
+            /** Email */
+            email: string;
+            /** Password */
+            password: string;
+        };
+        /** LoginResponse */
+        LoginResponse: {
+            /**
+             * Message
+             * @default Logged in successfully.
+             */
+            message: string;
+            user: components["schemas"]["UserPublic"];
+        };
+        /** LogoutResponse */
+        LogoutResponse: {
+            /**
+             * Message
+             * @default Logged out successfully.
+             */
+            message: string;
+        };
+        /** ProfileBase */
+        ProfileBase: {
+            /**
+             * Bio
+             * @default null
+             */
+            bio: string | null;
+            /**
+             * Birthdate
+             * @default null
+             */
+            birthdate: string | null;
+            /**
+             * Location
+             * @default null
+             */
+            location: string | null;
+            /**
+             * Website
+             * @default null
+             */
+            website: string | null;
+        };
+        /** RefreshResponse */
+        RefreshResponse: {
+            /**
+             * Message
+             * @default Token refreshed successfully.
+             */
+            message: string;
+            user: components["schemas"]["UserPublic"];
+        };
+        /** SignupResponse */
+        SignupResponse: {
+            /**
+             * Message
+             * @default Account created successfully.
+             */
+            message: string;
+            user: components["schemas"]["UserPublic"];
+        };
+        /** UserCreate */
+        UserCreate: {
+            /**
+             * Avatar
+             * @default null
+             */
+            avatar: string | null;
+            /** Email */
+            email: string;
+            /** Name */
+            name: string;
+            /** Password */
+            password: string;
+            /** Username */
+            username: string;
+        };
+        /** UserDetail */
+        UserDetail: {
+            /**
+             * Avatar
+             * @default null
+             */
+            avatar: string | null;
+            /**
+             * Createdat
+             * @default null
+             */
+            createdAt: string | null;
+            /** Email */
+            email: string;
+            /** Id */
+            id?: string | null;
+            /** Name */
+            name: string;
+            profile: components["schemas"]["ProfileBase"];
+            /**
+             * Updatedat
+             * @default null
+             */
+            updatedAt: string | null;
+            /** Username */
+            username: string;
+        };
+        /** UserPublic */
+        UserPublic: {
+            /**
+             * Avatar
+             * @default null
+             */
+            avatar: string | null;
+            /**
+             * Createdat
+             * @default null
+             */
+            createdAt: string | null;
+            /** Email */
+            email: string;
+            /** Id */
+            id?: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Updatedat
+             * @default null
+             */
+            updatedAt: string | null;
+            /** Username */
+            username: string;
+        };
+        /** UsersPublic */
+        UsersPublic: components["schemas"]["UserPublic"][];
+        /**
+         * ValidationErrorItem
+         * @description Validation error item matching Pydantic v2 format - used for all validation errors
+         */
+        ValidationErrorItem: {
+            /**
+             * Input
+             * @description Input value that caused the error
+             * @default null
+             */
+            input: unknown | null;
+            /**
+             * Loc
+             * @description Location of the error (field path)
+             */
+            loc: string[];
+            /**
+             * Msg
+             * @description Human-readable error message
+             */
+            msg: string;
+            /**
+             * Type
+             * @description Error type (e.g., 'missing', 'string_too_short')
+             */
+            type: string;
+            /**
+             * Url
+             * @description URL to Pydantic error documentation
+             * @default null
+             */
+            url: string | null;
+        };
+        /** ValidationErrorModel */
+        ValidationErrorModel: {
+            /**
+             * Error context
+             * @description an optional object which contains values required to render the error message.
+             * @default null
+             */
+            ctx: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Location
+             * @description the error's location as a list.
+             * @default null
+             */
+            loc: string[] | null;
+            /**
+             * Message
+             * @description a computer-readable identifier of the error type.
+             * @default null
+             */
+            msg: string | null;
+            /**
+             * Error Type
+             * @description a human readable explanation of the error.
+             * @default null
+             */
+            type_: string | null;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
-export type ErrorResponse = components["schemas"]["ErrorResponse"]
-export type HealthcheckResponse = components["schemas"]["HealthcheckResponse"]
-export type LoginCredentials = components["schemas"]["LoginCredentials"]
-export type LoginResponse = components["schemas"]["LoginResponse"]
-export type LogoutResponse = components["schemas"]["LogoutResponse"]
-export type ProfileBase = components["schemas"]["ProfileBase"]
-export type RefreshResponse = components["schemas"]["RefreshResponse"]
-export type SignupResponse = components["schemas"]["SignupResponse"]
-export type UserCreate = components["schemas"]["UserCreate"]
-export type UserDetail = components["schemas"]["UserDetail"]
-export type UserPublic = components["schemas"]["UserPublic"]
-export type UsersPublic = components["schemas"]["UsersPublic"]
-export type ValidationErrorItem = components["schemas"]["ValidationErrorItem"]
-export type ValidationErrorModel = components["schemas"]["ValidationErrorModel"]
-export type $defs = Record<string, never>
+export type ErrorResponse = components['schemas']['ErrorResponse'];
+export type HealthcheckResponse = components['schemas']['HealthcheckResponse'];
+export type LoginCredentials = components['schemas']['LoginCredentials'];
+export type LoginResponse = components['schemas']['LoginResponse'];
+export type LogoutResponse = components['schemas']['LogoutResponse'];
+export type ProfileBase = components['schemas']['ProfileBase'];
+export type RefreshResponse = components['schemas']['RefreshResponse'];
+export type SignupResponse = components['schemas']['SignupResponse'];
+export type UserCreate = components['schemas']['UserCreate'];
+export type UserDetail = components['schemas']['UserDetail'];
+export type UserPublic = components['schemas']['UserPublic'];
+export type UsersPublic = components['schemas']['UsersPublic'];
+export type ValidationErrorItem = components['schemas']['ValidationErrorItem'];
+export type ValidationErrorModel = components['schemas']['ValidationErrorModel'];
+export type $defs = Record<string, never>;
 export interface operations {
-  auth_login_auth_login_post: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["LoginCredentials"]
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["LoginResponse"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  auth_logout_auth_logout_post: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["LogoutResponse"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  auth_refresh_auth_refresh_post: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["RefreshResponse"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  auth_signup_auth_signup_post: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UserCreate"]
-      }
-    }
-    responses: {
-      /** @description Created */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["SignupResponse"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  healthcheck_healthcheck_healthcheck_get: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["HealthcheckResponse"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  healthcheck_healthcheck_test_healthcheck_post: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["HealthcheckResponse"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  user_me_users_me_get: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["UserPublic"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  user_get_user_profile_by_username_users_profile__string_username__get: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        username: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["UserDetail"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  user_search_user_by_username_users_search_get: {
-    parameters: {
-      query?: {
-        /** @description Search query */
-        q?: string
-      }
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["UsersPublic"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  user_get_user_by_username_users__string_username__get: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        username: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["UserPublic"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
-  user_delete_user_by_username_users__string_username__delete: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        username: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["UserPublic"]
-        }
-      }
-      /** @description Unprocessable Content */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "4XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-      "5XX": {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ErrorResponse"]
-        }
-      }
-    }
-  }
+    auth_login_auth_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginCredentials"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    auth_logout_auth_logout_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LogoutResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    auth_refresh_auth_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RefreshResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    auth_signup_auth_signup_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreate"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignupResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    healthcheck_healthcheck_healthcheck_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthcheckResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    healthcheck_healthcheck_test_healthcheck_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthcheckResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    user_me_users_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserPublic"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    user_get_user_profile_by_username_users_profile__string_username__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    user_search_user_by_username_users_search_get: {
+        parameters: {
+            query?: {
+                /** @description Search query */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersPublic"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    user_get_user_by_username_users__string_username__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserPublic"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    user_delete_user_by_username_users__string_username__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserPublic"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
 }
 export enum ApiPaths {
-  auth_login_auth_login_post = "/auth/login",
-  auth_logout_auth_logout_post = "/auth/logout",
-  auth_refresh_auth_refresh_post = "/auth/refresh",
-  auth_signup_auth_signup_post = "/auth/signup",
-  healthcheck_healthcheck_healthcheck_get = "/healthcheck",
-  healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
-  user_me_users_me_get = "/users/me",
-  user_get_user_profile_by_username_users_profile__string_username__get = "/users/profile/{username}",
-  user_search_user_by_username_users_search_get = "/users/search",
-  user_delete_user_by_username_users__string_username__delete = "/users/{username}",
-  user_get_user_by_username_users__string_username__get = "/users/{username}",
+    auth_login_auth_login_post = "/auth/login",
+    auth_logout_auth_logout_post = "/auth/logout",
+    auth_refresh_auth_refresh_post = "/auth/refresh",
+    auth_signup_auth_signup_post = "/auth/signup",
+    healthcheck_healthcheck_healthcheck_get = "/healthcheck",
+    healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
+    user_me_users_me_get = "/users/me",
+    user_get_user_profile_by_username_users_profile__string_username__get = "/users/profile/{username}",
+    user_search_user_by_username_users_search_get = "/users/search",
+    user_delete_user_by_username_users__string_username__delete = "/users/{username}",
+    user_get_user_by_username_users__string_username__get = "/users/{username}"
 }

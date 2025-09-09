@@ -1,6 +1,6 @@
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
-from sqlmodel import Field, col, select
+from sqlmodel import Field, and_, case, col, func, or_, select, text
 from werkzeug.exceptions import Forbidden, NotFound
 
 from app.database import get_session
@@ -97,11 +97,56 @@ class SearchQuery(ApiBaseModel):
 )
 @login_required
 def search_user_by_username(query: SearchQuery):
-    with get_session() as session:
-        statement = select(User).filter(col(User.username).match(query.q))
-        users = session.exec(statement).all()
+    search_term = query.q.strip()
 
-        return success_response(UsersPublic.model_validate(users).model_dump())
+    if not search_term:
+        return success_response([])
+    with get_session() as session:
+        # Approche hybride : utilise les index disponibles sans fonctions problématiques
+        search_lower = search_term.lower()
+        sql_query = (
+            select(
+                User,
+                case(
+                    # Correspondance exacte sur username (insensible à la casse)
+                    (func.lower(User.username) == search_lower, 100),
+                    # Correspondance exacte sur name (insensible à la casse)
+                    (func.lower(User.name) == search_lower, 95),
+                    # Préfixe sur username
+                    (func.lower(User.username).like(search_lower + "%"), 80),
+                    # Préfixe sur name
+                    (func.lower(User.name).like(search_lower + "%"), 70),
+                    # Similarité trigram (index GIN disponible)
+                    else_=func.greatest(
+                        func.similarity(User.username, search_term) * 40,
+                        func.similarity(User.name, search_term) * 40,
+                    ),
+                ).label("relevance_score"),
+            )
+            .where(
+                and_(
+                    col(User.deleted_at).is_(None),
+                    or_(
+                        # Correspondance exacte (utilise ix_user_username_lower)
+                        func.lower(User.username) == search_lower,
+                        func.lower(User.name) == search_lower,
+                        # Correspondance préfixe (utilise ix_user_username_lower)
+                        func.lower(User.username).like(search_lower + "%"),
+                        func.lower(User.name).like(search_lower + "%"),
+                        # Similarité trigram (utilise ix_user_username_trgm)
+                        func.similarity(User.username, search_term) > 0.3,
+                        func.similarity(User.name, search_term) > 0.3,
+                    ),
+                )
+            )
+            .order_by(text("relevance_score DESC"), text("username ASC"))
+            .limit(20)
+        )
+
+        results = session.exec(sql_query).all()
+        users = [UserPublic.model_validate(user) for user, _ in results]
+
+        return success_response([user.model_dump() for user in users])
 
 
 @users_router.delete(

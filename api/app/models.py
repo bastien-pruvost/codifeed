@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, RootModel
 from pydantic.alias_generators import to_camel
-from sqlmodel import TIMESTAMP, Field, Relationship, SQLModel, col, func, select
+from sqlmodel import TIMESTAMP, Field, Index, Relationship, SQLModel, col, func, select
 
 # ------ API Base Model -------
 
@@ -106,7 +106,7 @@ class UsersPublic(RootModel[list[UserPublic]]):
     pass
 
 
-class UsersDetails(RootModel[list[UserDetail]]):
+class UsersDetail(RootModel[list[UserDetail]]):
     pass
 
 
@@ -126,6 +126,22 @@ class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=
     )
     posts: list["Post"] = Relationship(back_populates="author")
 
+    __table_args__ = (
+        # Index GIN trigram sur les colonnes brutes pour similarité
+        Index(
+            "ix_user_username_trgm",
+            "username",
+            postgresql_using="gin",
+            postgresql_ops={"username": "gin_trgm_ops"},
+        ),
+        Index(
+            "ix_user_name_trgm",
+            "name",
+            postgresql_using="gin",
+            postgresql_ops={"name": "gin_trgm_ops"},
+        ),
+    )
+
 
 # ------ Profile ------
 
@@ -138,12 +154,12 @@ class ProfileBase(ApiBaseModel):
 
 
 class Profile(ProfileBase, SQLModel, table=True):
-    user_id: UUID = Field(
+    user_id: UUID | None = Field(
+        default=None,
         primary_key=True,
         unique=True,
         foreign_key="user.id",
         ondelete="CASCADE",
-        # default=None, # TODO: Check if this is needed
     )
     user: User = Relationship(back_populates="profile")
 

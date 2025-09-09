@@ -25,6 +25,10 @@ def init_db():
     """Initialize the database and create all tables"""
     SQLModel.metadata.create_all(engine)
 
+    with engine.begin() as conn:
+        conn.exec_driver_sql("CREATE EXTENSION IF NOT EXISTS pg_trgm")
+        conn.exec_driver_sql("CREATE EXTENSION IF NOT EXISTS unaccent")
+
     default_user = {
         "name": config.FIRST_ADMIN_NAME,
         "username": config.FIRST_ADMIN_USERNAME,
@@ -37,7 +41,7 @@ def init_db():
     default_profile = {
         "bio": "Administrator of the Codifeed app.",
         "location": "Paris, France",
-        "website": "https://codifeed.pruvostbastien.fr",
+        "website": "https://codifeed.bastienlimbour.com",
         "avatar": "https://avatar.iran.liara.run/public/7",
         "birthdate": date(1995, 6, 21),
     }
