@@ -23,11 +23,12 @@ def get_session():
 
 def init_db():
     """Initialize the database and create all tables"""
-    SQLModel.metadata.create_all(engine)
 
     with engine.begin() as conn:
         conn.exec_driver_sql("CREATE EXTENSION IF NOT EXISTS pg_trgm")
         conn.exec_driver_sql("CREATE EXTENSION IF NOT EXISTS unaccent")
+
+    SQLModel.metadata.create_all(engine)
 
     default_user = {
         "name": config.FIRST_ADMIN_NAME,
