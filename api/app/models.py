@@ -1,9 +1,12 @@
 from datetime import date, datetime, timezone
+from typing import Generic, TypeVar
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, RootModel
+from pydantic import BaseModel
 from pydantic.alias_generators import to_camel
 from sqlmodel import TIMESTAMP, Field, Index, Relationship, SQLModel, col, func, select
+
+T = TypeVar("T")
 
 # ------ API Base Model -------
 
@@ -42,7 +45,7 @@ class TimestampsMixin(ApiBaseModel):
     updated_at: datetime | None = Field(
         default=None,
         sa_type=TIMESTAMP(timezone=True),  # pyright: ignore[reportArgumentType]
-        sa_column_kwargs={"nullable": False, "server_default": func.now(), "onupdate": func.now()},
+        sa_column_kwargs={"nullable": True, "onupdate": func.now()},
     )
 
 
@@ -68,19 +71,41 @@ class SoftDeleteMixin(ApiBaseModel):
         return self.deleted_at is not None
 
     @classmethod
-    def select_active(cls):
-        """Query only non-deleted records"""
+    def select_active(
+        cls,
+    ):
+        """Build a select for active (non-deleted) records."""
         return select(cls).where(col(cls.deleted_at).is_(None))
 
     @classmethod
     def select_deleted(cls):
-        """Query only soft-deleted records"""
+        """Build a select for only soft-deleted records."""
         return select(cls).where(col(cls.deleted_at).is_not(None))
 
     @classmethod
     def select_all(cls):
-        """Query all records"""
+        """Build a select for all records."""
         return select(cls)
+
+
+# ------ Pagination ------
+
+
+class PaginationQuery(ApiBaseModel):
+    page: int = Field(default=1, ge=1, description="Page number")
+    items_per_page: int = Field(default=20, ge=1, le=1500, description="Number of items per page")
+
+
+class PaginationMeta(ApiBaseModel):
+    page: int
+    items_per_page: int
+    total_count: int
+    has_more: bool
+
+
+class PaginatedResponse(ApiBaseModel, Generic[T]):
+    data: list[T]
+    meta: PaginationMeta
 
 
 # ------ User ------
@@ -94,19 +119,19 @@ class UserBase(ApiBaseModel):
     # test_field: str | None = Field(default=None, max_length=255)
 
 
-class UserPublic(UserBase, TimestampsMixin, IdMixin):
-    pass
+class UserPublic(UserBase, TimestampsMixin):
+    id: UUID
 
 
 class UserDetail(UserPublic):
     profile: "ProfileBase"
 
 
-class UsersPublic(RootModel[list[UserPublic]]):
+class UsersPublic(PaginatedResponse[UserPublic]):
     pass
 
 
-class UsersDetail(RootModel[list[UserDetail]]):
+class UsersDetail(PaginatedResponse[UserDetail]):
     pass
 
 
@@ -127,7 +152,6 @@ class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=
     posts: list["Post"] = Relationship(back_populates="author")
 
     __table_args__ = (
-        # Index GIN trigram sur les colonnes brutes pour similarité
         Index(
             "ix_user_username_trgm",
             "username",

@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from flask import Response, make_response
 from flask_openapi3.types import ResponseDict
@@ -12,7 +12,7 @@ class ValidationErrorItem(ApiBaseModel):
     """Validation error item matching Pydantic v2 format - used for all validation errors"""
 
     type: str = Field(description="Error type (e.g., 'missing', 'string_too_short')")
-    loc: List[str] = Field(description="Location of the error (field path)")
+    loc: list[str] = Field(description="Location of the error (field path)")
     msg: str = Field(description="Human-readable error message")
     input: Optional[Any] = Field(default=None, description="Input value that caused the error")
     url: Optional[str] = Field(default=None, description="URL to Pydantic error documentation")
@@ -24,7 +24,7 @@ class ErrorResponse(ApiBaseModel):
 
     message: str = Field(description="Main error message")
     code: Optional[str] = Field(default=None, description="Error code for programmatic handling")
-    details: Optional[List[ValidationErrorItem]] = Field(
+    details: Optional[list[ValidationErrorItem]] = Field(
         default=None, description="Detailed validation errors"
     )
 
@@ -79,7 +79,7 @@ def error_response(
     message: str = "An error occurred",
     status: int = 500,
     code: Optional[str] = None,
-    details: Optional[List[ValidationErrorItem]] = None,
+    details: Optional[list[ValidationErrorItem]] = None,
 ) -> Response:
     """Create a standardized error response"""
     response = ErrorResponse(
@@ -91,7 +91,7 @@ def error_response(
 
 
 def validation_error_response(
-    validation_errors: List[ValidationErrorItem],
+    validation_errors: list[ValidationErrorItem],
     message: str = "Validation failed",
     status: int = 422,
 ) -> Response:

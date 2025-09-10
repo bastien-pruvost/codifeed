@@ -133,7 +133,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Search users by name or username */
+        /** @description Search users by name or username with pagination */
         get: operations["user_search_user_by_username_users_search_get"];
         put?: never;
         post?: never;
@@ -219,6 +219,17 @@ export interface components {
              */
             message: string;
         };
+        /** PaginationMeta */
+        PaginationMeta: {
+            /** Hasmore */
+            hasMore: boolean;
+            /** Itemsperpage */
+            itemsPerPage: number;
+            /** Page */
+            page: number;
+            /** Totalcount */
+            totalCount: number;
+        };
         /** ProfileBase */
         ProfileBase: {
             /**
@@ -290,8 +301,11 @@ export interface components {
             createdAt: string | null;
             /** Email */
             email: string;
-            /** Id */
-            id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
             /** Name */
             name: string;
             profile: components["schemas"]["ProfileBase"];
@@ -317,8 +331,11 @@ export interface components {
             createdAt: string | null;
             /** Email */
             email: string;
-            /** Id */
-            id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
             /** Name */
             name: string;
             /**
@@ -330,7 +347,11 @@ export interface components {
             username: string;
         };
         /** UsersPublic */
-        UsersPublic: components["schemas"]["UserPublic"][];
+        UsersPublic: {
+            /** Data */
+            data: components["schemas"]["UserPublic"][];
+            meta: components["schemas"]["PaginationMeta"];
+        };
         /**
          * ValidationErrorItem
          * @description Validation error item matching Pydantic v2 format - used for all validation errors
@@ -405,6 +426,7 @@ export type HealthcheckResponse = components['schemas']['HealthcheckResponse'];
 export type LoginCredentials = components['schemas']['LoginCredentials'];
 export type LoginResponse = components['schemas']['LoginResponse'];
 export type LogoutResponse = components['schemas']['LogoutResponse'];
+export type PaginationMeta = components['schemas']['PaginationMeta'];
 export type ProfileBase = components['schemas']['ProfileBase'];
 export type RefreshResponse = components['schemas']['RefreshResponse'];
 export type SignupResponse = components['schemas']['SignupResponse'];
@@ -789,6 +811,10 @@ export interface operations {
     user_search_user_by_username_users_search_get: {
         parameters: {
             query?: {
+                /** @description Page number */
+                page?: number;
+                /** @description Number of items per page */
+                itemsPerPage?: number;
                 /** @description Search query */
                 q?: string;
             };
