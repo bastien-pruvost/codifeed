@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority"
 
 import { cn } from "@/utils/classnames"
 
-const wrapperVariants = cva("mx-auto w-full px-4 sm:px-6 lg:px-8", {
+const wrapperVariants = cva("mx-auto w-full px-4 sm:px-6 md:px-6 lg:px-8", {
   variants: {
     width: {
       default: "max-w-7xl",

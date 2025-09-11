@@ -18,7 +18,7 @@ export function AppHeader({ user }: HeaderProps) {
     <header className="sticky top-0 z-20 border-b bg-background/80 shadow-sm shadow-muted/50 backdrop-blur-md">
       <Wrapper
         width="full"
-        className="flex h-(--header-height) items-center justify-between gap-3 sm:gap-4"
+        className="flex h-(--header-height) max-w-5xl items-center justify-between gap-3 sm:gap-4"
       >
         <div className="flex items-center gap-3 sm:gap-4">
           <SidebarTrigger className="md:hidden" />

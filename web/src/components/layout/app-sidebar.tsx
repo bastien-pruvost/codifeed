@@ -167,10 +167,7 @@ const navData = {
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const { isMobile } = useSidebar()
   return (
-    <Sidebar
-      className="top-(--header-height) h-[calc(100svh-var(--header-height))]"
-      {...props}
-    >
+    <Sidebar variant="floating" {...props}>
       {/* <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
