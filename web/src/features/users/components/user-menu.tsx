@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router"
 import { ChevronDownIcon, LogOutIcon, UserIcon } from "lucide-react"
 
 import type { UserPublic } from "@/types/generated/api.gen"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useLogoutMutation } from "@/features/auth/api/logout-mutation"
-import { getUserInitials } from "@/features/users/utils"
+import { UserAvatar } from "@/features/users/components/user-avatar"
 
 export function UserMenu({ user }: { user: UserPublic }) {
   const { mutate: logout } = useLogoutMutation()
@@ -26,10 +25,7 @@ export function UserMenu({ user }: { user: UserPublic }) {
           size="icon"
           className="size-auto w-fit hover:bg-transparent"
         >
-          <Avatar>
-            <AvatarImage src={user.avatar ?? ""} alt={user.name} />
-            <AvatarFallback>{getUserInitials(user)}</AvatarFallback>
-          </Avatar>
+          <UserAvatar user={user} />
           <div className="hidden text-sm font-medium md:block">{user.name}</div>
           <ChevronDownIcon className="hidden size-4 md:block" />
         </Button>

@@ -6,8 +6,7 @@ import { AppLogo } from "@/components/app-logo"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Wrapper } from "@/components/ui/wrapper"
-import { UserMenu } from "@/components/user-menu"
-import { SearchBar } from "@/features/search/components/search-bar"
+import { UserMenu } from "@/features/users/components/user-menu"
 
 interface HeaderProps extends ComponentProps<typeof Wrapper> {
   user: UserPublic
@@ -27,7 +26,7 @@ export function AppHeader({ user }: HeaderProps) {
           </Link>
         </div>
 
-        <SearchBar className="w-full max-w-xs" />
+        {/* <SearchBar className="w-full max-w-xs" /> */}
 
         <div className="flex items-center justify-end gap-3 sm:gap-4">
           <ThemeToggle />

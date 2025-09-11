@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
+import { PageContainer } from "@/components/ui/page-container"
+import { H1, P } from "@/components/ui/typography"
+import { Wrapper } from "@/components/ui/wrapper"
 import { useRefreshTokenMutation } from "@/features/auth/api/refresh-token-mutation"
+import { SearchBar } from "@/features/search/components/search-bar"
 
 export const Route = createFileRoute("/_app/home")({
   component: RouteComponent,
@@ -15,19 +19,25 @@ function RouteComponent() {
   const { mutate: refreshToken } = useRefreshTokenMutation()
 
   return (
-    <div className="text-center">
-      <h1>HOME - FEED</h1>
+    <PageContainer>
+      <Wrapper>
+        <div className="mb-8 text-center">
+          <H1>HOME - FEED</H1>
 
-      <br />
+          <P className="mt-4">You are authenticated ✅</P>
+          <P className="mt-4">Welcome back {user.name}</P>
 
-      <p>You are authenticated ✅</p>
-      <p>Welcome back {user.name}</p>
+          <Button
+            variant="default"
+            onClick={() => refreshToken()}
+            className="mt-4"
+          >
+            Refresh token
+          </Button>
+        </div>
 
-      <br />
-
-      <Button variant="default" onClick={() => refreshToken()}>
-        Refresh token
-      </Button>
-    </div>
+        <SearchBar />
+      </Wrapper>
+    </PageContainer>
   )
 }
