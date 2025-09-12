@@ -125,28 +125,31 @@ api.use(errorMiddleware)
 api.use(refreshTokenMiddleware)
 
 // Utility function to handle API response with proper error checking and type safety
-function getData<T>(response: {
-  data?: T
-  error?: ApiErrorData
-  response: Response
-}): T {
-  if (response.error) {
+async function getData<T>(
+  response: Promise<{
+    data?: T
+    error?: ApiErrorData
+    response: Response
+  }>,
+): Promise<T> {
+  const res = await response
+  if (res.error) {
     throw new ApiError(
-      `API request failed: ${response.response.status} ${response.response.statusText}`,
-      response.response,
-      response.error,
+      `API request failed: ${res.response.status} ${res.response.statusText}`,
+      res.response,
+      res.error,
     )
   }
 
-  if (response.data === undefined) {
+  if (res.data === undefined) {
     throw new ApiError(
-      `API request succeeded but returned no data: ${response.response.status} ${response.response.statusText}`,
-      response.response,
+      `API request succeeded but returned no data: ${res.response.status} ${res.response.statusText}`,
+      res.response,
       null,
     )
   }
 
-  return response.data
+  return res.data
 }
 
 export { api, getData }

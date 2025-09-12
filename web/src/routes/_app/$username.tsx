@@ -13,14 +13,14 @@ import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
 import { P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
-import { userProfileQueryOptions } from "@/features/users/api/user-profile-query"
+import { userQueries } from "@/features/users/api/user-queries"
 import { UserAvatar } from "@/features/users/components/user-avatar"
 import { Route as AppRoute } from "@/routes/_app"
 
 export const Route = createFileRoute("/_app/$username")({
   loader: async ({ context, params }) => {
     await context.queryClient.ensureQueryData(
-      userProfileQueryOptions(params.username),
+      userQueries.detail(params.username),
     )
   },
   component: UserProfilePage,
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/_app/$username")({
 
 export function UserProfilePage() {
   const username = Route.useParams({ select: (params) => params.username })
-  const { data: user } = useSuspenseQuery(userProfileQueryOptions(username))
+  const { data: user } = useSuspenseQuery(userQueries.detail(username))
   const { user: currentUser } = AppRoute.useRouteContext()
 
   const isOwnProfile = currentUser.id === user.id

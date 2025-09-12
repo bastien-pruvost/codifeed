@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"
 import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
-import { useRefreshTokenMutation } from "@/features/auth/api/refresh-token-mutation"
-import { SearchBar } from "@/features/search/components/search-bar"
+import { authMutations } from "@/features/auth/api/auth-mutations"
 
 export const Route = createFileRoute("/_app/home")({
   component: RouteComponent,
@@ -16,7 +15,7 @@ function RouteComponent() {
     select: (context) => context.user,
   })
 
-  const { mutate: refreshToken } = useRefreshTokenMutation()
+  const refreshTokenMutation = authMutations.useRefreshToken()
 
   return (
     <PageContainer>
@@ -29,14 +28,12 @@ function RouteComponent() {
 
           <Button
             variant="default"
-            onClick={() => refreshToken()}
+            onClick={() => refreshTokenMutation.mutate()}
             className="mt-4"
           >
             Refresh token
           </Button>
         </div>
-
-        <SearchBar />
       </Wrapper>
     </PageContainer>
   )

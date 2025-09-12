@@ -27,7 +27,7 @@ users_router = APIBlueprint("user", __name__, abp_tags=[users_tag], abp_response
     description="Get the current user",
 )
 @login_required
-def me():
+def get_current_user():
     user_id = get_current_user_id()
     with get_session() as session:
         user = session.get(User, user_id)
@@ -50,11 +50,11 @@ class UsernamePath(ApiBaseModel):
 
 @users_router.get(
     "/users/<string:username>",
-    responses={200: UserPublic},
-    description="Get a user by username",
+    responses={200: UserDetail},
+    description="Get a user detail by username",
 )
 @login_required
-def get_user_by_username(path: UsernamePath):
+def get_user_detail_by_username(path: UsernamePath):
     with get_session() as session:
         statement = select(User).where(User.username == path.username)
         user = session.exec(statement).first()
@@ -67,23 +67,6 @@ def get_user_by_username(path: UsernamePath):
                 description="This account has been deleted. \
                 Please contact support if you believe this is an error."
             )
-
-        return success_response(UserPublic.model_validate(user).model_dump())
-
-
-@users_router.get(
-    "/users/profile/<string:username>",
-    responses={200: UserDetail},
-    description="Get a user (with their profile) by username",
-)
-@login_required
-def get_user_profile_by_username(path: UsernamePath):
-    with get_session() as session:
-        statement = select(User).where(User.username == path.username)
-        user = session.exec(statement).first()
-
-        if not user:
-            raise NotFound(description="User not found")
 
         return success_response(UserDetail.model_validate(user).model_dump())
 

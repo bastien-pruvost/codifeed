@@ -11,7 +11,7 @@ import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
 import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
-import { useLoginMutation } from "@/features/auth/api/login-mutation"
+import { authMutations } from "@/features/auth/api/auth-mutations"
 import loginImg from "@/features/auth/assets/login-illustration.webp"
 import { getErrorMessage } from "@/utils/errors"
 
@@ -41,7 +41,7 @@ const loginDefaultValues: z.input<typeof loginFormSchema> = {
 }
 
 function LoginPage() {
-  const loginMutation = useLoginMutation()
+  const loginMutation = authMutations.useLogin()
 
   const form = useAppForm({
     defaultValues: loginDefaultValues,

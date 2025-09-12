@@ -43,7 +43,7 @@ def init_db():
         "bio": "Administrator of the Codifeed app.",
         "location": "Paris, France",
         "website": "https://codifeed.bastienlimbour.com",
-        "avatar": "https://avatar.iran.liara.run/public/7",
+        "avatar": "https://avatar.iran.liara.run/public/5",
         "birthdate": date(1995, 6, 21),
     }
 

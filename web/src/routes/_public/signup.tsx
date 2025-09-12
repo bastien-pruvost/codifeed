@@ -11,7 +11,7 @@ import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
 import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
-import { useSignupMutation } from "@/features/auth/api/signup-mutation"
+import { authMutations } from "@/features/auth/api/auth-mutations"
 import signupImg from "@/features/auth/assets/signup-illustration.webp"
 import { getErrorMessage } from "@/utils/errors"
 
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/_public/signup")({
 })
 
 function SignupPage() {
-  const signupMutation = useSignupMutation()
+  const signupMutation = authMutations.useSignup()
 
   const form = useAppForm({
     defaultValues,

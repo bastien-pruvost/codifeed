@@ -98,26 +98,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get the current user */
-        get: operations["user_me_users_me_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/users/profile/{username}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                username: string;
-            };
-            cookie?: never;
-        };
-        /** @description Get a user (with their profile) by username */
-        get: operations["user_get_user_profile_by_username_users_profile__string_username__get"];
+        get: operations["user_get_current_user_users_me_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -152,8 +133,8 @@ export interface paths {
             };
             cookie?: never;
         };
-        /** @description Get a user by username */
-        get: operations["user_get_user_by_username_users__string_username__get"];
+        /** @description Get a user detail by username */
+        get: operations["user_get_user_detail_by_username_users__string_username__get"];
         put?: never;
         post?: never;
         /** @description Delete a user by username */
@@ -716,7 +697,7 @@ export interface operations {
             };
         };
     };
-    user_me_users_me_get: {
+    user_get_current_user_users_me_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -732,53 +713,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserPublic"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "4XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "5XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    user_get_user_profile_by_username_users_profile__string_username__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                username: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserDetail"];
                 };
             };
             /** @description Unprocessable Content */
@@ -860,7 +794,7 @@ export interface operations {
             };
         };
     };
-    user_get_user_by_username_users__string_username__get: {
+    user_get_user_detail_by_username_users__string_username__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -877,7 +811,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserPublic"];
+                    "application/json": components["schemas"]["UserDetail"];
                 };
             };
             /** @description Unprocessable Content */
@@ -962,9 +896,8 @@ export enum ApiPaths {
     auth_signup_auth_signup_post = "/auth/signup",
     healthcheck_healthcheck_healthcheck_get = "/healthcheck",
     healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
-    user_me_users_me_get = "/users/me",
-    user_get_user_profile_by_username_users_profile__string_username__get = "/users/profile/{username}",
+    user_get_current_user_users_me_get = "/users/me",
     user_search_user_by_username_users_search_get = "/users/search",
     user_delete_user_by_username_users__string_username__delete = "/users/{username}",
-    user_get_user_by_username_users__string_username__get = "/users/{username}"
+    user_get_user_detail_by_username_users__string_username__get = "/users/{username}"
 }

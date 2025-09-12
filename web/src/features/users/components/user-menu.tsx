@@ -11,11 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useLogoutMutation } from "@/features/auth/api/logout-mutation"
+import { authMutations } from "@/features/auth/api/auth-mutations"
 import { UserAvatar } from "@/features/users/components/user-avatar"
 
 export function UserMenu({ user }: { user: UserPublic }) {
-  const { mutate: logout } = useLogoutMutation()
+  const logout = authMutations.useLogout()
 
   return (
     <DropdownMenu modal={false}>
@@ -48,7 +48,7 @@ export function UserMenu({ user }: { user: UserPublic }) {
           </Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem onSelect={() => logout()}>
+        <DropdownMenuItem onSelect={() => logout.mutate()}>
           <LogOutIcon />
           Log out
         </DropdownMenuItem>

@@ -7,13 +7,13 @@ import { lazy, Suspense } from "react"
 
 import type { RouterContext } from "@/main"
 import { Toaster } from "@/components/ui/sonner"
-import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
 import { shouldBeAuthenticated } from "@/features/auth/services/auth-flag-storage"
+import { userQueries } from "@/features/users/api/user-queries"
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context }) => {
     if (shouldBeAuthenticated()) {
-      await context.queryClient.ensureQueryData(currentUserQueryOptions())
+      await context.queryClient.ensureQueryData(userQueries.currentUser())
     }
   },
   component: RootRouteComponent,

@@ -1,12 +1,12 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 
 import { PublicHeader } from "@/components/layout/public-header"
-import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
+import { userQueries } from "@/features/users/api/user-queries"
 
 export const Route = createFileRoute("/_public")({
   beforeLoad: async ({ context }) => {
     const user = await context.queryClient.ensureQueryData(
-      currentUserQueryOptions(),
+      userQueries.currentUser(),
     )
     if (user) {
       throw redirect({ to: "/home" })

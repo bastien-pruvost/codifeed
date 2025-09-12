@@ -4,12 +4,12 @@ import { AppHeader } from "@/components/layout/app-header"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Wrapper } from "@/components/ui/wrapper"
-import { currentUserQueryOptions } from "@/features/auth/api/current-user-query"
+import { userQueries } from "@/features/users/api/user-queries"
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: async ({ context, location }) => {
     const user = await context.queryClient.ensureQueryData(
-      currentUserQueryOptions(),
+      userQueries.currentUser(),
     )
     if (!user) {
       throw redirect({
