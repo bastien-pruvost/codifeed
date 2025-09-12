@@ -23,7 +23,7 @@
 :root {
   /* Custom variables */
   --header-height: calc(--spacing(15));
-  --page-container-min-height: calc(100vh - var(--header-height) - 1px);
+  --page-container-min-height: calc(100svh - var(--header-height) - 1px);
 
   /* Shadcn UI variables */
   --radius: 0.625rem;
@@ -73,7 +73,7 @@
   --card-foreground: var(--color-neutral-50);
   --popover: var(--color-neutral-900);
   --popover-foreground: var(--color-neutral-50);
-  --primary: var(--color-sky-800);
+  --primary: var(--color-sky-700);
   --primary-foreground: var(--color-sky-50);
   --secondary: var(--color-neutral-800);
   --secondary-foreground: var(--color-neutral-50);

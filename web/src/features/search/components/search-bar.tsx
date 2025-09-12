@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react"
+import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { useState } from "react"
 
@@ -10,31 +11,13 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
+import { Spinner } from "@/components/ui/spinner"
+import { userQueries } from "@/features/users/api/user-queries"
 import { UserAvatar } from "@/features/users/components/user-avatar"
+import { useDebounceValue } from "@/hooks/use-debounce-value"
 import { cn } from "@/utils/classnames"
 
-const users = [
-  {
-    name: "John Doe",
-    username: "johndoe",
-    avatar: "https://avatar.iran.liara.run/public/1",
-  },
-  {
-    name: "Jane Doe",
-    username: "janedoe",
-    avatar: "https://avatar.iran.liara.run/public/2",
-  },
-  {
-    name: "Jean Bar",
-    username: "jeanbar",
-    avatar: "https://avatar.iran.liara.run/public/3",
-  },
-  {
-    name: "Franklin D. Roosevelt",
-    username: "franklin",
-    avatar: "https://avatar.iran.liara.run/public/4",
-  },
-]
+// Remote-backed search
 
 export function SearchBar({
   className,
@@ -42,44 +25,61 @@ export function SearchBar({
 }: ComponentProps<typeof Command>) {
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState("")
+  const [searchValue] = useDebounceValue(inputValue, 300)
+
+  const isDebouncing = inputValue !== searchValue
+
+  const { data, isFetching } = useQuery(
+    userQueries.listBySearch(searchValue, 1, 10),
+  )
+
+  const users = data?.data ?? []
 
   const handleValueChange = (value: string) => {
     setInputValue(value)
-    setOpen(!!value)
+    setOpen(!!value.trim())
   }
 
-  const filteredUsers = Array.isArray(users)
-    ? users.filter((user) =>
-        user.name.toLowerCase().includes(inputValue.toLowerCase()),
-      )
-    : []
-
-  console.log("filteredUsers", filteredUsers)
   return (
     <Command
       shouldFilter={false}
-      className={cn("rounded-lg border shadow-md", className)}
+      className={cn("rounded-lg border shadow-xs", className)}
       {...props}
     >
       <CommandInput
         placeholder="Search..."
         onValueChange={handleValueChange}
-        onFocus={() => setOpen(true)}
+        onFocus={() => setOpen(!!inputValue.trim())}
         onBlur={() => setOpen(false)}
       />
       {open && (
         <CommandList>
-          <CommandGroup heading="Users">
-            {filteredUsers.length > 0 &&
-              filteredUsers.map((user) => (
+          <CommandGroup
+            heading={
+              <div className="flex items-center">
+                Users{" "}
+                {(isFetching || isDebouncing) && users.length > 0 ? (
+                  <Spinner className="ml-2 size-4" />
+                ) : null}
+              </div>
+            }
+          >
+            {(isFetching || isDebouncing) && users.length === 0 ? (
+              <CommandItem value="loading">
+                <Spinner className="mr-2 size-4" /> Searching…
+              </CommandItem>
+            ) : users.length > 0 ? (
+              users.map((user) => (
                 <CommandItem asChild key={user.username} value={user.username}>
                   <Link to="/$username" params={{ username: user.username }}>
                     <UserAvatar user={user} />
                     {user.name}
                   </Link>
                 </CommandItem>
-              ))}
-            <CommandEmpty>No users found</CommandEmpty>
+              ))
+            ) : (
+              <CommandEmpty>No users found</CommandEmpty>
+            )}
           </CommandGroup>
         </CommandList>
       )}
