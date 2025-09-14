@@ -5,6 +5,8 @@
 *.swp
 *.swo
 
+AGENTS.md
+
 # Logs
 *.log
 logs/
