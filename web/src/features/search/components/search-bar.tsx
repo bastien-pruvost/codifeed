@@ -1,6 +1,7 @@
 import type { ComponentProps } from "react"
+import { useClickOutside, useDebouncedValue } from "@mantine/hooks"
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 
 import {
@@ -14,20 +15,24 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { userQueries } from "@/features/users/api/user-queries"
 import { UserAvatar } from "@/features/users/components/user-avatar"
-import { useDebounceValue } from "@/hooks/use-debounce-value"
 import { cn } from "@/utils/classnames"
-
-// Remote-backed search
 
 export function SearchBar({
   className,
   ...props
 }: ComponentProps<typeof Command>) {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState("")
-  const [searchValue] = useDebounceValue(inputValue, 300)
-
+  const [searchValue] = useDebouncedValue(inputValue, 300)
   const isDebouncing = inputValue !== searchValue
+
+  function handleClickOutside() {
+    setOpen(false)
+    setInputValue("")
+  }
+
+  const containerRef = useClickOutside(handleClickOutside)
 
   const { data, isFetching } = useQuery(
     userQueries.listBySearch(searchValue, 1, 10),
@@ -44,13 +49,14 @@ export function SearchBar({
     <Command
       shouldFilter={false}
       className={cn("rounded-lg border shadow-xs", className)}
+      ref={containerRef}
       {...props}
     >
       <CommandInput
         placeholder="Search..."
+        value={inputValue}
         onValueChange={handleValueChange}
         onFocus={() => setOpen(!!inputValue.trim())}
-        onBlur={() => setOpen(false)}
       />
       {open && (
         <CommandList>
@@ -70,11 +76,19 @@ export function SearchBar({
               </CommandItem>
             ) : users.length > 0 ? (
               users.map((user) => (
-                <CommandItem asChild key={user.username} value={user.username}>
-                  <Link to="/$username" params={{ username: user.username }}>
-                    <UserAvatar user={user} />
-                    {user.name}
-                  </Link>
+                <CommandItem
+                  key={user.username}
+                  onSelect={() => {
+                    void navigate({
+                      to: "/$username",
+                      params: { username: user.username },
+                    })
+                    setOpen(false)
+                    setInputValue("")
+                  }}
+                >
+                  <UserAvatar user={user} />
+                  {user.name}
                 </CommandItem>
               ))
             ) : (
