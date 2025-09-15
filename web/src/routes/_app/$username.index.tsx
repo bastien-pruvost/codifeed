@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { CalendarIcon, LinkIcon, MapPinIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -14,13 +14,14 @@ import { PageContainer } from "@/components/ui/page-container"
 import { P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
 import { userQueries } from "@/features/users/api/user-queries"
+import { FollowButton } from "@/features/users/components/follow-button"
 import { UserAvatar } from "@/features/users/components/user-avatar"
 import { Route as AppRoute } from "@/routes/_app"
 
-export const Route = createFileRoute("/_app/$username")({
+export const Route = createFileRoute("/_app/$username/")({
   loader: async ({ context, params }) => {
     await context.queryClient.ensureQueryData(
-      userQueries.detail(params.username),
+      userQueries.detail({ username: params.username }),
     )
   },
   component: UserProfilePage,
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/_app/$username")({
 
 export function UserProfilePage() {
   const username = Route.useParams({ select: (params) => params.username })
-  const { data: user } = useSuspenseQuery(userQueries.detail(username))
+  const { data: user } = useSuspenseQuery(userQueries.detail({ username }))
   const { user: currentUser } = AppRoute.useRouteContext()
 
   const isOwnProfile = currentUser.id === user.id
@@ -93,6 +94,32 @@ export function UserProfilePage() {
                   </span>
                 ) : null}
               </div>
+
+              <div className="mt-4 flex items-center gap-6 text-sm">
+                <InlineLink asChild className="text-foreground">
+                  <Link
+                    to="/$username/following"
+                    params={{ username: user.username }}
+                  >
+                    <div>
+                      <span className="font-medium">{user.followingCount}</span>{" "}
+                      <span className="text-muted-foreground">Following</span>
+                    </div>
+                  </Link>
+                </InlineLink>
+
+                <InlineLink asChild className="text-foreground">
+                  <Link
+                    to="/$username/followers"
+                    params={{ username: user.username }}
+                  >
+                    <div>
+                      <span className="font-medium">{user.followersCount}</span>{" "}
+                      <span className="text-muted-foreground">Followers</span>
+                    </div>
+                  </Link>
+                </InlineLink>
+              </div>
             </div>
 
             {isOwnProfile ? (
@@ -100,7 +127,7 @@ export function UserProfilePage() {
                 Edit profile
               </Button>
             ) : (
-              <Button size="sm">Follow</Button>
+              <FollowButton user={user} />
             )}
           </CardContent>
         </Card>

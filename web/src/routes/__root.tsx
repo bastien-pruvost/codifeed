@@ -13,7 +13,7 @@ import { userQueries } from "@/features/users/api/user-queries"
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context }) => {
     if (shouldBeAuthenticated()) {
-      await context.queryClient.ensureQueryData(userQueries.currentUser())
+      await context.queryClient.prefetchQuery(userQueries.currentUser())
     }
   },
   component: RootRouteComponent,

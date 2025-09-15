@@ -35,7 +35,7 @@ export function SearchBar({
   const containerRef = useClickOutside(handleClickOutside)
 
   const { data, isFetching } = useQuery(
-    userQueries.listBySearch(searchValue, 1, 10),
+    userQueries.search({ q: searchValue, page: 1, itemsPerPage: 10 }),
   )
 
   const users = data?.data ?? []

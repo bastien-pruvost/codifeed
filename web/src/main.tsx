@@ -13,6 +13,7 @@ import "@/styles/global.css"
 
 import type { UserPublic } from "@/types/generated/api.gen"
 import { ErrorComponent } from "@/components/error-component"
+import { PageContainer } from "@/components/ui/page-container"
 import { ThemeProvider } from "@/hooks/use-theme"
 
 export interface RouterContext {
@@ -35,9 +36,9 @@ const router = createRouter({
   // defaultViewTransition: true,
   scrollRestoration: true,
   defaultPendingComponent: () => (
-    <div className={`p-2 text-2xl`}>
+    <PageContainer className="flex h-full items-center justify-center">
       <Spinner />
-    </div>
+    </PageContainer>
   ),
   defaultErrorComponent: ErrorComponent,
   defaultNotFoundComponent: ({ data: _data }) => {

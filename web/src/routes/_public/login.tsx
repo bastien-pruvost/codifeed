@@ -1,5 +1,5 @@
 import { revalidateLogic } from "@tanstack/react-form"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
 import { AlertCircleIcon } from "lucide-react"
 import { z } from "zod"
 
@@ -11,7 +11,7 @@ import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
 import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
-import { authMutations } from "@/features/auth/api/auth-mutations"
+import { useLoginMutation } from "@/features/auth/api/auth-mutations"
 import loginImg from "@/features/auth/assets/login-illustration.webp"
 import { getErrorMessage } from "@/utils/errors"
 
@@ -41,7 +41,12 @@ const loginDefaultValues: z.input<typeof loginFormSchema> = {
 }
 
 function LoginPage() {
-  const loginMutation = authMutations.useLogin()
+  const router = useRouter()
+  const redirectUrl = Route.useSearch({
+    select: (search) => search.redirect,
+  })
+
+  const loginMutation = useLoginMutation()
 
   const form = useAppForm({
     defaultValues: loginDefaultValues,
@@ -50,7 +55,11 @@ function LoginPage() {
     },
     validationLogic: revalidateLogic(),
     onSubmit: ({ value }) => {
-      loginMutation.mutate(value)
+      loginMutation.mutate(value, {
+        onSuccess: () => {
+          router.history.push(redirectUrl || "/home")
+        },
+      })
     },
   })
 

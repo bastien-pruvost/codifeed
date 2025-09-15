@@ -15,7 +15,9 @@ import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicSignupRouteImport } from './routes/_public/signup'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AppHomeRouteImport } from './routes/_app/home'
-import { Route as AppUsernameRouteImport } from './routes/_app/$username'
+import { Route as AppUsernameIndexRouteImport } from './routes/_app/$username.index'
+import { Route as AppUsernameFollowingRouteImport } from './routes/_app/$username.following'
+import { Route as AppUsernameFollowersRouteImport } from './routes/_app/$username.followers'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -45,50 +47,82 @@ const AppHomeRoute = AppHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AppRoute,
 } as any)
-const AppUsernameRoute = AppUsernameRouteImport.update({
-  id: '/$username',
-  path: '/$username',
+const AppUsernameIndexRoute = AppUsernameIndexRouteImport.update({
+  id: '/$username/',
+  path: '/$username/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppUsernameFollowingRoute = AppUsernameFollowingRouteImport.update({
+  id: '/$username/following',
+  path: '/$username/following',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppUsernameFollowersRoute = AppUsernameFollowersRouteImport.update({
+  id: '/$username/followers',
+  path: '/$username/followers',
   getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/$username': typeof AppUsernameRoute
   '/home': typeof AppHomeRoute
   '/login': typeof PublicLoginRoute
   '/signup': typeof PublicSignupRoute
   '/': typeof PublicIndexRoute
+  '/$username/followers': typeof AppUsernameFollowersRoute
+  '/$username/following': typeof AppUsernameFollowingRoute
+  '/$username': typeof AppUsernameIndexRoute
 }
 export interface FileRoutesByTo {
-  '/$username': typeof AppUsernameRoute
   '/home': typeof AppHomeRoute
   '/login': typeof PublicLoginRoute
   '/signup': typeof PublicSignupRoute
   '/': typeof PublicIndexRoute
+  '/$username/followers': typeof AppUsernameFollowersRoute
+  '/$username/following': typeof AppUsernameFollowingRoute
+  '/$username': typeof AppUsernameIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
-  '/_app/$username': typeof AppUsernameRoute
   '/_app/home': typeof AppHomeRoute
   '/_public/login': typeof PublicLoginRoute
   '/_public/signup': typeof PublicSignupRoute
   '/_public/': typeof PublicIndexRoute
+  '/_app/$username/followers': typeof AppUsernameFollowersRoute
+  '/_app/$username/following': typeof AppUsernameFollowingRoute
+  '/_app/$username/': typeof AppUsernameIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/$username' | '/home' | '/login' | '/signup' | '/'
+  fullPaths:
+    | '/home'
+    | '/login'
+    | '/signup'
+    | '/'
+    | '/$username/followers'
+    | '/$username/following'
+    | '/$username'
   fileRoutesByTo: FileRoutesByTo
-  to: '/$username' | '/home' | '/login' | '/signup' | '/'
+  to:
+    | '/home'
+    | '/login'
+    | '/signup'
+    | '/'
+    | '/$username/followers'
+    | '/$username/following'
+    | '/$username'
   id:
     | '__root__'
     | '/_app'
     | '/_public'
-    | '/_app/$username'
     | '/_app/home'
     | '/_public/login'
     | '/_public/signup'
     | '/_public/'
+    | '/_app/$username/followers'
+    | '/_app/$username/following'
+    | '/_app/$username/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -140,24 +174,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHomeRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/$username': {
-      id: '/_app/$username'
+    '/_app/$username/': {
+      id: '/_app/$username/'
       path: '/$username'
       fullPath: '/$username'
-      preLoaderRoute: typeof AppUsernameRouteImport
+      preLoaderRoute: typeof AppUsernameIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/$username/following': {
+      id: '/_app/$username/following'
+      path: '/$username/following'
+      fullPath: '/$username/following'
+      preLoaderRoute: typeof AppUsernameFollowingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/$username/followers': {
+      id: '/_app/$username/followers'
+      path: '/$username/followers'
+      fullPath: '/$username/followers'
+      preLoaderRoute: typeof AppUsernameFollowersRouteImport
       parentRoute: typeof AppRoute
     }
   }
 }
 
 interface AppRouteChildren {
-  AppUsernameRoute: typeof AppUsernameRoute
   AppHomeRoute: typeof AppHomeRoute
+  AppUsernameFollowersRoute: typeof AppUsernameFollowersRoute
+  AppUsernameFollowingRoute: typeof AppUsernameFollowingRoute
+  AppUsernameIndexRoute: typeof AppUsernameIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppUsernameRoute: AppUsernameRoute,
   AppHomeRoute: AppHomeRoute,
+  AppUsernameFollowersRoute: AppUsernameFollowersRoute,
+  AppUsernameFollowingRoute: AppUsernameFollowingRoute,
+  AppUsernameIndexRoute: AppUsernameIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

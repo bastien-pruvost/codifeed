@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useRouter } from "@tanstack/react-router"
 import { ChevronDownIcon, LogOutIcon, UserIcon } from "lucide-react"
 
 import type { UserPublic } from "@/types/generated/api.gen"
@@ -11,11 +11,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { authMutations } from "@/features/auth/api/auth-mutations"
+import { useLogoutMutation } from "@/features/auth/api/auth-mutations"
 import { UserAvatar } from "@/features/users/components/user-avatar"
 
 export function UserMenu({ user }: { user: UserPublic }) {
-  const logout = authMutations.useLogout()
+  const router = useRouter()
+  const logout = useLogoutMutation()
 
   return (
     <DropdownMenu modal={false}>
@@ -48,7 +49,15 @@ export function UserMenu({ user }: { user: UserPublic }) {
           </Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem onSelect={() => logout.mutate()}>
+        <DropdownMenuItem
+          onSelect={() =>
+            logout.mutate(undefined, {
+              onSuccess: () => {
+                router.history.push("/")
+              },
+            })
+          }
+        >
           <LogOutIcon />
           Log out
         </DropdownMenuItem>

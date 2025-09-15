@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"
 import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
-import { authMutations } from "@/features/auth/api/auth-mutations"
+import { useRefreshTokenMutation } from "@/features/auth/api/auth-mutations"
 
 export const Route = createFileRoute("/_app/home")({
   component: RouteComponent,
@@ -15,7 +15,7 @@ function RouteComponent() {
     select: (context) => context.user,
   })
 
-  const refreshTokenMutation = authMutations.useRefreshToken()
+  const refreshTokenMutation = useRefreshTokenMutation()
 
   return (
     <PageContainer>

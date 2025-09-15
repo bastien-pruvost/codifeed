@@ -13,7 +13,7 @@ T = TypeVar("T")
 
 class ApiBaseModel(
     BaseModel
-):  # Keep BaseModel from pydantic (not SQLModel) to avoid breaking camelCase
+):  # Important: Keep BaseModel from pydantic (not SQLModel) to avoid breaking camelCase aliases
     """Base model to be used for all API models (Converts snake_case to camelCase)"""
 
     model_config = {
@@ -36,17 +36,24 @@ class IdMixin(ApiBaseModel):
     )
 
 
-class TimestampsMixin(ApiBaseModel):
+class CreatedAtMixin(ApiBaseModel):
     created_at: datetime | None = Field(
         default=None,
         sa_type=TIMESTAMP(timezone=True),  # pyright: ignore[reportArgumentType]
         sa_column_kwargs={"nullable": False, "server_default": func.now()},
     )
+
+
+class UpdatedAtMixin(ApiBaseModel):
     updated_at: datetime | None = Field(
         default=None,
         sa_type=TIMESTAMP(timezone=True),  # pyright: ignore[reportArgumentType]
         sa_column_kwargs={"nullable": True, "onupdate": func.now()},
     )
+
+
+class TimestampsMixin(UpdatedAtMixin, CreatedAtMixin):
+    pass
 
 
 class SoftDeleteMixin(ApiBaseModel):
@@ -71,9 +78,7 @@ class SoftDeleteMixin(ApiBaseModel):
         return self.deleted_at is not None
 
     @classmethod
-    def select_active(
-        cls,
-    ):
+    def select_active(cls):
         """Build a select for active (non-deleted) records."""
         return select(cls).where(col(cls.deleted_at).is_(None))
 
@@ -81,11 +86,6 @@ class SoftDeleteMixin(ApiBaseModel):
     def select_deleted(cls):
         """Build a select for only soft-deleted records."""
         return select(cls).where(col(cls.deleted_at).is_not(None))
-
-    @classmethod
-    def select_all(cls):
-        """Build a select for all records."""
-        return select(cls)
 
 
 # ------ Pagination ------
@@ -125,6 +125,10 @@ class UserPublic(UserBase, TimestampsMixin):
 
 class UserDetail(UserPublic):
     profile: "ProfileBase"
+    followers_count: int = 0
+    following_count: int = 0
+    is_following: bool = False
+    is_followed_by: bool = False
 
 
 class UsersPublic(PaginatedResponse[UserPublic]):
@@ -151,6 +155,19 @@ class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=
     )
     posts: list["Post"] = Relationship(back_populates="author")
 
+    # Links to follow relationships (self-referential via link model)
+    following_links: list["UserFollow"] = Relationship(
+        back_populates="follower",
+        cascade_delete=True,
+        sa_relationship_kwargs={"foreign_keys": "[UserFollow.follower_id]"},
+    )
+    followers_links: list["UserFollow"] = Relationship(
+        back_populates="following",
+        cascade_delete=True,
+        sa_relationship_kwargs={"foreign_keys": "[UserFollow.following_id]"},
+    )
+
+    # Indexes for search
     __table_args__ = (
         Index(
             "ix_user_username_trgm",
@@ -202,6 +219,33 @@ class PostPublic(PostBase, IdMixin):
 class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
     author_id: UUID = Field(foreign_key="user.id")
     author: User = Relationship(back_populates="posts")
+
+
+# ------ Follow (User <-> User) ------
+
+
+class UserFollow(SQLModel, table=True):
+    follower_id: UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
+    following_id: UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
+    created_at: datetime | None = Field(
+        default=None,
+        sa_type=TIMESTAMP(timezone=True),  # pyright: ignore[reportArgumentType]
+        sa_column_kwargs={"nullable": False, "server_default": func.now()},
+    )
+
+    follower: "User" = Relationship(
+        back_populates="following_links",
+        sa_relationship_kwargs={"foreign_keys": "[UserFollow.follower_id]"},
+    )
+    following: "User" = Relationship(
+        back_populates="followers_links",
+        sa_relationship_kwargs={"foreign_keys": "[UserFollow.following_id]"},
+    )
+
+    # __table_args__ = (
+    #     Index("ix_user_follow_follower_id", "follower_id"),
+    #     Index("ix_user_follow_following_id", "following_id"),
+    # )
 
 
 # ------ Auth ------
