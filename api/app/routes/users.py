@@ -381,7 +381,7 @@ class FollowersFollowingQuery(PaginationQuery):
     description="List followers of a user (public lists)",
 )
 @login_required
-def list_user_followers(path: UsernamePath, query: FollowersFollowingQuery):
+def get_user_followers(path: UsernamePath, query: FollowersFollowingQuery):
     with get_session() as session:
         target = session.exec(select(User).where(User.username == path.username)).first()
 
@@ -393,11 +393,11 @@ def list_user_followers(path: UsernamePath, query: FollowersFollowingQuery):
 
         statement = (
             User.select_active()
-            # .join(UserFollow, col(User.id) == UserFollow.follower_id)
-            # .where(
-            #     UserFollow.following_id == target.id,
-            # )
-            # .order_by(col(UserFollow.created_at).desc(), col(User.username).asc())
+            .join(UserFollow, col(User.id) == UserFollow.follower_id)
+            .where(
+                UserFollow.following_id == target.id,
+            )
+            .order_by(col(UserFollow.created_at).desc(), col(User.username).asc())
         )
 
         users, meta = paginate_query(session=session, statement=statement, pagination=query)
@@ -412,7 +412,7 @@ def list_user_followers(path: UsernamePath, query: FollowersFollowingQuery):
     description="List users that a user is following (public lists)",
 )
 @login_required
-def list_user_following(path: UsernamePath, query: FollowersFollowingQuery):
+def get_user_following(path: UsernamePath, query: FollowersFollowingQuery):
     with get_session() as session:
         target = session.exec(select(User).where(User.username == path.username)).first()
 

@@ -9,7 +9,7 @@ import {
 
 type Theme = "dark" | "light" | "system"
 
-type ThemeContextValue = {
+interface ThemeContextValue {
   theme: Theme
   setTheme: (theme: Theme) => void
 }

@@ -1,18 +1,37 @@
 import { type ReactNode } from "react"
 
-import { Card, CardContent, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { InlineLink } from "@/components/ui/inline-link"
-import { Spinner } from "@/components/ui/spinner"
-import { useInfiniteScroll } from "@/hooks/use-infinite-scroll"
+import { UserAvatar } from "@/features/users/components/user-avatar"
 import { type UserPublic } from "@/types/generated/api.gen"
 
-import { UserAvatar } from "./user-avatar"
+interface UserListTitleProps {
+  children: ReactNode
+}
+
+export function UserListTitle({ children }: UserListTitleProps) {
+  return (
+    <CardHeader>
+      <CardTitle>{children}</CardTitle>
+    </CardHeader>
+  )
+}
+
+interface UserListContentProps {
+  children: ReactNode
+}
+
+export function UserListContent({ children }: UserListContentProps) {
+  return (
+    <CardContent className="flex flex-col divide-y">{children}</CardContent>
+  )
+}
 
 interface UserListItemProps {
   user: UserPublic
 }
 
-function UserListItem({ user }: UserListItemProps) {
+export function UserListItem({ user }: UserListItemProps) {
   return (
     <div className="flex items-center gap-3 py-3">
       <UserAvatar user={user} className="size-9" />
@@ -29,44 +48,9 @@ function UserListItem({ user }: UserListItemProps) {
 }
 
 interface UserListProps {
-  title: string
-  users: UserPublic[]
-  hasNextPage: boolean
-  isFetchingNextPage: boolean
-  fetchNextPage: () => Promise<unknown> | void
-  children?: ReactNode
+  children: ReactNode
 }
 
-export function UserList({
-  title,
-  users,
-  hasNextPage,
-  isFetchingNextPage,
-  fetchNextPage,
-  children,
-}: UserListProps) {
-  const { ref } = useInfiniteScroll({
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  })
-
-  return (
-    <Card>
-      <CardContent>
-        <CardTitle className="mb-4">{title}</CardTitle>
-        <div className="flex flex-col divide-y">
-          {users.map((user) => (
-            <UserListItem key={user.id} user={user} />
-          ))}
-        </div>
-        {children}
-        {isFetchingNextPage ? (
-          <Spinner className="mx-auto my-8" />
-        ) : hasNextPage ? (
-          <div ref={ref} className="my-2 h-4" />
-        ) : null}
-      </CardContent>
-    </Card>
-  )
+export function UserList({ children }: UserListProps) {
+  return <Card>{children}</Card>
 }

@@ -5,7 +5,16 @@ import { useMemo } from "react"
 import { PageContainer } from "@/components/ui/page-container"
 import { Wrapper } from "@/components/ui/wrapper"
 import { userQueries } from "@/features/users/api/user-queries"
-import { UserList } from "@/features/users/components/user-list"
+import {
+  UserList,
+  UserListContent,
+  UserListItem,
+  UserListTitle,
+} from "@/features/users/components/user-list"
+import {
+  InfiniteScroll,
+  InfiniteScrollTrigger,
+} from "@/hooks/use-infinite-scroll"
 
 export const Route = createFileRoute("/_app/$username/followers")({
   loader: async ({ context, params }) => {
@@ -22,7 +31,7 @@ export const Route = createFileRoute("/_app/$username/followers")({
 function FollowersPage() {
   const username = Route.useParams({ select: (p) => p.username })
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useSuspenseInfiniteQuery(
       userQueries.followersInfinite({ username, itemsPerPage: 5 }),
     )
@@ -30,29 +39,38 @@ function FollowersPage() {
   const items = useMemo(() => {
     const originalItems = data.pages.flatMap((p) => p.data)
     const multipliedItems = []
-
     for (let i = 0; i < 4; i++) {
       multipliedItems.push(
-        ...originalItems.map((user, index) => ({
-          ...user,
-          id: `${user.id}_${i}_${index}`,
+        ...originalItems.map((item) => ({
+          ...item,
+          id: `${item.id}_${i}`,
         })),
       )
     }
-
     return multipliedItems
   }, [data])
 
   return (
     <PageContainer>
       <Wrapper>
-        <UserList
-          title="Followers"
-          users={items}
+        <InfiniteScroll
+          fetchNextPage={fetchNextPage}
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
-          fetchNextPage={() => void fetchNextPage()}
-        />
+          options={{
+            rootMargin: "50% 0px",
+          }}
+        >
+          <UserList>
+            <UserListTitle>Followers</UserListTitle>
+            <UserListContent>
+              {items.map((user) => (
+                <UserListItem key={user.id} user={user} />
+              ))}
+            </UserListContent>
+            <InfiniteScrollTrigger />
+          </UserList>
+        </InfiniteScroll>
       </Wrapper>
     </PageContainer>
   )
