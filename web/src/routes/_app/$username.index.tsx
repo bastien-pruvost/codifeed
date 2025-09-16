@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_app/$username/")({
   component: UserProfilePage,
 })
 
-export function UserProfilePage() {
+function UserProfilePage() {
   const username = Route.useParams({ select: (params) => params.username })
   const { data: user } = useSuspenseQuery(userQueries.detail({ username }))
   const { user: currentUser } = AppRoute.useRouteContext()

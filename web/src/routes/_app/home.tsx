@@ -7,10 +7,10 @@ import { Wrapper } from "@/components/ui/wrapper"
 import { useRefreshTokenMutation } from "@/features/auth/api/auth-mutations"
 
 export const Route = createFileRoute("/_app/home")({
-  component: RouteComponent,
+  component: HomePage,
 })
 
-function RouteComponent() {
+function HomePage() {
   const user = Route.useRouteContext({
     select: (context) => context.user,
   })

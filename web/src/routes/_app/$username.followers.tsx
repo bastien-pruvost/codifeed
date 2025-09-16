@@ -25,10 +25,10 @@ export const Route = createFileRoute("/_app/$username/followers")({
       }),
     )
   },
-  component: FollowersPage,
+  component: UserFollowersPage,
 })
 
-function FollowersPage() {
+function UserFollowersPage() {
   const username = Route.useParams({ select: (p) => p.username })
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
