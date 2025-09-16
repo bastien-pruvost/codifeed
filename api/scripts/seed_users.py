@@ -1,14 +1,12 @@
-from __future__ import annotations
-
 import os
 from typing import Iterable
 
 from sqlmodel import select
 
 from app.database import get_session
-from app.fixtures.users import USERS_FIXTURES
 from app.models import Profile, User
 from app.utils.password import hash_password
+from fixtures.users import USERS_FIXTURES
 
 
 def ensure_users(fixtures: Iterable[dict]) -> None:
