@@ -42,7 +42,7 @@ export function FollowButton({ user }: FollowButtonProps) {
     <>
       <Button
         size="sm"
-        variant="secondary"
+        variant={hovered ? "destructive" : "secondary"}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onClick={() => setShowConfirm(true)}

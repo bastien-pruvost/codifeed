@@ -64,8 +64,10 @@ export function useLogoutMutation() {
 
   return useMutation({
     mutationFn: () => getData(api.POST("/auth/logout", {})),
-    onSuccess: async () => {
+    onMutate: () => {
       setShouldBeAuthenticated(false)
+    },
+    onSuccess: async () => {
       await queryClient.cancelQueries()
       queryClient.clear()
     },
