@@ -13,20 +13,15 @@ posts_router = APIBlueprint("posts", __name__, abp_tags=[posts_tag], abp_respons
 
 
 # class GetPostsQuery(ApiBaseModel):
-#     # page: int = 1
-#     # limit: int = 10
+#     page: int = 1
 #     user_id: int | None = None
 
 
 # @posts_router.get(
 #     "/posts",
-#     responses={200: MessageResponse},
+#     responses={200: PostRead},
 #     description="Get all posts",
-#     security=[{"cookieAuth": []}],
 # )
 # @login_required
-# def get_posts(query: GetPostsQuery):
-#     user_id = get_jwt_identity()
-#     return success_response(
-#         MessageResponse(message=f"Posts fetched successfully by {user_id}").model_dump()
-#     )
+# def get_posts(query: GetPostsQuery, user: User):
+#     return success_response(PostRead.model_validate(user.posts).model_dump())

@@ -207,6 +207,11 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /**
+         * ApiBaseModel
+         * @description Base model to be used for all API models (Converts snake_case to camelCase)
+         */
+        ApiBaseModel: Record<string, never>;
+        /**
          * ErrorResponse
          * @description Standard error response format
          */
@@ -241,30 +246,21 @@ export interface components {
             /** Password */
             password: string;
         };
-        /** LoginResponse */
-        LoginResponse: {
-            /**
-             * Message
-             * @default Logged in successfully.
-             */
-            message: string;
-            user: components["schemas"]["UserPublic"];
-        };
-        /** LogoutResponse */
-        LogoutResponse: {
-            /**
-             * Message
-             * @default Logged out successfully.
-             */
-            message: string;
-        };
         /** PaginationMeta */
         PaginationMeta: {
             /** Hasmore */
             hasMore: boolean;
-            /** Itemsperpage */
+            /**
+             * Itemsperpage
+             * @description Number of items per page
+             * @default 24
+             */
             itemsPerPage: number;
-            /** Page */
+            /**
+             * Page
+             * @description Page number
+             * @default 1
+             */
             page: number;
             /** Totalcount */
             totalCount: number;
@@ -291,24 +287,6 @@ export interface components {
              * @default null
              */
             website: string | null;
-        };
-        /** RefreshResponse */
-        RefreshResponse: {
-            /**
-             * Message
-             * @default Token refreshed successfully.
-             */
-            message: string;
-            user: components["schemas"]["UserPublic"];
-        };
-        /** SignupResponse */
-        SignupResponse: {
-            /**
-             * Message
-             * @default Account created successfully.
-             */
-            message: string;
-            user: components["schemas"]["UserPublic"];
         };
         /** UserCreate */
         UserCreate: {
@@ -376,6 +354,12 @@ export interface components {
             /** Username */
             username: string;
         };
+        /** UserList */
+        UserList: {
+            /** Data */
+            data: components["schemas"]["UserPublic"][];
+            meta: components["schemas"]["PaginationMeta"];
+        };
         /** UserPublic */
         UserPublic: {
             /**
@@ -404,12 +388,6 @@ export interface components {
             updatedAt: string | null;
             /** Username */
             username: string;
-        };
-        /** UsersPublic */
-        UsersPublic: {
-            /** Data */
-            data: components["schemas"]["UserPublic"][];
-            meta: components["schemas"]["PaginationMeta"];
         };
         /**
          * ValidationErrorItem
@@ -480,19 +458,16 @@ export interface components {
     headers: never;
     pathItems: never;
 }
+export type ApiBaseModel = components['schemas']['ApiBaseModel'];
 export type ErrorResponse = components['schemas']['ErrorResponse'];
 export type HealthcheckResponse = components['schemas']['HealthcheckResponse'];
 export type LoginCredentials = components['schemas']['LoginCredentials'];
-export type LoginResponse = components['schemas']['LoginResponse'];
-export type LogoutResponse = components['schemas']['LogoutResponse'];
 export type PaginationMeta = components['schemas']['PaginationMeta'];
 export type ProfileBase = components['schemas']['ProfileBase'];
-export type RefreshResponse = components['schemas']['RefreshResponse'];
-export type SignupResponse = components['schemas']['SignupResponse'];
 export type UserCreate = components['schemas']['UserCreate'];
 export type UserDetail = components['schemas']['UserDetail'];
+export type UserList = components['schemas']['UserList'];
 export type UserPublic = components['schemas']['UserPublic'];
-export type UsersPublic = components['schemas']['UsersPublic'];
 export type ValidationErrorItem = components['schemas']['ValidationErrorItem'];
 export type ValidationErrorModel = components['schemas']['ValidationErrorModel'];
 export type $defs = Record<string, never>;
@@ -516,7 +491,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LoginResponse"];
+                    "application/json": components["schemas"]["UserPublic"];
                 };
             };
             /** @description Unprocessable Content */
@@ -561,7 +536,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LogoutResponse"];
+                    "application/json": components["schemas"]["ApiBaseModel"];
                 };
             };
             /** @description Unprocessable Content */
@@ -606,7 +581,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RefreshResponse"];
+                    "application/json": components["schemas"]["UserPublic"];
                 };
             };
             /** @description Unprocessable Content */
@@ -655,7 +630,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SignupResponse"];
+                    "application/json": components["schemas"]["UserPublic"];
                 };
             };
             /** @description Unprocessable Content */
@@ -842,7 +817,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UsersPublic"];
+                    "application/json": components["schemas"]["UserList"];
                 };
             };
             /** @description Unprocessable Content */
@@ -1082,7 +1057,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UsersPublic"];
+                    "application/json": components["schemas"]["UserList"];
                 };
             };
             /** @description Unprocessable Content */
@@ -1134,7 +1109,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UsersPublic"];
+                    "application/json": components["schemas"]["UserList"];
                 };
             };
             /** @description Unprocessable Content */

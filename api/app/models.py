@@ -93,12 +93,10 @@ class SoftDeleteMixin(ApiBaseModel):
 
 class PaginationQuery(ApiBaseModel):
     page: int = Field(default=1, ge=1, description="Page number")
-    items_per_page: int = Field(default=20, ge=1, le=1500, description="Number of items per page")
+    items_per_page: int = Field(default=24, ge=1, le=2400, description="Number of items per page")
 
 
-class PaginationMeta(ApiBaseModel):
-    page: int
-    items_per_page: int
+class PaginationMeta(PaginationQuery):
     total_count: int
     has_more: bool
 
@@ -112,43 +110,15 @@ class PaginatedResponse(ApiBaseModel, Generic[T]):
 
 
 class UserBase(ApiBaseModel):
-    email: str = Field(unique=True, index=True, max_length=255)
-    username: str = Field(unique=True, index=True, max_length=255)
-    name: str = Field(max_length=255)
+    email: str = Field(unique=True, index=True, min_length=1, max_length=255)
+    username: str = Field(unique=True, index=True, min_length=1, max_length=255)
+    name: str = Field(min_length=1, max_length=255)
     avatar: str | None = Field(default=None, max_length=255)
-    # test_field: str | None = Field(default=None, max_length=255)
-
-
-class UserPublic(UserBase, TimestampsMixin):
-    id: UUID
-
-
-class UserDetail(UserPublic):
-    profile: "ProfileBase"
-    followers_count: int = 0
-    following_count: int = 0
-    is_following: bool = False
-    is_followed_by: bool = False
-
-
-class UsersPublic(PaginatedResponse[UserPublic]):
-    pass
-
-
-class UsersDetail(PaginatedResponse[UserDetail]):
-    pass
-
-
-class UserCreate(UserBase):
-    password: str = Field(max_length=255)
-
-
-class UserUpdate(UserBase):
-    pass
 
 
 class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
-    hashed_password: str = Field(max_length=255)
+    hashed_password: str = Field(min_length=1, max_length=255)
+
     profile: "Profile" = Relationship(
         back_populates="user",
         cascade_delete=True,
@@ -184,7 +154,31 @@ class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=
     )
 
 
-# ------ Profile ------
+class UserPublic(UserBase, TimestampsMixin):
+    id: UUID
+
+
+class UserList(PaginatedResponse[UserPublic]):
+    pass
+
+
+class UserDetail(UserPublic):
+    profile: "ProfileBase"
+    followers_count: int = Field(default=0, ge=0)
+    following_count: int = Field(default=0, ge=0)
+    is_following: bool = False
+    is_followed_by: bool = False
+
+
+class UserCreate(UserBase):
+    password: str = Field(min_length=1, max_length=255)
+
+
+class UserUpdate(UserBase):
+    pass
+
+
+# ------ Profile (User Profile) ------
 
 
 class ProfileBase(ApiBaseModel):
@@ -196,12 +190,13 @@ class ProfileBase(ApiBaseModel):
 
 class Profile(ProfileBase, SQLModel, table=True):
     user_id: UUID | None = Field(
-        default=None,
+        foreign_key="user.id",
         primary_key=True,
         unique=True,
-        foreign_key="user.id",
+        default=None,
         ondelete="CASCADE",
     )
+
     user: User = Relationship(back_populates="profile")
 
 
@@ -209,22 +204,25 @@ class Profile(ProfileBase, SQLModel, table=True):
 
 
 class PostBase(ApiBaseModel):
-    content: str = Field(max_length=255)
-
-
-class PostPublic(PostBase, IdMixin):
-    author: "UserPublic"
+    content: str = Field(min_length=1, max_length=255)
 
 
 class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
     author_id: UUID = Field(foreign_key="user.id")
+
     author: User = Relationship(back_populates="posts")
 
 
-# ------ Follow (User <-> User) ------
+class PostPublic(PostBase, IdMixin):
+    author: UserPublic
+
+
+# ------ UserFollow (User Self Reference) ------
 
 
 class UserFollow(SQLModel, table=True):
+    __tablename__: str = "user_follow"
+
     follower_id: UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
     following_id: UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
     created_at: datetime | None = Field(
@@ -233,11 +231,11 @@ class UserFollow(SQLModel, table=True):
         sa_column_kwargs={"nullable": False, "server_default": func.now()},
     )
 
-    follower: "User" = Relationship(
+    follower: User = Relationship(
         back_populates="following_links",
         sa_relationship_kwargs={"foreign_keys": "[UserFollow.follower_id]"},
     )
-    following: "User" = Relationship(
+    following: User = Relationship(
         back_populates="followers_links",
         sa_relationship_kwargs={"foreign_keys": "[UserFollow.following_id]"},
     )
@@ -246,37 +244,3 @@ class UserFollow(SQLModel, table=True):
     #     Index("ix_user_follow_follower_id", "follower_id"),
     #     Index("ix_user_follow_following_id", "following_id"),
     # )
-
-
-# ------ Auth ------
-
-
-class LoginCredentials(ApiBaseModel):
-    email: str
-    password: str
-
-
-class SignupResponse(ApiBaseModel):
-    user: UserPublic
-    message: str = "Account created successfully."
-
-
-class LoginResponse(ApiBaseModel):
-    user: UserPublic
-    message: str = "Logged in successfully."
-
-
-class RefreshResponse(ApiBaseModel):
-    user: UserPublic
-    message: str = "Token refreshed successfully."
-
-
-class LogoutResponse(ApiBaseModel):
-    message: str = "Logged out successfully."
-
-
-# ------ Healthcheck ------
-
-
-class HealthcheckResponse(ApiBaseModel):
-    status: str

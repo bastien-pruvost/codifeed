@@ -1,13 +1,17 @@
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 
-from app.models import HealthcheckResponse
+from app.models import ApiBaseModel
 from app.utils.response import abp_responses, success_response
 
 healthcheck_tag = Tag(name="Healthcheck", description="Healthcheck routes")
 healthcheck_router = APIBlueprint(
     "healthcheck", __name__, abp_tags=[healthcheck_tag], abp_responses=abp_responses
 )
+
+
+class HealthcheckResponse(ApiBaseModel):
+    status: str
 
 
 @healthcheck_router.get(

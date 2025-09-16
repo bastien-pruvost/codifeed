@@ -11,12 +11,8 @@ from werkzeug.exceptions import BadRequest, InternalServerError, Unauthorized
 
 from app.database import get_session
 from app.models import (
-    LoginCredentials,
-    LoginResponse,
-    LogoutResponse,
+    ApiBaseModel,
     Profile,
-    RefreshResponse,
-    SignupResponse,
     User,
     UserCreate,
     UserPublic,
@@ -31,7 +27,7 @@ auth_router = APIBlueprint("auth", __name__, abp_tags=[auth_tag], abp_responses=
 
 @auth_router.post(
     "/auth/signup",
-    responses={201: SignupResponse},
+    responses={201: UserPublic},
     description="Create a new user account",
 )
 def signup(body: UserCreate):
@@ -50,7 +46,7 @@ def signup(body: UserCreate):
         session.commit()
         session.refresh(user)
 
-        response_data = SignupResponse(user=UserPublic.model_validate(user))
+        response_data = UserPublic.model_validate(user)
         response = success_response(response_data.model_dump(), 201)
 
         if not user.id:
@@ -63,9 +59,14 @@ def signup(body: UserCreate):
         return response
 
 
+class LoginCredentials(ApiBaseModel):
+    email: str
+    password: str
+
+
 @auth_router.post(
     "/auth/login",
-    responses={200: LoginResponse},
+    responses={200: UserPublic},
     description="Login a user with email and password",
 )
 def login(body: LoginCredentials):
@@ -77,7 +78,7 @@ def login(body: LoginCredentials):
             if not user or not verify_password(body.password, user.hashed_password):
                 raise BadRequest(description="Invalid email or password")
 
-            response_data = LoginResponse(user=UserPublic.model_validate(user))
+            response_data = UserPublic.model_validate(user)
             response = success_response(response_data.model_dump())
 
             if not user.id:
@@ -98,7 +99,7 @@ def login(body: LoginCredentials):
 
 @auth_router.post(
     "/auth/refresh",
-    responses={200: RefreshResponse},
+    responses={200: UserPublic},
     description="Refresh a user's tokens (access and refresh)",
 )
 @refresh_required
@@ -110,7 +111,7 @@ def refresh():
         if not user:
             raise Unauthorized(description="User not found")
 
-        response_data = RefreshResponse(user=UserPublic.model_validate(user))
+        response_data = UserPublic.model_validate(user)
         response = success_response(response_data.model_dump())
 
         access_token, refresh_token = create_tokens(user_id)
@@ -122,11 +123,10 @@ def refresh():
 
 @auth_router.post(
     "/auth/logout",
-    responses={200: LogoutResponse},
+    responses={200: ApiBaseModel},
     description="Logout a user by clearing cookies",
 )
 def logout():
-    response_data = LogoutResponse()
-    response = success_response(response_data.model_dump())
+    response = success_response({}, 204)
     unset_jwt_cookies(response)
     return response

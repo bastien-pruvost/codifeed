@@ -12,8 +12,8 @@ from app.models import (
     User,
     UserDetail,
     UserFollow,
+    UserList,
     UserPublic,
-    UsersPublic,
 )
 from app.utils.jwt import get_current_user_id, login_required
 from app.utils.pagination import paginate_query
@@ -138,7 +138,7 @@ class SearchQuery(PaginationQuery):
 
 @users_router.get(
     "/users/search",
-    responses={200: UsersPublic},
+    responses={200: UserList},
     description="Search users by name or username with pagination",
 )
 @login_required
@@ -192,9 +192,7 @@ def search_users(query: SearchQuery):
             pagination=query,
         )
 
-        return success_response(
-            UsersPublic.model_validate({"data": users, "meta": meta}).model_dump()
-        )
+        return success_response(UserList.model_validate({"data": users, "meta": meta}).model_dump())
 
 
 @users_router.delete(
@@ -371,17 +369,13 @@ def unfollow_user(path: UsernamePath):
         return success_response(response_data.model_dump())
 
 
-class FollowersFollowingQuery(PaginationQuery):
-    pass
-
-
 @users_router.get(
     "/users/<string:username>/followers",
-    responses={200: UsersPublic},
+    responses={200: UserList},
     description="List followers of a user (public lists)",
 )
 @login_required
-def get_user_followers(path: UsernamePath, query: FollowersFollowingQuery):
+def get_user_followers(path: UsernamePath, query: PaginationQuery):
     with get_session() as session:
         target = session.exec(select(User).where(User.username == path.username)).first()
 
@@ -401,18 +395,16 @@ def get_user_followers(path: UsernamePath, query: FollowersFollowingQuery):
         )
 
         users, meta = paginate_query(session=session, statement=statement, pagination=query)
-        return success_response(
-            UsersPublic.model_validate({"data": users, "meta": meta}).model_dump()
-        )
+        return success_response(UserList.model_validate({"data": users, "meta": meta}).model_dump())
 
 
 @users_router.get(
     "/users/<string:username>/following",
-    responses={200: UsersPublic},
+    responses={200: UserList},
     description="List users that a user is following (public lists)",
 )
 @login_required
-def get_user_following(path: UsernamePath, query: FollowersFollowingQuery):
+def get_user_following(path: UsernamePath, query: PaginationQuery):
     with get_session() as session:
         target = session.exec(select(User).where(User.username == path.username)).first()
 
@@ -432,6 +424,4 @@ def get_user_following(path: UsernamePath, query: FollowersFollowingQuery):
         )
 
         users, meta = paginate_query(session=session, statement=statement, pagination=query)
-        return success_response(
-            UsersPublic.model_validate({"data": users, "meta": meta}).model_dump()
-        )
+        return success_response(UserList.model_validate({"data": users, "meta": meta}).model_dump())

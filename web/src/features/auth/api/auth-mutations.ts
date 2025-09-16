@@ -11,9 +11,9 @@ export function useLoginMutation() {
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) =>
       getData(api.POST("/auth/login", { body: credentials })),
-    onSuccess: async (data) => {
+    onSuccess: async (user) => {
       setShouldBeAuthenticated(true)
-      queryClient.setQueryData(userQueries.currentUser().queryKey, data.user)
+      queryClient.setQueryData(userQueries.currentUser().queryKey, user)
       return queryClient.invalidateQueries({
         predicate: (q) =>
           q.queryKey.length !== userQueries.currentUser().queryKey.length ||
@@ -34,9 +34,9 @@ export function useSignupMutation() {
   return useMutation({
     mutationFn: async (user: UserCreate) =>
       getData(api.POST("/auth/signup", { body: user })),
-    onSuccess: async (data) => {
+    onSuccess: async (user) => {
       setShouldBeAuthenticated(true)
-      queryClient.setQueryData(userQueries.currentUser().queryKey, data.user)
+      queryClient.setQueryData(userQueries.currentUser().queryKey, user)
       return queryClient.invalidateQueries({
         predicate: (q) =>
           q.queryKey.length !== userQueries.currentUser().queryKey.length ||
@@ -53,8 +53,8 @@ export function useRefreshTokenMutation() {
 
   return useMutation({
     mutationFn: () => getData(api.POST("/auth/refresh")),
-    onSuccess: (data) => {
-      queryClient.setQueryData(userQueries.currentUser().queryKey, data.user)
+    onSuccess: (user) => {
+      queryClient.setQueryData(userQueries.currentUser().queryKey, user)
     },
   })
 }
