@@ -37,13 +37,13 @@ def init_db():
         "hashed_password": hash_password(
             config.FIRST_ADMIN_PASSWORD if config.FIRST_ADMIN_PASSWORD else generate_password(),
         ),
+        "avatar": f"https://api.dicebear.com/9.x/bottts/webp?seed={config.FIRST_ADMIN_USERNAME}",
     }
 
     default_profile = {
         "bio": "Administrator of the Codifeed app.",
         "location": "Paris, France",
         "website": "https://codifeed.bastienlimbour.com",
-        "avatar": "https://avatar.iran.liara.run/public/5",
         "birthdate": date(1995, 6, 21),
     }
 
