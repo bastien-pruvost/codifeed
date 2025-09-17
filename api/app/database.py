@@ -49,10 +49,8 @@ def init_db():
 
     with get_session() as session:
         if session.exec(select(User).where(User.email == default_user["email"])).first() is None:
-            user = User.model_validate(default_user)
-            profile = Profile.model_validate(default_profile)
-
-            user.profile = profile
+            profile = Profile(**default_profile)
+            user = User(**default_user, profile=profile)
 
             session.add(user)
             session.commit()

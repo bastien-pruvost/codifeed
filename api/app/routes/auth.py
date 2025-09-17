@@ -38,9 +38,10 @@ def signup(body: UserCreate):
         if existing_user:
             raise BadRequest(description="A user with this email already exists")
 
-        user = User.model_validate(body, update={"hashed_password": hash_password(body.password)})
-        profile = Profile.model_validate({})
-        user.profile = profile
+        profile = Profile()
+        user = User.model_validate(
+            body, update={"profile": profile, "hashed_password": hash_password(body.password)}
+        )
 
         session.add(user)
         session.commit()

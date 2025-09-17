@@ -1,8 +1,7 @@
 from datetime import date, datetime, timezone
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel
 from pydantic.alias_generators import to_camel
 from sqlmodel import TIMESTAMP, Field, Index, Relationship, SQLModel, col, func, select
 
@@ -11,18 +10,28 @@ T = TypeVar("T")
 # ------ API Base Model -------
 
 
-class ApiBaseModel(
-    BaseModel
-):  # Important: Keep BaseModel from pydantic (not SQLModel) to avoid breaking camelCase aliases
+class ApiBaseModel(SQLModel):
     """Base model to be used for all API models (Converts snake_case to camelCase)"""
 
-    model_config = {
+    model_config = {  # pyright: ignore[reportAssignmentType]
         "alias_generator": to_camel,
         "from_attributes": True,
         "validate_by_name": True,
         "validate_by_alias": True,
         "serialize_by_alias": True,
     }
+
+    def model_dump(self, *args, **kwargs) -> dict[str, Any]:
+        # Security to never expose password fields
+        sensitive_fields = {"hashed_password", "password"}
+        for field in sensitive_fields:
+            kwargs.pop(field, None)
+
+        # Ensure by_alias is True when not specified
+        if "by_alias" not in kwargs:
+            return super().model_dump(*args, **kwargs, by_alias=True)
+        else:
+            return super().model_dump(*args, **kwargs)
 
 
 # ------ Mixins -------
@@ -114,9 +123,10 @@ class UserBase(ApiBaseModel):
     username: str = Field(unique=True, index=True, min_length=1, max_length=255)
     name: str = Field(min_length=1, max_length=255)
     avatar: str | None = Field(default=None, max_length=255)
+    test_field: str | None = Field(default=None, max_length=255)
 
 
-class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
+class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, table=True):
     hashed_password: str = Field(min_length=1, max_length=255)
 
     profile: "Profile" = Relationship(
@@ -188,7 +198,7 @@ class ProfileBase(ApiBaseModel):
     birthdate: date | None = Field(default=None)
 
 
-class Profile(ProfileBase, SQLModel, table=True):
+class Profile(ProfileBase, table=True):
     user_id: UUID | None = Field(
         foreign_key="user.id",
         primary_key=True,
@@ -207,7 +217,7 @@ class PostBase(ApiBaseModel):
     content: str = Field(min_length=1, max_length=255)
 
 
-class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
+class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, table=True):
     author_id: UUID = Field(foreign_key="user.id")
 
     author: User = Relationship(back_populates="posts")
@@ -220,7 +230,7 @@ class PostPublic(PostBase, IdMixin):
 # ------ UserFollow (User Self Reference) ------
 
 
-class UserFollow(SQLModel, table=True):
+class UserFollow(ApiBaseModel, table=True):
     __tablename__: str = "user_follow"
 
     follower_id: UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")

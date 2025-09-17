@@ -301,6 +301,11 @@ export interface components {
             name: string;
             /** Password */
             password: string;
+            /**
+             * Testfield
+             * @default null
+             */
+            testField: string | null;
             /** Username */
             username: string;
         };
@@ -347,6 +352,11 @@ export interface components {
             name: string;
             profile: components["schemas"]["ProfileBase"];
             /**
+             * Testfield
+             * @default null
+             */
+            testField: string | null;
+            /**
              * Updatedat
              * @default null
              */
@@ -357,7 +367,7 @@ export interface components {
         /** UserList */
         UserList: {
             /** Data */
-            data: components["schemas"]["UserPublic"][];
+            data: unknown[];
             meta: components["schemas"]["PaginationMeta"];
         };
         /** UserPublic */
@@ -381,6 +391,11 @@ export interface components {
             id: string;
             /** Name */
             name: string;
+            /**
+             * Testfield
+             * @default null
+             */
+            testField: string | null;
             /**
              * Updatedat
              * @default null

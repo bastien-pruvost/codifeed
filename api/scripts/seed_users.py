@@ -21,26 +21,22 @@ def ensure_users(fixtures: Iterable[dict]) -> None:
 
     with get_session() as session:
         for item in fixtures:
-            user_data = dict(item["user"])  # shallow copy
+            user_data = dict(item.get("user", {}))
             profile_data = dict(item.get("profile", {}))
 
-            email = user_data["email"]
+            avatar = f"https://api.dicebear.com/9.x/bottts/webp?seed={user_data['username']}"
 
-            existing = session.exec(select(User).where(User.email == email)).first()
+            existing = session.exec(select(User).where(User.email == user_data["email"])).first()
             if existing is not None:
                 skipped_count += 1
                 continue
 
-            user = User.model_validate(
-                {
-                    **user_data,
-                    "hashed_password": hash_password(fake_user_password),
-                    "avatar": f"https://api.dicebear.com/9.x/bottts/webp?seed={user_data['username']}",
-                },
+            user = User(
+                **user_data,
+                avatar=avatar,
+                hashed_password=hash_password(fake_user_password),
+                profile=Profile(**profile_data),
             )
-
-            profile = Profile.model_validate(profile_data)
-            user.profile = profile
 
             session.add(user)
             created_count += 1
