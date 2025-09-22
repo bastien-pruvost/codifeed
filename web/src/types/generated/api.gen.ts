@@ -98,7 +98,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get the current user */
-        get: operations["user_get_current_user_users_me_get"];
+        get: operations["user_get_current_user_route_users_me_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -115,7 +115,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Search users by name or username with pagination */
-        get: operations["user_search_users_users_search_get"];
+        get: operations["user_search_users_route_users_search_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -134,11 +134,11 @@ export interface paths {
             cookie?: never;
         };
         /** @description Get a user detail by username */
-        get: operations["user_get_user_detail_users__string_username__get"];
+        get: operations["user_get_user_detail_route_users__string_username__get"];
         put?: never;
         post?: never;
         /** @description Delete a user by username */
-        delete: operations["user_delete_user_users__string_username__delete"];
+        delete: operations["user_delete_user_route_users__string_username__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -156,9 +156,9 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Follow a user by username */
-        post: operations["user_follow_user_users__string_username__follow_post"];
+        post: operations["user_follow_user_route_users__string_username__follow_post"];
         /** @description Unfollow a user by username */
-        delete: operations["user_unfollow_user_users__string_username__follow_delete"];
+        delete: operations["user_unfollow_user_route_users__string_username__follow_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -174,7 +174,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description List followers of a user (public lists) */
-        get: operations["user_get_user_followers_users__string_username__followers_get"];
+        get: operations["user_get_user_followers_route_users__string_username__followers_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -193,7 +193,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description List users that a user is following (public lists) */
-        get: operations["user_get_user_following_users__string_username__following_get"];
+        get: operations["user_get_user_following_route_users__string_username__following_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -389,6 +389,16 @@ export interface components {
              * Format: uuid
              */
             id: string;
+            /**
+             * Isfollowedby
+             * @default false
+             */
+            isFollowedBy: boolean;
+            /**
+             * Isfollowing
+             * @default false
+             */
+            isFollowing: boolean;
             /** Name */
             name: string;
             /**
@@ -765,7 +775,7 @@ export interface operations {
             };
         };
     };
-    user_get_current_user_users_me_get: {
+    user_get_current_user_route_users_me_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -810,7 +820,7 @@ export interface operations {
             };
         };
     };
-    user_search_users_users_search_get: {
+    user_search_users_route_users_search_get: {
         parameters: {
             query?: {
                 /** @description Page number */
@@ -862,7 +872,7 @@ export interface operations {
             };
         };
     };
-    user_get_user_detail_users__string_username__get: {
+    user_get_user_detail_route_users__string_username__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -909,7 +919,7 @@ export interface operations {
             };
         };
     };
-    user_delete_user_users__string_username__delete: {
+    user_delete_user_route_users__string_username__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -956,7 +966,7 @@ export interface operations {
             };
         };
     };
-    user_follow_user_users__string_username__follow_post: {
+    user_follow_user_route_users__string_username__follow_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -1003,7 +1013,7 @@ export interface operations {
             };
         };
     };
-    user_unfollow_user_users__string_username__follow_delete: {
+    user_unfollow_user_route_users__string_username__follow_delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -1050,7 +1060,7 @@ export interface operations {
             };
         };
     };
-    user_get_user_followers_users__string_username__followers_get: {
+    user_get_user_followers_route_users__string_username__followers_get: {
         parameters: {
             query?: {
                 /** @description Page number */
@@ -1102,7 +1112,7 @@ export interface operations {
             };
         };
     };
-    user_get_user_following_users__string_username__following_get: {
+    user_get_user_following_route_users__string_username__following_get: {
         parameters: {
             query?: {
                 /** @description Page number */
@@ -1162,12 +1172,12 @@ export enum ApiPaths {
     auth_signup_auth_signup_post = "/auth/signup",
     healthcheck_healthcheck_healthcheck_get = "/healthcheck",
     healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
-    user_get_current_user_users_me_get = "/users/me",
-    user_search_users_users_search_get = "/users/search",
-    user_delete_user_users__string_username__delete = "/users/{username}",
-    user_get_user_detail_users__string_username__get = "/users/{username}",
-    user_unfollow_user_users__string_username__follow_delete = "/users/{username}/follow",
-    user_follow_user_users__string_username__follow_post = "/users/{username}/follow",
-    user_get_user_followers_users__string_username__followers_get = "/users/{username}/followers",
-    user_get_user_following_users__string_username__following_get = "/users/{username}/following"
+    user_get_current_user_route_users_me_get = "/users/me",
+    user_search_users_route_users_search_get = "/users/search",
+    user_delete_user_route_users__string_username__delete = "/users/{username}",
+    user_get_user_detail_route_users__string_username__get = "/users/{username}",
+    user_unfollow_user_route_users__string_username__follow_delete = "/users/{username}/follow",
+    user_follow_user_route_users__string_username__follow_post = "/users/{username}/follow",
+    user_get_user_followers_route_users__string_username__followers_get = "/users/{username}/followers",
+    user_get_user_following_route_users__string_username__following_get = "/users/{username}/following"
 }

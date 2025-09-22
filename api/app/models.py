@@ -166,6 +166,8 @@ class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, table=True):
 
 class UserPublic(UserBase, TimestampsMixin):
     id: UUID
+    is_following: bool = False
+    is_followed_by: bool = False
 
 
 class UserList(PaginatedResponse[UserPublic]):
@@ -176,8 +178,6 @@ class UserDetail(UserPublic):
     profile: "ProfileBase"
     followers_count: int = Field(default=0, ge=0)
     following_count: int = Field(default=0, ge=0)
-    is_following: bool = False
-    is_followed_by: bool = False
 
 
 class UserCreate(UserBase):
@@ -250,7 +250,7 @@ class UserFollow(ApiBaseModel, table=True):
         sa_relationship_kwargs={"foreign_keys": "[UserFollow.following_id]"},
     )
 
-    # __table_args__ = (
-    #     Index("ix_user_follow_follower_id", "follower_id"),
-    #     Index("ix_user_follow_following_id", "following_id"),
-    # )
+    __table_args__ = (
+        Index("ix_user_follow_follower_id", "follower_id"),
+        Index("ix_user_follow_following_id", "following_id"),
+    )
