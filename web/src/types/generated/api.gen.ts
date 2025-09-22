@@ -301,11 +301,6 @@ export interface components {
             name: string;
             /** Password */
             password: string;
-            /**
-             * Testfield
-             * @default null
-             */
-            testField: string | null;
             /** Username */
             username: string;
         };
@@ -352,11 +347,6 @@ export interface components {
             name: string;
             profile: components["schemas"]["ProfileBase"];
             /**
-             * Testfield
-             * @default null
-             */
-            testField: string | null;
-            /**
              * Updatedat
              * @default null
              */
@@ -367,7 +357,7 @@ export interface components {
         /** UserList */
         UserList: {
             /** Data */
-            data: unknown[];
+            data: components["schemas"]["UserPublic"][];
             meta: components["schemas"]["PaginationMeta"];
         };
         /** UserPublic */
@@ -401,11 +391,6 @@ export interface components {
             isFollowing: boolean;
             /** Name */
             name: string;
-            /**
-             * Testfield
-             * @default null
-             */
-            testField: string | null;
             /**
              * Updatedat
              * @default null
