@@ -27,25 +27,30 @@ export class ApiError extends Error {
 
   // Helper method to get a user-friendly error message
   getUserMessage(): string {
+    const trimmedMessage = this.message.trim()
+    const fallbackMessage =
+      trimmedMessage.length > 0 ? trimmedMessage : this.getDefaultMessage()
+
     if (!this.data) {
-      return this.getDefaultMessage()
+      return fallbackMessage
     }
 
     // Handle responses with a message field
     if (
       typeof this.data === "object" &&
       "message" in this.data &&
-      this.data.message
+      typeof this.data.message === "string" &&
+      this.data.message.trim().length > 0
     ) {
       return this.data.message
     }
 
     // Handle plain text responses
-    if (typeof this.data === "string") {
+    if (typeof this.data === "string" && this.data.trim().length > 0) {
       return this.data
     }
 
-    return this.getDefaultMessage()
+    return fallbackMessage
   }
 
   private getDefaultMessage(): string {

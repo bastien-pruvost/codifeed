@@ -142,6 +142,10 @@ async function getData<T>(
   }
 
   if (res.data === undefined) {
+    if (res.response.status === 204) {
+      return res.data as T
+    }
+
     throw new ApiError(
       `API request succeeded but returned no data: ${res.response.status} ${res.response.statusText}`,
       res.response,
