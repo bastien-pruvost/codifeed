@@ -14,6 +14,7 @@ def paginate_query(
     statement: Union[SelectOfScalar[T], Select[T]],
     pagination: PaginationQuery,
 ) -> tuple[list[T], PaginationMeta]:
+    """Paginate a query"""
     total_count_statement = select(func.count("*")).select_from(statement.subquery())
     total_count = session.scalar(total_count_statement) or 0
 

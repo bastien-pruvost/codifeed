@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Tuple
 from uuid import UUID
 
@@ -17,8 +15,103 @@ from app.models import (
 )
 from app.utils.pagination import paginate_query
 
+# Constants
+MIN_SIMILARITY_THRESHOLD = 0.3
+RELEVANCE_SCORES = {
+    "EXACT_USERNAME": 100,
+    "EXACT_NAME": 95,
+    "PREFIX_USERNAME": 80,
+    "PREFIX_NAME": 70,
+    "SIMILARITY_MULTIPLIER": 40,
+}
+
 
 class UserService:
+    """Service responsible for all user-related business logic."""
+
+    @staticmethod
+    def get_by_id(session: Session, user_id: UUID) -> UserPublic:
+        """Get user by ID.
+
+        Args:
+            session: Database session
+            user_id: User ID
+
+        Returns:
+            UserPublic: User data
+
+        Raises:
+            NotFound: If user not found or is deleted
+        """
+        user = session.get(User, user_id)
+
+        if not user:
+            raise NotFound(description="User not found")
+
+        if user.is_deleted:
+            raise NotFound(
+                description="User has been deleted. "
+                "Please contact support if you believe this is an error."
+            )
+
+        return UserPublic.model_validate(user)
+
+    @staticmethod
+    def delete_user_by_id(session: Session, user_id: UUID, username: str) -> UserPublic:
+        """Delete user account by ID.
+
+        Args:
+            session: Database session
+            user_id: User ID to delete
+            username: Username for verification
+
+        Returns:
+            UserPublic: Deleted user data
+
+        Raises:
+            NotFound: If user not found
+            Forbidden: If username doesn't match current user
+        """
+        from werkzeug.exceptions import Forbidden
+
+        user = session.get(User, user_id)
+
+        if not user:
+            raise NotFound(description="User not found")
+
+        if user.username != username:
+            raise Forbidden(description="You are not allowed to delete this user")
+
+        user.soft_delete()
+        session.commit()
+
+        return UserPublic.model_validate(user)
+
+    @staticmethod
+    def _get_follow_relationships(
+        session: Session, current_user_id: UUID, user_ids: list[UUID]
+    ) -> tuple[set[UUID], set[UUID]]:
+        """Get follow relationships between current user and list of users.
+
+        Returns:
+            Tuple of (following_ids, followed_by_ids)
+        """
+        # Which listed users are followed by current user?
+        following_ids_statement = select(UserFollow.following_id).where(
+            UserFollow.follower_id == current_user_id,
+            col(UserFollow.following_id).in_(user_ids),
+        )
+        following_ids = set(session.exec(following_ids_statement).all())
+
+        # Which listed users follow the current user?
+        followed_by_ids_statement = select(UserFollow.follower_id).where(
+            UserFollow.following_id == current_user_id,
+            col(UserFollow.follower_id).in_(user_ids),
+        )
+        followed_by_ids = set(session.exec(followed_by_ids_statement).all())
+
+        return following_ids, followed_by_ids
+
     @staticmethod
     def _annotate_follow_flags_for_users(
         session: Session,
@@ -33,19 +126,9 @@ class UserService:
         if not user_ids:
             return [UserPublic.model_validate(u) for u in users]
 
-        # Which listed users are followed by current user?
-        following_ids_statement = select(UserFollow.following_id).where(
-            UserFollow.follower_id == current_user_id,
-            col(UserFollow.following_id).in_(user_ids),
+        following_ids, followed_by_ids = UserService._get_follow_relationships(
+            session, current_user_id, user_ids
         )
-        following_ids = set(session.exec(following_ids_statement).all())
-
-        # Which listed users follow the current user?
-        followed_by_ids_statement = select(UserFollow.follower_id).where(
-            UserFollow.following_id == current_user_id,
-            col(UserFollow.follower_id).in_(user_ids),
-        )
-        followed_by_ids = set(session.exec(followed_by_ids_statement).all())
 
         result: list[UserPublic] = []
         for user in users:
@@ -253,19 +336,31 @@ class UserService:
         exact_name_condition = User.name == search_term
         prefix_username_condition = col(User.username).ilike(search_term + "%")
         prefix_name_condition = col(User.name).ilike(search_term + "%")
-        similarity_username_condition = func.similarity(User.username, search_term) > 0.3
-        similarity_name_condition = func.similarity(User.name, search_term) > 0.3
+        similarity_username_condition = (
+            func.similarity(User.username, search_term) > MIN_SIMILARITY_THRESHOLD
+        )
+        similarity_name_condition = (
+            func.similarity(User.name, search_term) > MIN_SIMILARITY_THRESHOLD
+        )
 
         relevance_score = case(
-            (exact_username_condition, 100),
-            (exact_name_condition, 95),
-            (prefix_username_condition, 80),
-            (prefix_name_condition, 70),
-            (similarity_username_condition, func.similarity(User.username, search_term) * 40),
-            (similarity_name_condition, func.similarity(User.name, search_term) * 40),
+            (exact_username_condition, RELEVANCE_SCORES["EXACT_USERNAME"]),
+            (exact_name_condition, RELEVANCE_SCORES["EXACT_NAME"]),
+            (prefix_username_condition, RELEVANCE_SCORES["PREFIX_USERNAME"]),
+            (prefix_name_condition, RELEVANCE_SCORES["PREFIX_NAME"]),
+            (
+                similarity_username_condition,
+                func.similarity(User.username, search_term)
+                * RELEVANCE_SCORES["SIMILARITY_MULTIPLIER"],
+            ),
+            (
+                similarity_name_condition,
+                func.similarity(User.name, search_term) * RELEVANCE_SCORES["SIMILARITY_MULTIPLIER"],
+            ),
             else_=func.greatest(
-                func.similarity(User.username, search_term) * 40,
-                func.similarity(User.name, search_term) * 40,
+                func.similarity(User.username, search_term)
+                * RELEVANCE_SCORES["SIMILARITY_MULTIPLIER"],
+                func.similarity(User.name, search_term) * RELEVANCE_SCORES["SIMILARITY_MULTIPLIER"],
             ),
         ).label("relevance_score")
 

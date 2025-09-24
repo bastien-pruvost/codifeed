@@ -1,10 +1,9 @@
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 from sqlmodel import Field
-from werkzeug.exceptions import Forbidden, NotFound
 
 from app.database import get_session
-from app.models import ApiBaseModel, PaginationQuery, User, UserDetail, UserList, UserPublic
+from app.models import ApiBaseModel, PaginationQuery, UserDetail, UserList, UserPublic
 from app.services.user_service import UserService
 from app.utils.jwt import get_current_user_id, login_required
 from app.utils.response import abp_responses, success_response
@@ -22,18 +21,8 @@ users_router = APIBlueprint("user", __name__, abp_tags=[users_tag], abp_response
 def get_current_user_route():
     user_id = get_current_user_id()
     with get_session() as session:
-        user = session.get(User, user_id)
-
-        if not user:
-            raise NotFound(description="User not found")
-
-        if user.is_deleted:
-            raise NotFound(
-                description="Your account has been deleted. \
-                Please contact support if you believe this is an error."
-            )
-
-        return success_response(UserPublic.model_validate(user).model_dump())
+        user_data = UserService.get_by_id(session, user_id)
+        return success_response(user_data.model_dump())
 
 
 class UsernamePath(ApiBaseModel):
@@ -64,8 +53,8 @@ class SearchQuery(PaginationQuery):
 )
 @login_required
 def search_users_route(query: SearchQuery):
+    current_user_id = get_current_user_id()
     with get_session() as session:
-        current_user_id = get_current_user_id()
         users, meta = UserService.search(
             session=session, current_user_id=current_user_id, query=query.q, pagination=query
         )
@@ -81,18 +70,8 @@ def search_users_route(query: SearchQuery):
 def delete_user_route(path: UsernamePath):
     current_user_id = get_current_user_id()
     with get_session() as session:
-        user = session.get(User, current_user_id)
-
-        if not user:
-            raise NotFound(description="User not found")
-
-        if user.username != path.username:
-            raise Forbidden(description="You are not allowed to delete this user")
-
-        user.soft_delete()
-        session.commit()
-
-        return success_response(UserPublic.model_validate(user).model_dump())
+        user_data = UserService.delete_user_by_id(session, current_user_id, path.username)
+        return success_response(user_data.model_dump())
 
 
 @users_router.post(
@@ -136,8 +115,8 @@ def unfollow_user_route(path: UsernamePath):
 )
 @login_required
 def get_user_followers_route(path: UsernamePath, query: PaginationQuery):
+    current_user_id = get_current_user_id()
     with get_session() as session:
-        current_user_id = get_current_user_id()
         users, meta = UserService.get_followers_by_username(
             session=session,
             current_user_id=current_user_id,
@@ -154,8 +133,8 @@ def get_user_followers_route(path: UsernamePath, query: PaginationQuery):
 )
 @login_required
 def get_user_following_route(path: UsernamePath, query: PaginationQuery):
+    current_user_id = get_current_user_id()
     with get_session() as session:
-        current_user_id = get_current_user_id()
         users, meta = UserService.get_following_by_username(
             session=session,
             current_user_id=current_user_id,

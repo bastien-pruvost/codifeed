@@ -25,6 +25,8 @@ from werkzeug.exceptions import Unauthorized
 
 
 def login_required(func) -> Callable:
+    """Decorator to check if the user is logged in with a valid access token"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -38,6 +40,8 @@ def login_required(func) -> Callable:
 
 
 def refresh_required(func) -> Callable:
+    """Decorator to check if the user is logged in with a valid refresh token"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -50,6 +54,7 @@ def refresh_required(func) -> Callable:
 
 
 def get_current_user_id() -> UUID:
+    """Get the current user ID from the JWT"""
     user_id = get_jwt_identity()
     if not user_id or not isinstance(user_id, str):
         raise Unauthorized("No valid token found")
@@ -57,12 +62,14 @@ def get_current_user_id() -> UUID:
 
 
 def create_tokens(user_id: UUID) -> tuple[str, str]:
+    """Create a new access and refresh token for a user"""
     access_token = create_access_token(identity=user_id)
     refresh_token = create_refresh_token(identity=user_id)
     return access_token, refresh_token
 
 
 def should_auto_refresh_token() -> bool:
+    """Check if the token should be auto-refreshed (within 15 minutes of expiry)"""
     try:
         jwt = get_jwt()
 
