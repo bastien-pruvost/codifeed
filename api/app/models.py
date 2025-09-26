@@ -251,6 +251,6 @@ class UserFollow(ApiBaseModel, SQLModel, table=True):
     )
 
     __table_args__ = (
-        Index("ix_user_follow_follower_id", "follower_id"),
-        Index("ix_user_follow_following_id", "following_id"),
+        Index("ix_user_follow_following_id_created_at", "following_id", "created_at"),
+        Index("ix_user_follow_follower_id_created_at", "follower_id", "created_at"),
     )

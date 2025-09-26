@@ -15,16 +15,6 @@ from app.models import (
 )
 from app.utils.pagination import paginate_query
 
-# Constants
-MIN_SIMILARITY_THRESHOLD = 0.3
-RELEVANCE_SCORES = {
-    "EXACT_USERNAME": 100,
-    "EXACT_NAME": 95,
-    "PREFIX_USERNAME": 80,
-    "PREFIX_NAME": 70,
-    "SIMILARITY_MULTIPLIER": 40,
-}
-
 
 class UserService:
     """Service responsible for all user-related business logic."""
@@ -50,14 +40,27 @@ class UserService:
 
         if user.is_deleted:
             raise NotFound(
-                description="User has been deleted. "
+                description="This account has been deleted. "
                 "Please contact support if you believe this is an error."
             )
 
         return UserPublic.model_validate(user)
 
     @staticmethod
-    def delete_user_by_id(session: Session, user_id: UUID, username: str) -> UserPublic:
+    def get_by_username(session: Session, username: str) -> User:
+        """Return an active (non-deleted) user by username or raise 404."""
+        user = session.exec(select(User).where(col(User.username) == username)).first()
+
+        if not user:
+            raise NotFound(description=f"User {username} not found")
+
+        if user.is_deleted:
+            raise NotFound(description=f"This account ({username}) has been deleted.")
+
+        return user
+
+    @staticmethod
+    def delete_by_id(session: Session, user_id: UUID, username: str) -> UserPublic:
         """Delete user account by ID.
 
         Args:
@@ -142,17 +145,8 @@ class UserService:
                     }
                 )
             )
-        return result
 
-    @staticmethod
-    def get_by_username(session: Session, username: str) -> User:
-        """Return an active (non-deleted) user by username or raise 404."""
-        user = session.exec(select(User).where(col(User.username) == username)).first()
-        if not user:
-            raise NotFound(description="User not found")
-        if user.is_deleted:
-            raise NotFound(description="This account has been deleted.")
-        return user
+        return result
 
     @staticmethod
     def get_detail_by_username(
@@ -160,54 +154,58 @@ class UserService:
         current_user_id: UUID,
         username: str,
     ) -> UserDetail:
-        """Load a user's public detail with followers/following counts and follow flags."""
+        """Get a user's detail by username."""
         user = UserService.get_by_username(session, username)
 
-        followers_count_statement = (
+        followers_count_subquery = (
             select(func.count("*"))
             .select_from(UserFollow)
             .join(User, col(User.id) == UserFollow.follower_id)
-            .where(
-                UserFollow.following_id == user.id,
-                col(User.deleted_at).is_(None),
-            )
+            .where(UserFollow.following_id == user.id, col(User.deleted_at).is_(None))
+            .scalar_subquery()
+            .label("followers_count")
         )
 
-        following_count_statement = (
+        following_count_subquery = (
             select(func.count("*"))
             .select_from(UserFollow)
             .join(User, col(User.id) == UserFollow.following_id)
-            .where(
-                UserFollow.follower_id == user.id,
-                col(User.deleted_at).is_(None),
-            )
+            .where(UserFollow.follower_id == user.id, col(User.deleted_at).is_(None))
+            .scalar_subquery()
+            .label("following_count")
         )
 
-        followers_count = session.scalar(followers_count_statement) or 0
-        following_count = session.scalar(following_count_statement) or 0
-
-        # Follow flags
-        is_following_statement = (
-            select(func.count("*"))
+        is_following_subquery = (
+            select(1)
             .select_from(UserFollow)
-            .where(
-                UserFollow.follower_id == current_user_id,
-                UserFollow.following_id == user.id,
-            )
+            .where(UserFollow.follower_id == current_user_id, UserFollow.following_id == user.id)
+            .exists()
+            .label("is_following")
         )
-        is_followed_by_statement = (
-            select(func.count("*"))
+        is_followed_by_subquery = (
+            select(1)
             .select_from(UserFollow)
-            .where(
-                UserFollow.follower_id == user.id,
-                UserFollow.following_id == current_user_id,
-            )
+            .where(UserFollow.follower_id == user.id, UserFollow.following_id == current_user_id)
+            .exists()
+            .label("is_followed_by")
         )
 
-        is_following = (session.scalar(is_following_statement) or 0) > 0
-        is_followed_by = (session.scalar(is_followed_by_statement) or 0) > 0
+        stats_statement = select(
+            followers_count_subquery,
+            following_count_subquery,
+            is_following_subquery,
+            is_followed_by_subquery,
+        )
 
-        response_data = UserDetail.model_validate(user).model_copy(
+        result = session.exec(stats_statement).first()
+
+        if result:
+            followers_count, following_count, is_following, is_followed_by = result
+        else:
+            followers_count = following_count = 0
+            is_following = is_followed_by = False
+
+        return UserDetail.model_validate(user).model_copy(
             update={
                 "followers_count": int(followers_count or 0),
                 "following_count": int(following_count or 0),
@@ -215,8 +213,6 @@ class UserService:
                 "is_followed_by": bool(is_followed_by),
             }
         )
-
-        return response_data
 
     @staticmethod
     def follow_by_username(
@@ -238,7 +234,6 @@ class UserService:
         except IntegrityError:
             session.rollback()
 
-        # Return the updated detail using the optimized query
         return UserService.get_detail_by_username(session, current_user_id, username)
 
     @staticmethod
@@ -331,7 +326,15 @@ class UserService:
         if not search_term:
             raise BadRequest(description="Search query is required")
 
-        # For prefix and exact we can use ILIKE/== directly; similarity uses pg_trgm
+        MIN_SIMILARITY_THRESHOLD = 0.3
+        RELEVANCE_SCORES = {
+            "EXACT_USERNAME": 100,
+            "EXACT_NAME": 95,
+            "PREFIX_USERNAME": 80,
+            "PREFIX_NAME": 70,
+            "SIMILARITY_MULTIPLIER": 40,
+        }
+
         exact_username_condition = User.username == search_term
         exact_name_condition = User.name == search_term
         prefix_username_condition = col(User.username).ilike(search_term + "%")
@@ -342,6 +345,10 @@ class UserService:
         similarity_name_condition = (
             func.similarity(User.name, search_term) > MIN_SIMILARITY_THRESHOLD
         )
+
+        # TODO: Try to use this instead of the similarity function
+        # similarity_username_condition = col(User.username).op("%")(search_term)
+        # similarity_name_condition = col(User.name).op("%")(search_term)
 
         relevance_score = case(
             (exact_username_condition, RELEVANCE_SCORES["EXACT_USERNAME"]),

@@ -70,7 +70,7 @@ def search_users_route(query: SearchQuery):
 def delete_user_route(path: UsernamePath):
     current_user_id = get_current_user_id()
     with get_session() as session:
-        user_data = UserService.delete_user_by_id(session, current_user_id, path.username)
+        user_data = UserService.delete_by_id(session, current_user_id, path.username)
         return success_response(user_data.model_dump())
 
 
