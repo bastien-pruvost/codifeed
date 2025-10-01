@@ -214,7 +214,7 @@ class Profile(ProfileBase, SQLModel, table=True):
 
 
 class PostBase(ApiBaseModel):
-    content: str = Field(min_length=1, max_length=255)
+    content: str = Field(min_length=1, max_length=1024)
 
 
 class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
