@@ -5,9 +5,6 @@ import { api, getData } from "@/services/http-client"
 
 export function useFollowUser() {
   const queryClient = useQueryClient()
-  // const currentUser = queryClient.getQueryData(
-  //   userQueries.currentUser().queryKey,
-  // )
 
   return useMutation({
     mutationFn: (username: string) =>
@@ -16,19 +13,18 @@ export function useFollowUser() {
           params: { path: { username } },
         }),
       ),
-
-    // Optimistic update of the user detail
+    // Optimistic update
     onMutate: async (username) => {
       await queryClient.cancelQueries({
-        queryKey: userQueries.detail({ username }).queryKey,
+        queryKey: userQueries.detail(username).queryKey,
       })
 
       const prev = queryClient.getQueryData(
-        userQueries.detail({ username }).queryKey,
+        userQueries.detail(username).queryKey,
       )
 
       if (prev) {
-        queryClient.setQueryData(userQueries.detail({ username }).queryKey, {
+        queryClient.setQueryData(userQueries.detail(username).queryKey, {
           ...prev,
           isFollowing: true,
           followersCount: Math.max(0, prev.followersCount + 1),
@@ -40,7 +36,7 @@ export function useFollowUser() {
     onError: (_err, username, ctx) => {
       if (ctx?.prev) {
         queryClient.setQueryData(
-          userQueries.detail({ username }).queryKey,
+          userQueries.detail(username).queryKey,
           ctx.prev,
         )
       }
@@ -48,10 +44,10 @@ export function useFollowUser() {
     onSettled: async (_data, _error, username) => {
       return Promise.all([
         queryClient.invalidateQueries({
-          queryKey: userQueries.detail({ username }).queryKey,
+          queryKey: userQueries.detail(username).queryKey,
         }),
         queryClient.invalidateQueries({
-          queryKey: userQueries.followers({ username }),
+          queryKey: userQueries.followers(username),
         }),
       ])
     },
@@ -71,15 +67,15 @@ export function useUnfollowUser() {
       ),
     onMutate: async (username) => {
       await queryClient.cancelQueries({
-        queryKey: userQueries.detail({ username }).queryKey,
+        queryKey: userQueries.detail(username).queryKey,
       })
 
       const prev = queryClient.getQueryData(
-        userQueries.detail({ username }).queryKey,
+        userQueries.detail(username).queryKey,
       )
 
       if (prev) {
-        queryClient.setQueryData(userQueries.detail({ username }).queryKey, {
+        queryClient.setQueryData(userQueries.detail(username).queryKey, {
           ...prev,
           isFollowing: false,
           followersCount: Math.max(0, prev.followersCount - 1),
@@ -91,7 +87,7 @@ export function useUnfollowUser() {
     onError: (_err, username, ctx) => {
       if (ctx?.prev) {
         queryClient.setQueryData(
-          userQueries.detail({ username }).queryKey,
+          userQueries.detail(username).queryKey,
           ctx.prev,
         )
       }
@@ -99,10 +95,10 @@ export function useUnfollowUser() {
     onSettled: async (_data, _error, username) => {
       return Promise.all([
         queryClient.invalidateQueries({
-          queryKey: userQueries.detail({ username }).queryKey,
+          queryKey: userQueries.detail(username).queryKey,
         }),
         queryClient.invalidateQueries({
-          queryKey: userQueries.followers({ username }),
+          queryKey: userQueries.followers(username),
         }),
       ])
     },

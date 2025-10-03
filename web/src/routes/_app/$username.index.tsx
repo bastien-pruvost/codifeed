@@ -21,7 +21,7 @@ import { Route as AppRoute } from "@/routes/_app"
 export const Route = createFileRoute("/_app/$username/")({
   loader: async ({ context, params }) => {
     await context.queryClient.ensureQueryData(
-      userQueries.detail({ username: params.username }),
+      userQueries.detail(params.username),
     )
   },
   component: UserProfilePage,
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_app/$username/")({
 
 function UserProfilePage() {
   const username = Route.useParams({ select: (params) => params.username })
-  const { data: user } = useSuspenseQuery(userQueries.detail({ username }))
+  const { data: user } = useSuspenseQuery(userQueries.detail(username))
   const { user: currentUser } = AppRoute.useRouteContext()
 
   const isOwnProfile = currentUser.id === user.id

@@ -128,9 +128,7 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                username: string;
-            };
+            path?: never;
             cookie?: never;
         };
         /** @description Get a user detail by username */
@@ -148,9 +146,7 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                username: string;
-            };
+            path?: never;
             cookie?: never;
         };
         get?: never;
@@ -168,9 +164,7 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                username: string;
-            };
+            path?: never;
             cookie?: never;
         };
         /** @description List followers of a user (public lists) */
@@ -187,9 +181,7 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                username: string;
-            };
+            path?: never;
             cookie?: never;
         };
         /** @description List users that a user is following (public lists) */
@@ -1149,20 +1141,4 @@ export interface operations {
             };
         };
     };
-}
-export enum ApiPaths {
-    auth_login_auth_login_post = "/auth/login",
-    auth_logout_auth_logout_post = "/auth/logout",
-    auth_refresh_auth_refresh_post = "/auth/refresh",
-    auth_signup_auth_signup_post = "/auth/signup",
-    healthcheck_healthcheck_healthcheck_get = "/healthcheck",
-    healthcheck_healthcheck_test_healthcheck_post = "/healthcheck",
-    user_get_current_user_route_users_me_get = "/users/me",
-    user_search_users_route_users_search_get = "/users/search",
-    user_delete_user_route_users__string_username__delete = "/users/{username}",
-    user_get_user_detail_route_users__string_username__get = "/users/{username}",
-    user_unfollow_user_route_users__string_username__follow_delete = "/users/{username}/follow",
-    user_follow_user_route_users__string_username__follow_post = "/users/{username}/follow",
-    user_get_user_followers_route_users__string_username__followers_get = "/users/{username}/followers",
-    user_get_user_following_route_users__string_username__following_get = "/users/{username}/following"
 }

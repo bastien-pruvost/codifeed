@@ -14,7 +14,7 @@ export const userQueries = {
   // All
   all: () => ["users"],
 
-  // Current user
+  // Current
   currentUser: () =>
     queryOptions({
       queryKey: [...userQueries.all(), "current"],
@@ -24,55 +24,66 @@ export const userQueries = {
       refetchInterval: 1000 * 60 * 5, // 5 minutes - periodic check for long sessions
     }),
 
-  // Lists (multiple users)
+  // Lists
   lists: () => [...userQueries.all(), "lists"],
 
-  search: (options: Omit<SearchUsersOptions, "signal">) =>
+  search: ({
+    q,
+    page,
+    itemsPerPage,
+  }: {
+    q: string
+    page: number
+    itemsPerPage: number
+  }) =>
     queryOptions({
-      queryKey: [...userQueries.lists(), "search", options],
-      queryFn: ({ signal }) => searchUsers({ ...options, signal }),
-      enabled: options.q.trim().length > 0,
+      queryKey: [...userQueries.lists(), "search", q, page, itemsPerPage],
+      queryFn: ({ signal }) => searchUsers({ q, page, itemsPerPage, signal }),
+      enabled: q.trim().length > 0,
       staleTime: 1000 * 30, // 30 seconds
       placeholderData: keepPreviousData,
     }),
 
-  // User-specific lists
-  followers: ({ username }: { username: string }) => [
+  followers: (username: string) => [
     ...userQueries.lists(),
     "followers",
     username,
   ],
 
-  followersInfinite: (options: Omit<GetUserFollowersOptions, "page">) =>
+  followersInfinite: ({
+    username,
+    itemsPerPage,
+  }: {
+    username: string
+    itemsPerPage: number
+  }) =>
     infiniteQueryOptions({
-      queryKey: [
-        ...userQueries.followers({ username: options.username }),
-        "infinite",
-        options,
-      ],
+      queryKey: [...userQueries.followers(username), "infinite", itemsPerPage],
       queryFn: ({ pageParam }) =>
-        getUserFollowers({ ...options, page: pageParam }),
+        getUserFollowers({ username, itemsPerPage, page: pageParam }),
       initialPageParam: 1,
       getNextPageParam: (lastPage, allPages) =>
         lastPage.meta.hasMore ? allPages.length + 1 : undefined,
       staleTime: 1000 * 60 * 2, // 2 minute
     }),
 
-  following: ({ username }: { username: string }) => [
+  following: (username: string) => [
     ...userQueries.lists(),
     "following",
     username,
   ],
 
-  followingInfinite: (options: Omit<GetUserFollowingOptions, "page">) =>
+  followingInfinite: ({
+    username,
+    itemsPerPage,
+  }: {
+    username: string
+    itemsPerPage: number
+  }) =>
     infiniteQueryOptions({
-      queryKey: [
-        ...userQueries.following({ username: options.username }),
-        "infinite",
-        options,
-      ],
+      queryKey: [...userQueries.following(username), "infinite", itemsPerPage],
       queryFn: ({ pageParam }) =>
-        getUserFollowing({ ...options, page: pageParam }),
+        getUserFollowing({ username, itemsPerPage, page: pageParam }),
       initialPageParam: 1,
       getNextPageParam: (lastPage, allPages) =>
         lastPage.meta.hasMore ? allPages.length + 1 : undefined,
@@ -82,10 +93,10 @@ export const userQueries = {
   // Details
   details: () => [...userQueries.all(), "detail"],
 
-  detail: (options: GetUserDetailOptions) =>
+  detail: (username: string) =>
     queryOptions({
-      queryKey: [...userQueries.details(), options],
-      queryFn: () => getUserDetail(options),
+      queryKey: [...userQueries.details(), username],
+      queryFn: () => getUserDetail({ username }),
       staleTime: 1000 * 60 * 2, // 2 minute
     }),
 }
