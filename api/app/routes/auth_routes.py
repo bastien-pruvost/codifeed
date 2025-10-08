@@ -8,6 +8,7 @@ from flask_openapi3.models.tag import Tag
 
 from app.database import get_session
 from app.models import ApiBaseModel, UserCreate, UserPublic
+from app.schemas import LoginCredentials
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 from app.utils.jwt import create_tokens, get_current_user_id, refresh_required
@@ -24,19 +25,16 @@ auth_router = APIBlueprint("auth", __name__, abp_tags=[auth_tag], abp_responses=
 )
 def signup(body: UserCreate):
     with get_session() as session:
-        user_data = AuthService.create_user(session, body)
-        access_token, refresh_token = create_tokens(user_data.id)
+        user = AuthService.create_user(session, body)
+        user_public = UserPublic.model_validate(user)
 
-        response = success_response(user_data.model_dump(), 201)
+        response = success_response(user_public.model_dump(), 201)
+
+        access_token, refresh_token = create_tokens(user_public.id)
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
 
         return response
-
-
-class LoginCredentials(ApiBaseModel):
-    email: str
-    password: str
 
 
 @auth_router.post(
@@ -46,10 +44,12 @@ class LoginCredentials(ApiBaseModel):
 )
 def login(body: LoginCredentials):
     with get_session() as session:
-        user_data = AuthService.authenticate_user(session, body.email, body.password)
-        access_token, refresh_token = create_tokens(user_data.id)
+        user = AuthService.authenticate_user(session, body.email, body.password)
+        user_public = UserPublic.model_validate(user)
 
-        response = success_response(user_data.model_dump())
+        response = success_response(user_public.model_dump())
+
+        access_token, refresh_token = create_tokens(user_public.id)
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
 
@@ -65,10 +65,12 @@ def login(body: LoginCredentials):
 def refresh():
     user_id = get_current_user_id()
     with get_session() as session:
-        user_data = UserService.get_by_id(session, user_id)
-        access_token, refresh_token = create_tokens(user_data.id)
+        user = UserService.get_by_id(session, user_id)
+        user_public = UserPublic.model_validate(user)
 
-        response = success_response(user_data.model_dump())
+        response = success_response(user_public.model_dump())
+
+        access_token, refresh_token = create_tokens(user_public.id)
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
 

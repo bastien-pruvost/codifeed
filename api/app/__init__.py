@@ -12,10 +12,10 @@ def create_app():
     from app.database import init_db
     from app.middlewares.auto_refresh import auto_refresh_expiring_tokens
     from app.middlewares.exceptions import register_error_handlers
-    from app.routes.auth import auth_router
-    from app.routes.healthcheck import healthcheck_router
-    from app.routes.posts import posts_router
-    from app.routes.users import users_router
+    from app.routes.auth_routes import auth_router
+    from app.routes.healthcheck_routes import healthcheck_router
+    from app.routes.post_routes import posts_router
+    from app.routes.user_routes import users_router
     from app.utils.logging import configure_logging
 
     config = get_config()

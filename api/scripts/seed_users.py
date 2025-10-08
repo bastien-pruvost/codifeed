@@ -6,7 +6,7 @@ from sqlmodel import select
 from app.database import get_session
 from app.models import Profile, User
 from app.utils.password import hash_password
-from fixtures.users import USERS_FIXTURES
+from fixtures.users_fixtures import USERS_FIXTURES
 
 
 def ensure_users(fixtures: Iterable[dict]) -> None:

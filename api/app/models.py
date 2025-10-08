@@ -1,3 +1,13 @@
+"""Domain models and database tables.
+
+This module contains all domain-related models:
+- Database tables (User, Post, Profile, UserFollow)
+- Domain entity models (UserPublic, PostPublic, UserDetail)
+- Create/Update models (UserCreate, PostCreate)
+- Base models and mixins (UserBase, PostBase, IdMixin, etc.)
+- Infrastructure models (PaginatedList, PaginationQuery, etc.)
+"""
+
 from datetime import date, datetime, timezone
 from typing import Any, Generic, TypeVar
 from uuid import UUID, uuid4
@@ -67,8 +77,6 @@ class TimestampsMixin(UpdatedAtMixin, CreatedAtMixin):
 
 
 class SoftDeleteMixin(ApiBaseModel):
-    """Base model with soft delete support"""
-
     deleted_at: datetime | None = Field(
         default=None,
         index=True,
@@ -102,8 +110,17 @@ class SoftDeleteMixin(ApiBaseModel):
 
 
 class PaginationQuery(ApiBaseModel):
-    page: int = Field(default=1, ge=1, description="Page number")
-    items_per_page: int = Field(default=24, ge=1, le=2400, description="Number of items per page")
+    page: int = Field(
+        default=1,
+        ge=1,
+        description="Page number",
+    )
+    items_per_page: int = Field(
+        default=24,
+        ge=1,
+        le=2400,
+        description="Number of items per page",
+    )
 
 
 class PaginationMeta(PaginationQuery):
@@ -111,7 +128,7 @@ class PaginationMeta(PaginationQuery):
     has_more: bool
 
 
-class PaginatedResponse(ApiBaseModel, Generic[T]):
+class PaginatedList(ApiBaseModel, Generic[T]):
     data: list[T]
     meta: PaginationMeta
 
@@ -120,14 +137,33 @@ class PaginatedResponse(ApiBaseModel, Generic[T]):
 
 
 class UserBase(ApiBaseModel):
-    email: str = Field(unique=True, index=True, min_length=1, max_length=255)
-    username: str = Field(unique=True, index=True, min_length=1, max_length=255)
-    name: str = Field(min_length=1, max_length=255)
-    avatar: str | None = Field(default=None, max_length=255)
+    email: str = Field(
+        unique=True,
+        index=True,
+        min_length=1,
+        max_length=255,
+    )
+    username: str = Field(
+        unique=True,
+        index=True,
+        min_length=1,
+        max_length=255,
+    )
+    name: str = Field(
+        min_length=1,
+        max_length=255,
+    )
+    avatar: str | None = Field(
+        default=None,
+        max_length=255,
+    )
 
 
 class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
-    hashed_password: str = Field(min_length=1, max_length=255)
+    hashed_password: str = Field(
+        min_length=1,
+        max_length=255,
+    )
 
     profile: "Profile" = Relationship(
         back_populates="user",
@@ -170,61 +206,94 @@ class UserPublic(UserBase, TimestampsMixin):
     is_followed_by: bool = False
 
 
-class UserList(PaginatedResponse[UserPublic]):
+class UserList(PaginatedList[UserPublic]):
     pass
 
 
 class UserDetail(UserPublic):
     profile: "ProfileBase"
-    followers_count: int = Field(default=0, ge=0)
-    following_count: int = Field(default=0, ge=0)
+    followers_count: int = Field(
+        default=0,
+        ge=0,
+    )
+    following_count: int = Field(
+        default=0,
+        ge=0,
+    )
 
 
 class UserCreate(UserBase):
-    password: str = Field(min_length=1, max_length=255)
-
-
-class UserUpdate(UserBase):
-    pass
+    password: str = Field(
+        min_length=1,
+        max_length=255,
+    )
 
 
 # ------ Profile (User Profile) ------
 
 
 class ProfileBase(ApiBaseModel):
-    bio: str | None = Field(default=None, max_length=255)
-    location: str | None = Field(default=None, max_length=255)
-    website: str | None = Field(default=None, max_length=255)
-    birthdate: date | None = Field(default=None)
+    bio: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+    location: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+    website: str | None = Field(
+        default=None,
+        max_length=255,
+    )
+    birthdate: date | None = Field(
+        default=None,
+    )
 
 
 class Profile(ProfileBase, SQLModel, table=True):
     user_id: UUID | None = Field(
-        foreign_key="user.id",
         primary_key=True,
         unique=True,
         default=None,
+        foreign_key="user.id",
         ondelete="CASCADE",
     )
 
-    user: User = Relationship(back_populates="profile")
+    user: User = Relationship(
+        back_populates="profile",
+    )
 
 
 # ------ Post ------
 
 
 class PostBase(ApiBaseModel):
-    content: str = Field(min_length=1, max_length=1024)
+    content: str = Field(
+        min_length=1,
+        max_length=1024,
+    )
 
 
 class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
-    author_id: UUID = Field(foreign_key="user.id")
+    author_id: UUID = Field(
+        foreign_key="user.id",
+    )
 
-    author: User = Relationship(back_populates="posts")
+    author: User = Relationship(
+        back_populates="posts",
+    )
 
 
-class PostPublic(PostBase, IdMixin):
+class PostPublic(PostBase, TimestampsMixin, IdMixin):
     author: UserPublic
+
+
+class PostList(PaginatedList[PostPublic]):
+    pass
+
+
+class PostCreate(PostBase):
+    pass
 
 
 # ------ UserFollow (User Self Reference) ------
@@ -233,8 +302,16 @@ class PostPublic(PostBase, IdMixin):
 class UserFollow(ApiBaseModel, SQLModel, table=True):
     __tablename__: str = "user_follow"
 
-    follower_id: UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
-    following_id: UUID = Field(foreign_key="user.id", primary_key=True, ondelete="CASCADE")
+    follower_id: UUID = Field(
+        primary_key=True,
+        foreign_key="user.id",
+        ondelete="CASCADE",
+    )
+    following_id: UUID = Field(
+        primary_key=True,
+        foreign_key="user.id",
+        ondelete="CASCADE",
+    )
     created_at: datetime | None = Field(
         default=None,
         sa_type=TIMESTAMP(timezone=True),  # pyright: ignore[reportArgumentType]

@@ -4,7 +4,7 @@ from argon2 import exceptions as argon_exceptions
 from sqlmodel import Session, or_, select
 from werkzeug.exceptions import BadRequest, InternalServerError
 
-from app.models import Profile, User, UserCreate, UserPublic
+from app.models import Profile, User, UserCreate
 from app.utils.password import hash_password, verify_password
 
 
@@ -12,7 +12,7 @@ class AuthService:
     """Service responsible for all authentication-related business logic."""
 
     @staticmethod
-    def create_user(session: Session, user_data: UserCreate) -> UserPublic:
+    def create_user(session: Session, user_data: UserCreate) -> User:
         """Create a new user account and return user data.
 
         Args:
@@ -20,7 +20,7 @@ class AuthService:
             user_data: User creation data
 
         Returns:
-            UserPublic
+            User: Created user
 
         Raises:
             BadRequest: If email already exists
@@ -55,10 +55,10 @@ class AuthService:
         if not user or not user.id:
             raise InternalServerError(description="Failed to create user")
 
-        return UserPublic.model_validate(user)
+        return User.model_validate(user)
 
     @staticmethod
-    def authenticate_user(session: Session, email: str, password: str) -> UserPublic:
+    def authenticate_user(session: Session, email: str, password: str) -> User:
         """Authenticate user with email and password.
 
         Args:
@@ -67,7 +67,7 @@ class AuthService:
             password: User password
 
         Returns:
-            UserPublic
+            User: Authenticated user
 
         Raises:
             BadRequest: If credentials are invalid
@@ -83,7 +83,7 @@ class AuthService:
             if not user.id:
                 raise InternalServerError(description="Failed to login user")
 
-            return UserPublic.model_validate(user)
+            return User.model_validate(user)
 
         except (
             argon_exceptions.VerifyMismatchError,

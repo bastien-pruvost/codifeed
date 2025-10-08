@@ -20,7 +20,7 @@ class UserService:
     """Service responsible for all user-related business logic."""
 
     @staticmethod
-    def get_by_id(session: Session, user_id: UUID) -> UserPublic:
+    def get_by_id(session: Session, user_id: UUID) -> User:
         """Get user by ID.
 
         Args:
@@ -28,7 +28,7 @@ class UserService:
             user_id: User ID
 
         Returns:
-            UserPublic: User data
+            User: User data
 
         Raises:
             NotFound: If user not found or is deleted
@@ -44,11 +44,22 @@ class UserService:
                 "Please contact support if you believe this is an error."
             )
 
-        return UserPublic.model_validate(user)
+        return User.model_validate(user)
 
     @staticmethod
     def get_by_username(session: Session, username: str) -> User:
-        """Return an active (non-deleted) user by username or raise 404."""
+        """Get user by username.
+
+        Args:
+            session: Database session
+            username: User username
+
+        Returns:
+            User: User data
+
+        Raises:
+            NotFound: If user not found or is deleted
+        """
         user = session.exec(select(User).where(col(User.username) == username)).first()
 
         if not user:
@@ -60,7 +71,7 @@ class UserService:
         return user
 
     @staticmethod
-    def delete_by_id(session: Session, user_id: UUID, username: str) -> UserPublic:
+    def delete_by_id(session: Session, user_id: UUID, username: str) -> User:
         """Delete user account by ID.
 
         Args:
@@ -88,65 +99,7 @@ class UserService:
         user.soft_delete()
         session.commit()
 
-        return UserPublic.model_validate(user)
-
-    @staticmethod
-    def _get_follow_relationships(
-        session: Session, current_user_id: UUID, user_ids: list[UUID]
-    ) -> tuple[set[UUID], set[UUID]]:
-        """Get follow relationships between current user and list of users.
-
-        Returns:
-            Tuple of (following_ids, followed_by_ids)
-        """
-        # Which listed users are followed by current user?
-        following_ids_statement = select(UserFollow.following_id).where(
-            UserFollow.follower_id == current_user_id,
-            col(UserFollow.following_id).in_(user_ids),
-        )
-        following_ids = set(session.exec(following_ids_statement).all())
-
-        # Which listed users follow the current user?
-        followed_by_ids_statement = select(UserFollow.follower_id).where(
-            UserFollow.following_id == current_user_id,
-            col(UserFollow.follower_id).in_(user_ids),
-        )
-        followed_by_ids = set(session.exec(followed_by_ids_statement).all())
-
-        return following_ids, followed_by_ids
-
-    @staticmethod
-    def _annotate_follow_flags_for_users(
-        session: Session,
-        current_user_id: UUID,
-        users: list[User],
-    ) -> list[UserPublic]:
-        """Return UserPublic list enriched with follow flags relative to current user."""
-        if not users:
-            return []
-
-        user_ids = [u.id for u in users if u.id is not None]
-        if not user_ids:
-            return [UserPublic.model_validate(u) for u in users]
-
-        following_ids, followed_by_ids = UserService._get_follow_relationships(
-            session, current_user_id, user_ids
-        )
-
-        result: list[UserPublic] = []
-        for user in users:
-            is_following = bool(user.id in following_ids)
-            is_followed_by = bool(user.id in followed_by_ids)
-            result.append(
-                UserPublic.model_validate(user).model_copy(
-                    update={
-                        "is_following": is_following,
-                        "is_followed_by": is_followed_by,
-                    }
-                )
-            )
-
-        return result
+        return User.model_validate(user)
 
     @staticmethod
     def get_detail_by_username(
@@ -154,7 +107,19 @@ class UserService:
         current_user_id: UUID,
         username: str,
     ) -> UserDetail:
-        """Get a user's detail by username."""
+        """Get a user's detail by username.
+
+        Args:
+            session: Database session
+            current_user_id: Current user ID
+            username: User username
+
+        Returns:
+            UserDetail: User detail
+
+        Raises:
+            NotFound: If user not found or is deleted
+        """
         user = UserService.get_by_username(session, username)
 
         followers_count_subquery = (
@@ -220,7 +185,20 @@ class UserService:
         current_user_id: UUID,
         username: str,
     ) -> UserDetail:
-        """Follow a user idempotently and return updated detail."""
+        """Follow a user idempotently and return updated detail.
+
+        Args:
+            session: Database session
+            current_user_id: Current user ID
+            username: User username
+
+        Returns:
+            UserDetail: User detail
+
+        Raises:
+            NotFound: If user not found
+            BadRequest: If user cannot follow themselves
+        """
         target = UserService.get_by_username(session, username)
         if not target.id:
             raise NotFound(description="User not found")
@@ -242,7 +220,20 @@ class UserService:
         current_user_id: UUID,
         username: str,
     ) -> UserDetail:
-        """Unfollow a user and return updated detail; raise 404 if not following."""
+        """Unfollow a user and return updated detail; raise 404 if not following.
+
+        Args:
+            session: Database session
+            current_user_id: Current user ID
+            username: User username
+
+        Returns:
+            UserDetail: User detail
+
+        Raises:
+            NotFound: If user not found
+            BadRequest: If user cannot unfollow themselves
+        """
         target = UserService.get_by_username(session, username)
         if not target.id:
             raise NotFound(description="User not found")
@@ -261,6 +252,60 @@ class UserService:
         return UserService.get_detail_by_username(session, current_user_id, username)
 
     @staticmethod
+    def _get_follow_relationships(
+        session: Session, current_user_id: UUID, user_ids: list[UUID]
+    ) -> tuple[set[UUID], set[UUID]]:
+        """Get follow relationships between current user and list of users."""
+        # Which listed users are followed by current user?
+        following_ids_statement = select(UserFollow.following_id).where(
+            UserFollow.follower_id == current_user_id,
+            col(UserFollow.following_id).in_(user_ids),
+        )
+        following_ids = set(session.exec(following_ids_statement).all())
+
+        # Which listed users follow the current user?
+        followed_by_ids_statement = select(UserFollow.follower_id).where(
+            UserFollow.following_id == current_user_id,
+            col(UserFollow.follower_id).in_(user_ids),
+        )
+        followed_by_ids = set(session.exec(followed_by_ids_statement).all())
+
+        return following_ids, followed_by_ids
+
+    @staticmethod
+    def _annotate_follow_flags_for_users(
+        session: Session,
+        current_user_id: UUID,
+        users: list[User],
+    ) -> list[UserPublic]:
+        """Return UserPublic list enriched with follow flags relative to current user."""
+        if not users:
+            return []
+
+        user_ids = [u.id for u in users if u.id is not None]
+        if not user_ids:
+            return [UserPublic.model_validate(u) for u in users]
+
+        following_ids, followed_by_ids = UserService._get_follow_relationships(
+            session, current_user_id, user_ids
+        )
+
+        result: list[UserPublic] = []
+        for user in users:
+            is_following = bool(user.id in following_ids)
+            is_followed_by = bool(user.id in followed_by_ids)
+            result.append(
+                UserPublic.model_validate(user).model_copy(
+                    update={
+                        "is_following": is_following,
+                        "is_followed_by": is_followed_by,
+                    }
+                )
+            )
+
+        return result
+
+    @staticmethod
     def get_followers_by_username(
         session: Session,
         current_user_id: UUID,
@@ -269,8 +314,17 @@ class UserService:
     ) -> Tuple[list[UserPublic], PaginationMeta]:
         """List followers (active users) of a target user with pagination.
 
-        Returns `UserPublic` enriched with `is_following` and `is_followed_by` flags
-        relative to the current user.
+        Args:
+            session: Database session
+            current_user_id: Current user ID
+            username: User username
+            pagination: Pagination query
+
+        Returns:
+            Tuple[list[UserPublic], PaginationMeta]: List of users and pagination metadata
+
+        Raises:
+            NotFound: If user not found
         """
         target = UserService.get_by_username(session, username)
 
@@ -296,6 +350,18 @@ class UserService:
         """List users (active) that the target user is following with pagination.
 
         Returns `UserPublic` enriched with `is_following` and `is_followed_by` flags.
+
+        Args:
+            session: Database session
+            current_user_id: Current user ID
+            username: User username
+            pagination: Pagination query
+
+        Returns:
+            Tuple[list[UserPublic], PaginationMeta]: List of users and pagination metadata
+
+        Raises:
+            NotFound: If user not found
         """
         target = UserService.get_by_username(session, username)
 
@@ -320,7 +386,17 @@ class UserService:
     ) -> Tuple[list[UserPublic], PaginationMeta]:
         """Search users by name/username, ordered by a relevance score.
 
-        Note: We avoid wrapping columns with functions that can negate trigram index usage.
+        Args:
+            session: Database session
+            current_user_id: Current user ID
+            query: Search query
+            pagination: Pagination query
+
+        Returns:
+            Tuple[list[UserPublic], PaginationMeta]: List of users and pagination metadata
+
+        Raises:
+            BadRequest: If search query is required
         """
         search_term = query.strip()
         if not search_term:

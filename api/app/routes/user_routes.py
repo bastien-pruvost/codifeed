@@ -1,9 +1,9 @@
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
-from sqlmodel import Field
 
 from app.database import get_session
-from app.models import ApiBaseModel, PaginationQuery, UserDetail, UserList, UserPublic
+from app.models import PaginationQuery, UserDetail, UserList, UserPublic
+from app.schemas import SearchQuery, UsernamePath
 from app.services.user_service import UserService
 from app.utils.jwt import get_current_user_id, login_required
 from app.utils.response import abp_responses, success_response
@@ -21,12 +21,9 @@ users_router = APIBlueprint("user", __name__, abp_tags=[users_tag], abp_response
 def get_current_user_route():
     user_id = get_current_user_id()
     with get_session() as session:
-        user_data = UserService.get_by_id(session, user_id)
-        return success_response(user_data.model_dump())
-
-
-class UsernamePath(ApiBaseModel):
-    username: str
+        user = UserService.get_by_id(session, user_id)
+        user_public = UserPublic.model_validate(user)
+        return success_response(user_public.model_dump())
 
 
 @users_router.get(
@@ -38,12 +35,8 @@ class UsernamePath(ApiBaseModel):
 def get_user_detail_route(path: UsernamePath):
     current_user_id = get_current_user_id()
     with get_session() as session:
-        response_data = UserService.get_detail_by_username(session, current_user_id, path.username)
-        return success_response(response_data.model_dump())
-
-
-class SearchQuery(PaginationQuery):
-    q: str = Field(default="", min_length=1, max_length=255, description="Search query")
+        user_detail = UserService.get_detail_by_username(session, current_user_id, path.username)
+        return success_response(user_detail.model_dump())
 
 
 @users_router.get(
@@ -58,7 +51,8 @@ def search_users_route(query: SearchQuery):
         users, meta = UserService.search(
             session=session, current_user_id=current_user_id, query=query.q, pagination=query
         )
-        return success_response(UserList.model_validate({"data": users, "meta": meta}).model_dump())
+        user_list = UserList.model_validate({"data": users, "meta": meta})
+        return success_response(user_list.model_dump())
 
 
 @users_router.delete(
@@ -70,8 +64,9 @@ def search_users_route(query: SearchQuery):
 def delete_user_route(path: UsernamePath):
     current_user_id = get_current_user_id()
     with get_session() as session:
-        user_data = UserService.delete_by_id(session, current_user_id, path.username)
-        return success_response(user_data.model_dump())
+        user = UserService.delete_by_id(session, current_user_id, path.username)
+        user_public = UserPublic.model_validate(user)
+        return success_response(user_public.model_dump())
 
 
 @users_router.post(
@@ -83,12 +78,12 @@ def delete_user_route(path: UsernamePath):
 def follow_user_route(path: UsernamePath):
     current_user_id = get_current_user_id()
     with get_session() as session:
-        response_data = UserService.follow_by_username(
+        user_detail = UserService.follow_by_username(
             session=session,
             current_user_id=current_user_id,
             username=path.username,
         )
-        return success_response(response_data.model_dump())
+        return success_response(user_detail.model_dump())
 
 
 @users_router.delete(
@@ -100,12 +95,12 @@ def follow_user_route(path: UsernamePath):
 def unfollow_user_route(path: UsernamePath):
     current_user_id = get_current_user_id()
     with get_session() as session:
-        response_data = UserService.unfollow_by_username(
+        user_detail = UserService.unfollow_by_username(
             session=session,
             current_user_id=current_user_id,
             username=path.username,
         )
-        return success_response(response_data.model_dump())
+        return success_response(user_detail.model_dump())
 
 
 @users_router.get(
@@ -123,7 +118,8 @@ def get_user_followers_route(path: UsernamePath, query: PaginationQuery):
             username=path.username,
             pagination=query,
         )
-        return success_response(UserList.model_validate({"data": users, "meta": meta}).model_dump())
+        user_list = UserList.model_validate({"data": users, "meta": meta})
+        return success_response(user_list.model_dump())
 
 
 @users_router.get(
@@ -141,4 +137,5 @@ def get_user_following_route(path: UsernamePath, query: PaginationQuery):
             username=path.username,
             pagination=query,
         )
-        return success_response(UserList.model_validate({"data": users, "meta": meta}).model_dump())
+        user_list = UserList.model_validate({"data": users, "meta": meta})
+        return success_response(user_list.model_dump())
