@@ -90,6 +90,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Create a new post */
+        post: operations["posts_create_post_posts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/posts/user/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get all posts for a user */
+        get: operations["posts_get_user_posts_posts_user__string_username__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/me": {
         parameters: {
             query?: never;
@@ -256,6 +290,35 @@ export interface components {
             page: number;
             /** Totalcount */
             totalCount: number;
+        };
+        /** PostCreate */
+        PostCreate: {
+            /** Content */
+            content: string;
+        };
+        /** PostList */
+        PostList: {
+            /** Data */
+            data: components["schemas"]["PostPublic"][];
+            meta: components["schemas"]["PaginationMeta"];
+        };
+        /** PostPublic */
+        PostPublic: {
+            author: components["schemas"]["UserPublic"];
+            /** Content */
+            content: string;
+            /**
+             * Createdat
+             * @default null
+             */
+            createdAt: string | null;
+            /** Id */
+            id?: string | null;
+            /**
+             * Updatedat
+             * @default null
+             */
+            updatedAt: string | null;
         };
         /** ProfileBase */
         ProfileBase: {
@@ -465,6 +528,9 @@ export type ErrorResponse = components['schemas']['ErrorResponse'];
 export type HealthcheckResponse = components['schemas']['HealthcheckResponse'];
 export type LoginCredentials = components['schemas']['LoginCredentials'];
 export type PaginationMeta = components['schemas']['PaginationMeta'];
+export type PostCreate = components['schemas']['PostCreate'];
+export type PostList = components['schemas']['PostList'];
+export type PostPublic = components['schemas']['PostPublic'];
 export type ProfileBase = components['schemas']['ProfileBase'];
 export type UserCreate = components['schemas']['UserCreate'];
 export type UserDetail = components['schemas']['UserDetail'];
@@ -723,6 +789,107 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthcheckResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    posts_create_post_posts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PostCreate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostPublic"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    posts_get_user_posts_posts_user__string_username__get: {
+        parameters: {
+            query?: {
+                /** @description Page number */
+                page?: number;
+                /** @description Number of items per page */
+                itemsPerPage?: number;
+            };
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostList"];
                 };
             };
             /** @description Unprocessable Content */
