@@ -40,7 +40,7 @@ export function InlineLink({
   return (
     <Comp
       data-slot="inline-link"
-      className={cn(inlineLinkVariants({ underline, className }))}
+      className={cn(inlineLinkVariants({ underline }), className)}
       {...props}
     />
   )

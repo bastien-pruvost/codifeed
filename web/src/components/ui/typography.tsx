@@ -34,7 +34,7 @@ export function P({
   ...props
 }: ParagraphProps) {
   return (
-    <p className={cn(paragraphVariants({ tone, size, className }))} {...props}>
+    <p className={cn(paragraphVariants({ tone, size }), className)} {...props}>
       {children}
     </p>
   )
