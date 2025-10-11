@@ -12,9 +12,11 @@ import { userQueries } from "@/features/users/api/user-queries"
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context }) => {
-    if (shouldBeAuthenticated()) {
-      await context.queryClient.prefetchQuery(userQueries.currentUser())
-    }
+    const currentUser = shouldBeAuthenticated()
+      ? await context.queryClient.ensureQueryData(userQueries.currentUser())
+      : null
+
+    return { currentUser }
   },
   component: RootRouteComponent,
 })
@@ -22,11 +24,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootRouteComponent() {
   return (
     <>
-      <Toaster position="top-center" richColors />
       <HeadContent />
-
       <Outlet />
-
+      <Toaster position="top-center" richColors />
       {import.meta.env.DEV ? (
         <Suspense fallback={null}>
           <TanStackRouterDevtools position="bottom-left" />

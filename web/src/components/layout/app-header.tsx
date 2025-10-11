@@ -10,10 +10,10 @@ import { SearchBar } from "@/features/search/components/search-bar"
 import { UserMenu } from "@/features/users/components/user-menu"
 
 interface HeaderProps extends ComponentProps<typeof Wrapper> {
-  user: UserPublic
+  currentUser: UserPublic
 }
 
-export function AppHeader({ user }: HeaderProps) {
+export function AppHeader({ currentUser }: HeaderProps) {
   return (
     <header className="sticky top-0 z-20 border-b bg-background/80 shadow-sm shadow-muted/50 backdrop-blur-md">
       <Wrapper
@@ -33,7 +33,7 @@ export function AppHeader({ user }: HeaderProps) {
 
         <div className="flex items-center justify-end gap-3 sm:gap-4">
           <ThemeToggle />
-          <UserMenu user={user} />
+          <UserMenu user={currentUser} />
         </div>
       </Wrapper>
     </header>

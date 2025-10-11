@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { userQueries } from "@/features/users/api/user-queries"
 import { api, getData } from "@/services/http-client"
 
-export function useFollowUser() {
+export function useFollowUserMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -41,20 +41,20 @@ export function useFollowUser() {
         )
       }
     },
-    onSettled: async (_data, _error, username) => {
+    onSettled: async (_data, _error) => {
       return Promise.all([
         queryClient.invalidateQueries({
-          queryKey: userQueries.detail(username).queryKey,
+          queryKey: userQueries.details(),
         }),
         queryClient.invalidateQueries({
-          queryKey: userQueries.followers(username),
+          queryKey: userQueries.lists(),
         }),
       ])
     },
   })
 }
 
-export function useUnfollowUser() {
+export function useUnfollowUserMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -92,13 +92,13 @@ export function useUnfollowUser() {
         )
       }
     },
-    onSettled: async (_data, _error, username) => {
+    onSettled: async (_data, _error) => {
       return Promise.all([
         queryClient.invalidateQueries({
-          queryKey: userQueries.detail(username).queryKey,
+          queryKey: userQueries.details(),
         }),
         queryClient.invalidateQueries({
-          queryKey: userQueries.followers(username),
+          queryKey: userQueries.lists(),
         }),
       ])
     },

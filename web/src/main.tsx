@@ -18,12 +18,12 @@ import { ThemeProvider } from "@/hooks/use-theme"
 
 export interface RouterContext {
   queryClient: QueryClient
-  user: UserPublic | null
+  currentUser: UserPublic | null
 }
 
 const defaultRouterContext: RouterContext = {
   queryClient,
-  user: null,
+  currentUser: null,
 }
 
 // Create a new router instance

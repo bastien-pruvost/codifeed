@@ -14,12 +14,6 @@ export const Route = createFileRoute("/_public/")({
 })
 
 function LandingPage() {
-  const user = Route.useRouteContext({
-    select: (context) => context.user,
-  })
-
-  console.log(user)
-
   return (
     <>
       <PageContainer className="flex items-center justify-center">

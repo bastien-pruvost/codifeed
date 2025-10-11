@@ -1,26 +1,18 @@
-// import {
-//   useLocation,
-//   useNavigate,
-//   useParentMatches,
-//   useRouteContext,
-//   useRouter,
-// } from "@tanstack/react-router"
+import { useSuspenseQuery } from "@tanstack/react-query"
 
-// export function useCurrentUser() {
-//   const router = useRouter()
+import { userQueries } from "@/features/users/api/user-queries"
 
-//   const location = useLocation()
-//   const user = useRouteContext({
-//     from: "__root__",
-//     select: (context) => context.user,
-//   })
+export function useCurrentUser() {
+  const { data: currentUser } = useSuspenseQuery(userQueries.currentUser())
+  if (!currentUser) {
+    throw new Error(
+      "Current user is null in a protected route. `useCurrentUser` must be used within a `_app` route.",
+    )
+  }
+  return currentUser
+}
 
-//   // if (!user) {
-//   //   router.history.push("/login", {
-//   //     search: { redirect: location.href },
-//   //   })
-//   //   return null
-//   // }
-
-//   return user
-// }
+export function useOptionalCurrentUser() {
+  const { data: currentUser } = useSuspenseQuery(userQueries.currentUser())
+  return currentUser
+}
