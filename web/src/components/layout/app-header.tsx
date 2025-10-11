@@ -21,15 +21,13 @@ export function AppHeader({ currentUser }: HeaderProps) {
         className="flex h-(--header-height) max-w-5xl items-center justify-between gap-3 sm:gap-4"
       >
         <div className="flex items-center gap-3 sm:gap-4">
-          <SidebarTrigger className="md:hidden" />
+          <SidebarTrigger variant="ghost" className="md:hidden" />
           <Link to="/home">
             <AppLogo className="**:data-[slot=app-logo-text]:hidden *:data-[slot=app-logo-text]:sm:block" />
           </Link>
         </div>
 
-        <div className="relative h-9 w-full max-w-xs overflow-visible">
-          <SearchBar className="absolute top-0 left-0 h-auto w-full" />
-        </div>
+        <SearchBar className="w-full max-w-xs" />
 
         <div className="flex items-center justify-end gap-3 sm:gap-4">
           <ThemeToggle />

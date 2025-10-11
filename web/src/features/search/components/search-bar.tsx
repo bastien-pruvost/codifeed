@@ -46,57 +46,59 @@ export function SearchBar({
   }
 
   return (
-    <Command
-      shouldFilter={false}
-      className={cn("rounded-lg border shadow-xs", className)}
-      ref={containerRef}
-      {...props}
-    >
-      <CommandInput
-        placeholder="Search..."
-        value={inputValue}
-        onValueChange={handleValueChange}
-        onFocus={() => setOpen(!!inputValue.trim())}
-      />
-      {open && (
-        <CommandList>
-          <CommandGroup
-            heading={
-              <div className="flex items-center">
-                Users{" "}
-                {(isFetching || isDebouncing) && users.length > 0 ? (
-                  <Spinner className="ml-2 size-4" />
-                ) : null}
-              </div>
-            }
-          >
-            {(isFetching || isDebouncing) && users.length === 0 ? (
-              <CommandItem value="loading">
-                <Spinner className="mr-2 size-4" /> Searching…
-              </CommandItem>
-            ) : users.length > 0 ? (
-              users.map((user) => (
-                <CommandItem
-                  key={user.username}
-                  onSelect={() => {
-                    void navigate({
-                      to: "/$username",
-                      params: { username: user.username },
-                    })
-                    setOpen(false)
-                    setInputValue("")
-                  }}
-                >
-                  <UserAvatar user={user} />
-                  {user.name}
+    <div className={cn("relative h-9 overflow-visible", className)}>
+      <Command
+        shouldFilter={false}
+        className="absolute inset-x-0 top-0 h-auto rounded-lg border shadow-xs"
+        ref={containerRef}
+        {...props}
+      >
+        <CommandInput
+          placeholder="Search..."
+          value={inputValue}
+          onValueChange={handleValueChange}
+          onFocus={() => setOpen(!!inputValue.trim())}
+        />
+        {open && (
+          <CommandList>
+            <CommandGroup
+              heading={
+                <div className="flex items-center">
+                  Users{" "}
+                  {(isFetching || isDebouncing) && users.length > 0 ? (
+                    <Spinner className="ml-2 size-4" />
+                  ) : null}
+                </div>
+              }
+            >
+              {(isFetching || isDebouncing) && users.length === 0 ? (
+                <CommandItem value="loading">
+                  <Spinner className="mr-2 size-4" /> Searching…
                 </CommandItem>
-              ))
-            ) : (
-              <CommandEmpty>No users found</CommandEmpty>
-            )}
-          </CommandGroup>
-        </CommandList>
-      )}
-    </Command>
+              ) : users.length > 0 ? (
+                users.map((user) => (
+                  <CommandItem
+                    key={user.username}
+                    onSelect={() => {
+                      void navigate({
+                        to: "/$username",
+                        params: { username: user.username },
+                      })
+                      setOpen(false)
+                      setInputValue("")
+                    }}
+                  >
+                    <UserAvatar user={user} />
+                    {user.name}
+                  </CommandItem>
+                ))
+              ) : (
+                <CommandEmpty>No users found</CommandEmpty>
+              )}
+            </CommandGroup>
+          </CommandList>
+        )}
+      </Command>
+    </div>
   )
 }
