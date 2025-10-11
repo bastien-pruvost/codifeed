@@ -1,6 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { CalendarIcon, LinkIcon, MapPinIcon } from "lucide-react"
+import { useMemo } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,15 +14,35 @@ import { InlineLink } from "@/components/ui/inline-link"
 import { PageContainer } from "@/components/ui/page-container"
 import { P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
+import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
+import { postQueries } from "@/features/posts/api/post-queries"
+import { CreatePostForm } from "@/features/posts/components/create-post-form"
+import {
+  PostList,
+  PostListContent,
+  PostListEmpty,
+  PostListHeader,
+  PostListItem,
+  PostListItemSkeleton,
+} from "@/features/posts/components/post-list"
 import { userQueries } from "@/features/users/api/user-queries"
-import { FollowButton } from "@/features/users/components/follow-button"
 import { UserAvatar } from "@/features/users/components/user-avatar"
-import { Route as AppRoute } from "@/routes/_app"
+import { FollowButton } from "@/features/users/components/user-follow-button"
+import {
+  InfiniteScroll,
+  InfiniteScrollTrigger,
+} from "@/hooks/use-infinite-scroll"
 
 export const Route = createFileRoute("/_app/$username/")({
   loader: async ({ context, params }) => {
     await context.queryClient.ensureQueryData(
       userQueries.detail(params.username),
+    )
+    void context.queryClient.ensureInfiniteQueryData(
+      postQueries.userInfinite({
+        username: params.username,
+        itemsPerPage: 20,
+      }),
     )
   },
   component: UserProfilePage,
@@ -30,7 +51,7 @@ export const Route = createFileRoute("/_app/$username/")({
 function UserProfilePage() {
   const username = Route.useParams({ select: (params) => params.username })
   const { data: user } = useSuspenseQuery(userQueries.detail(username))
-  const { user: currentUser } = AppRoute.useRouteContext()
+  const currentUser = useCurrentUser()
 
   const isOwnProfile = currentUser.id === user.id
 
@@ -42,6 +63,23 @@ function UserProfilePage() {
     url.startsWith("http://") || url.startsWith("https://")
       ? url
       : `https://${url}`
+
+  const {
+    data: posts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery(
+    postQueries.userInfinite({
+      username,
+      itemsPerPage: 20,
+    }),
+  )
+
+  const postItems = useMemo(() => {
+    return posts?.pages.flatMap((p) => p.data) ?? []
+  }, [posts])
 
   return (
     <PageContainer>
@@ -131,6 +169,39 @@ function UserProfilePage() {
             )}
           </CardContent>
         </Card>
+
+        <div className="mt-6">
+          <InfiniteScroll
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            options={{
+              rootMargin: "50% 0px",
+            }}
+          >
+            <PostList>
+              {isOwnProfile && (
+                <PostListHeader>
+                  <CreatePostForm />
+                </PostListHeader>
+              )}
+              <PostListContent>
+                {postItems.length === 0 ? (
+                  isLoading ? (
+                    <PostListItemSkeleton />
+                  ) : (
+                    <PostListEmpty>This user has no posts yet.</PostListEmpty>
+                  )
+                ) : (
+                  postItems.map((post) => (
+                    <PostListItem key={post.id} post={post} />
+                  ))
+                )}
+              </PostListContent>
+              <InfiniteScrollTrigger />
+            </PostList>
+          </InfiniteScroll>
+        </div>
       </Wrapper>
     </PageContainer>
   )

@@ -1,39 +1,40 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { Button } from "@/components/ui/button"
+import type { PostPublic } from "@/types/generated/api.gen"
 import { PageContainer } from "@/components/ui/page-container"
-import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
-import { useRefreshTokenMutation } from "@/features/auth/api/auth-mutations"
+import { CreatePostForm } from "@/features/posts/components/create-post-form"
+import {
+  PostList,
+  PostListContent,
+  PostListEmpty,
+  PostListHeader,
+} from "@/features/posts/components/post-list"
 
 export const Route = createFileRoute("/_app/home")({
   component: HomePage,
 })
 
 function HomePage() {
-  const user = Route.useRouteContext({
-    select: (context) => context.user,
-  })
-
-  const refreshTokenMutation = useRefreshTokenMutation()
-
+  const postItems = [] satisfies PostPublic[]
   return (
     <PageContainer>
       <Wrapper>
-        <div className="mb-8 text-center">
-          <H1>HOME - FEED</H1>
-
-          <P className="mt-4">You are authenticated ✅</P>
-          <P className="mt-4">Welcome back {user.name}</P>
-
-          <Button
-            variant="default"
-            onClick={() => refreshTokenMutation.mutate()}
-            className="mt-4"
-          >
-            Refresh token
-          </Button>
-        </div>
+        <PostList>
+          <PostListHeader>
+            <CreatePostForm />
+          </PostListHeader>
+          <PostListContent>
+            {/* {postItems.map((post) => (
+              <PostListItem key={post.id} post={post} />
+            ))} */}
+            {postItems.length === 0 && (
+              <PostListEmpty>
+                There are no posts yet. Follow some users to get started.
+              </PostListEmpty>
+            )}
+          </PostListContent>
+        </PostList>
       </Wrapper>
     </PageContainer>
   )

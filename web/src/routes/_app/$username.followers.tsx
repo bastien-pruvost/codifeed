@@ -37,17 +37,7 @@ function UserFollowersPage() {
     )
 
   const items = useMemo(() => {
-    const originalItems = data.pages.flatMap((p) => p.data)
-    const multipliedItems = []
-    for (let i = 0; i < 4; i++) {
-      multipliedItems.push(
-        ...originalItems.map((item) => ({
-          ...item,
-          id: `${item.id}_${i}`,
-        })),
-      )
-    }
-    return multipliedItems
+    return data.pages.flatMap((p) => p.data)
   }, [data])
 
   return (

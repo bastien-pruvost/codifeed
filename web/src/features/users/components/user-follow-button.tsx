@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import type { components } from "@/types/generated/api.gen"
+import type { UserPublic } from "@/types/generated/api.gen"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -11,28 +11,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import {
-  useFollowUser,
-  useUnfollowUser,
+  useFollowUserMutation,
+  useUnfollowUserMutation,
 } from "@/features/users/api/user-mutations"
 
 interface FollowButtonProps {
-  user: components["schemas"]["UserDetail"]
+  user: UserPublic
 }
 
 export function FollowButton({ user }: FollowButtonProps) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [hovered, setHovered] = useState(false)
 
-  const follow = useFollowUser()
-  const unfollow = useUnfollowUser()
+  const follow = useFollowUserMutation()
+  const unfollow = useUnfollowUserMutation()
 
   if (!user.isFollowing) {
     return (
-      <Button
-        size="sm"
-        onClick={() => follow.mutate(user.username)}
-        // No loading state; optimistic update handled in mutation
-      >
+      <Button size="sm" onClick={() => follow.mutate(user.username)}>
         Follow
       </Button>
     )

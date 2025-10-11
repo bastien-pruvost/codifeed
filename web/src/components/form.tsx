@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/utils/classnames"
 
 // Tanstack Form Contexts
@@ -23,6 +24,7 @@ export const { useAppForm, withForm } = createFormHook({
   fieldContext,
   fieldComponents: {
     TextField,
+    TextAreaField,
     CheckboxField,
   },
   formComponents: {
@@ -203,6 +205,31 @@ function TextField({ label, description, ...props }: TextFieldProps) {
       <FormControl>
         <Input
           type="text"
+          name={field.name}
+          value={field.state.value}
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.value)}
+          {...props}
+        />
+      </FormControl>
+      {description && <FormDescription>{description}</FormDescription>}
+      <FormMessage />
+    </FormItem>
+  )
+}
+
+interface TextAreaFieldProps
+  extends FieldProps,
+    ComponentProps<typeof Textarea> {}
+
+function TextAreaField({ label, description, ...props }: TextAreaFieldProps) {
+  const field = useFieldContext<string>()
+
+  return (
+    <FormItem>
+      {label && <FormLabel>{label}</FormLabel>}
+      <FormControl>
+        <Textarea
           name={field.name}
           value={field.state.value}
           onBlur={field.handleBlur}
