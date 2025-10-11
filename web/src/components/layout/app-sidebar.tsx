@@ -265,7 +265,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
-        <SidebarGroup {...props}>
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {navData.navSecondary.map((item) => (

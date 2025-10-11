@@ -28,11 +28,11 @@ function AppLayout() {
   const currentUser = useCurrentUser()
 
   return (
-    <SidebarProvider className="block">
+    <SidebarProvider className="flex flex-col">
       <AppHeader currentUser={currentUser} />
 
       <Wrapper className="flex max-w-5xl flex-1 px-0 sm:px-0 md:pr-0 lg:pr-0">
-        <AppSidebar />
+        <AppSidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]" />
 
         <SidebarInset className="overflow-hidden">
           <Outlet />
