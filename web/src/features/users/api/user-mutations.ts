@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 import { userQueries } from "@/features/users/api/user-queries"
 import { api, getData } from "@/services/http-client"
@@ -13,6 +14,9 @@ export function useFollowUserMutation() {
           params: { path: { username } },
         }),
       ),
+    onSuccess: (user) => {
+      toast.success(`You are now following @${user.username} !`)
+    },
     // Optimistic update
     onMutate: async (username) => {
       await queryClient.cancelQueries({
@@ -65,6 +69,9 @@ export function useUnfollowUserMutation() {
           params: { path: { username } },
         }),
       ),
+    onSuccess: (user) => {
+      toast.success(`You don't follow @${user.username} anymore!`)
+    },
     // Optimistic update
     onMutate: async (username) => {
       await queryClient.cancelQueries({

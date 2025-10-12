@@ -12,8 +12,8 @@ export function useCreatePostMutation() {
     mutationFn: (post: PostCreate) =>
       getData(api.POST("/posts", { body: post })),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: postQueries.lists() })
       toast.success("Post created successfully!")
+      await queryClient.invalidateQueries({ queryKey: postQueries.lists() })
     },
   })
 }
@@ -29,8 +29,8 @@ export function useDeletePostMutation() {
         }),
       ),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: postQueries.lists() })
       toast.success("Post deleted successfully!")
+      await queryClient.invalidateQueries({ queryKey: postQueries.lists() })
     },
   })
 }

@@ -95,7 +95,7 @@ export function PostListItem({ post, className, ...props }: PostListItemProps) {
         {isOwnPost && <PostListItemDropdown post={post} />}
       </div>
 
-      <P className="mt-2 ml-13 break-words whitespace-pre-wrap">
+      <P className="mt-4 ml-13 break-words whitespace-pre-wrap">
         {post.content}
       </P>
     </div>
