@@ -26,7 +26,7 @@ function RootRouteComponent() {
     <>
       <HeadContent />
       <Outlet />
-      <Toaster position="top-center" richColors />
+      <Toaster />
       {import.meta.env.DEV ? (
         <Suspense fallback={null}>
           <TanStackRouterDevtools position="bottom-left" />
