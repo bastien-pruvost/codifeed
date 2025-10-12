@@ -1,8 +1,8 @@
 """Domain models and database tables.
 
 This module contains all domain-related models:
-- Database tables (User, Post, Profile, UserFollow)
-- Domain entity models (UserPublic, PostPublic, UserDetail)
+- Database tables (User, Post, Profile, UserFollow, PostLike, etc.)
+- Domain entity models (UserPublic, PostPublic, PostDetail, UserDetail, etc.)
 - Create/Update models (UserCreate, PostCreate)
 - Base models and mixins (UserBase, PostBase, IdMixin, etc.)
 - Infrastructure models (PaginatedList, PaginationQuery, etc.)
@@ -183,6 +183,11 @@ class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=
         sa_relationship_kwargs={"foreign_keys": "[UserFollow.following_id]"},
     )
 
+    # Many-to-many: posts liked by this user
+    liked_posts: list["PostLike"] = Relationship(
+        back_populates="user",
+    )
+
     # Indexes for search
     __table_args__ = (
         Index(
@@ -283,10 +288,24 @@ class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=
         back_populates="posts",
     )
 
+    # Many-to-many: users who liked this post
+    liked_by_users: list["PostLike"] = Relationship(
+        back_populates="post",
+    )
+
 
 class PostPublic(PostBase, TimestampsMixin):
     id: UUID
     author: UserPublic
+    likes_count: int = Field(
+        default=0,
+        ge=0,
+    )
+    is_liked: bool = False
+
+
+class PostDetail(PostPublic):
+    likes: list[UserPublic]
 
 
 class PostList(PaginatedList[PostPublic]):
@@ -300,7 +319,7 @@ class PostCreate(PostBase):
 # ------ UserFollow (User Self Reference) ------
 
 
-class UserFollow(ApiBaseModel, SQLModel, table=True):
+class UserFollow(CreatedAtMixin, SQLModel, table=True):
     __tablename__: str = "user_follow"
 
     follower_id: UUID = Field(
@@ -312,11 +331,6 @@ class UserFollow(ApiBaseModel, SQLModel, table=True):
         primary_key=True,
         foreign_key="user.id",
         ondelete="CASCADE",
-    )
-    created_at: datetime | None = Field(
-        default=None,
-        sa_type=TIMESTAMP(timezone=True),  # pyright: ignore[reportArgumentType]
-        sa_column_kwargs={"nullable": False, "server_default": func.now()},
     )
 
     follower: User = Relationship(
@@ -331,4 +345,34 @@ class UserFollow(ApiBaseModel, SQLModel, table=True):
     __table_args__ = (
         Index("ix_user_follow_following_id_created_at", "following_id", "created_at"),
         Index("ix_user_follow_follower_id_created_at", "follower_id", "created_at"),
+    )
+
+
+# ------ PostLike (Post <-> User Link for Likes) ------
+
+
+class PostLike(CreatedAtMixin, SQLModel, table=True):
+    __tablename__: str = "post_like"
+
+    user_id: UUID = Field(
+        primary_key=True,
+        foreign_key="user.id",
+        ondelete="CASCADE",
+    )
+    post_id: UUID = Field(
+        primary_key=True,
+        foreign_key="post.id",
+        ondelete="CASCADE",
+    )
+
+    user: User = Relationship(
+        back_populates="liked_posts",
+    )
+    post: Post = Relationship(
+        back_populates="liked_by_users",
+    )
+
+    __table_args__ = (
+        Index("ix_post_like_post_id_created_at", "post_id", "created_at"),
+        Index("ix_post_like_user_id_created_at", "user_id", "created_at"),
     )

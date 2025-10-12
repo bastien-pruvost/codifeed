@@ -29,8 +29,15 @@ def create_post(body: PostCreate):
             author=author,
             content=body.content,
         )
-        post_public = PostPublic.model_validate(post)
-        return success_response(post_public.model_dump())
+
+        # Enrich with likes info
+        enriched = PostService._annotate_likes_for_posts(
+            session=session,
+            current_user_id=current_user_id,
+            posts=[post],
+        )
+
+        return success_response(enriched[0].model_dump())
 
 
 @posts_router.get(
@@ -40,11 +47,13 @@ def create_post(body: PostCreate):
 )
 @login_required
 def get_user_posts(path: UsernamePath, query: PaginationQuery):
+    current_user_id = get_current_user_id()
     with get_session() as session:
         user = UserService.get_by_username(session, path.username)
 
         posts, meta = PostService.get_user_posts(
             session=session,
+            current_user_id=current_user_id,
             author=user,
             pagination=query,
         )
@@ -63,5 +72,38 @@ def delete_post(path: PostIdPath):
     current_user_id = get_current_user_id()
     with get_session() as session:
         post = PostService.delete_post(session, path.post_id, current_user_id)
-        post_public = PostPublic.model_validate(post)
+
+        # Enrich with likes info
+        enriched = PostService._annotate_likes_for_posts(
+            session=session,
+            current_user_id=current_user_id,
+            posts=[post],
+        )
+
+        return success_response(enriched[0].model_dump())
+
+
+@posts_router.post(
+    "/posts/<uuid:post_id>/like",
+    responses={200: PostPublic},
+    description="Like a post",
+)
+@login_required
+def like_post(path: PostIdPath):
+    current_user_id = get_current_user_id()
+    with get_session() as session:
+        post_public = PostService.like_post(session, path.post_id, current_user_id)
+        return success_response(post_public.model_dump())
+
+
+@posts_router.delete(
+    "/posts/<uuid:post_id>/like",
+    responses={200: PostPublic},
+    description="Unlike a post",
+)
+@login_required
+def unlike_post(path: PostIdPath):
+    current_user_id = get_current_user_id()
+    with get_session() as session:
+        post_public = PostService.unlike_post(session, path.post_id, current_user_id)
         return success_response(post_public.model_dump())
