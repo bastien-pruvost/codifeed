@@ -50,8 +50,6 @@ def get_user_posts(path: UsernamePath, query: PaginationQuery):
             author=user,
             pagination=query,
         )
-        # Wait 5 seconds
-        sleep(2)
 
         post_list = PostList.model_validate({"data": posts, "meta": meta})
         return success_response(post_list.model_dump())

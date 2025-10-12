@@ -3,7 +3,7 @@ from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, case, col, func, or_, select
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import BadRequest, Forbidden, NotFound
 
 from app.models import (
     PaginationMeta,
@@ -21,18 +21,7 @@ class UserService:
 
     @staticmethod
     def get_by_id(session: Session, user_id: UUID) -> User:
-        """Get user by ID.
-
-        Args:
-            session: Database session
-            user_id: User ID
-
-        Returns:
-            User: User data
-
-        Raises:
-            NotFound: If user not found or is deleted
-        """
+        """Get user by ID."""
         user = session.get(User, user_id)
 
         if not user:
@@ -48,18 +37,7 @@ class UserService:
 
     @staticmethod
     def get_by_username(session: Session, username: str) -> User:
-        """Get user by username.
-
-        Args:
-            session: Database session
-            username: User username
-
-        Returns:
-            User: User data
-
-        Raises:
-            NotFound: If user not found or is deleted
-        """
+        """Get user by username."""
         user = session.exec(select(User).where(col(User.username) == username)).first()
 
         if not user:
@@ -72,21 +50,7 @@ class UserService:
 
     @staticmethod
     def delete_by_id(session: Session, user_id: UUID, username: str) -> User:
-        """Delete user account by ID.
-
-        Args:
-            session: Database session
-            user_id: User ID to delete
-            username: Username for verification
-
-        Returns:
-            UserPublic: Deleted user data
-
-        Raises:
-            NotFound: If user not found
-            Forbidden: If username doesn't match current user
-        """
-        from werkzeug.exceptions import Forbidden
+        """Delete user account by ID."""
 
         user = session.get(User, user_id)
 
@@ -107,19 +71,7 @@ class UserService:
         current_user_id: UUID,
         username: str,
     ) -> UserDetail:
-        """Get a user's detail by username.
-
-        Args:
-            session: Database session
-            current_user_id: Current user ID
-            username: User username
-
-        Returns:
-            UserDetail: User detail
-
-        Raises:
-            NotFound: If user not found or is deleted
-        """
+        """Get a user's detail by username."""
         user = UserService.get_by_username(session, username)
 
         followers_count_subquery = (
@@ -185,20 +137,7 @@ class UserService:
         current_user_id: UUID,
         username: str,
     ) -> UserDetail:
-        """Follow a user idempotently and return updated detail.
-
-        Args:
-            session: Database session
-            current_user_id: Current user ID
-            username: User username
-
-        Returns:
-            UserDetail: User detail
-
-        Raises:
-            NotFound: If user not found
-            BadRequest: If user cannot follow themselves
-        """
+        """Follow a user idempotently and return updated detail."""
         target = UserService.get_by_username(session, username)
         if not target.id:
             raise NotFound(description="User not found")
@@ -220,20 +159,7 @@ class UserService:
         current_user_id: UUID,
         username: str,
     ) -> UserDetail:
-        """Unfollow a user and return updated detail; raise 404 if not following.
-
-        Args:
-            session: Database session
-            current_user_id: Current user ID
-            username: User username
-
-        Returns:
-            UserDetail: User detail
-
-        Raises:
-            NotFound: If user not found
-            BadRequest: If user cannot unfollow themselves
-        """
+        """Unfollow a user and return updated detail; raise 404 if not following."""
         target = UserService.get_by_username(session, username)
         if not target.id:
             raise NotFound(description="User not found")
@@ -312,20 +238,7 @@ class UserService:
         username: str,
         pagination: PaginationQuery,
     ) -> Tuple[list[UserPublic], PaginationMeta]:
-        """List followers (active users) of a target user with pagination.
-
-        Args:
-            session: Database session
-            current_user_id: Current user ID
-            username: User username
-            pagination: Pagination query
-
-        Returns:
-            Tuple[list[UserPublic], PaginationMeta]: List of users and pagination metadata
-
-        Raises:
-            NotFound: If user not found
-        """
+        """List followers (active users) of a target user with pagination."""
         target = UserService.get_by_username(session, username)
 
         statement = (
@@ -347,22 +260,7 @@ class UserService:
         username: str,
         pagination: PaginationQuery,
     ) -> Tuple[list[UserPublic], PaginationMeta]:
-        """List users (active) that the target user is following with pagination.
-
-        Returns `UserPublic` enriched with `is_following` and `is_followed_by` flags.
-
-        Args:
-            session: Database session
-            current_user_id: Current user ID
-            username: User username
-            pagination: Pagination query
-
-        Returns:
-            Tuple[list[UserPublic], PaginationMeta]: List of users and pagination metadata
-
-        Raises:
-            NotFound: If user not found
-        """
+        """List users (active) that the target user is following with pagination."""
         target = UserService.get_by_username(session, username)
 
         statement = (
@@ -384,20 +282,7 @@ class UserService:
         query: str,
         pagination: PaginationQuery,
     ) -> Tuple[list[UserPublic], PaginationMeta]:
-        """Search users by name/username, ordered by a relevance score.
-
-        Args:
-            session: Database session
-            current_user_id: Current user ID
-            query: Search query
-            pagination: Pagination query
-
-        Returns:
-            Tuple[list[UserPublic], PaginationMeta]: List of users and pagination metadata
-
-        Raises:
-            BadRequest: If search query is required
-        """
+        """Search users by name/username, ordered by a relevance score."""
         search_term = query.strip()
         if not search_term:
             raise BadRequest(description="Search query is required")

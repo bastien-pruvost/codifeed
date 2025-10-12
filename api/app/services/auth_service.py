@@ -13,19 +13,7 @@ class AuthService:
 
     @staticmethod
     def create_user(session: Session, user_data: UserCreate) -> User:
-        """Create a new user account and return user data.
-
-        Args:
-            session: Database session
-            user_data: User creation data
-
-        Returns:
-            User: Created user
-
-        Raises:
-            BadRequest: If email already exists
-            InternalServerError: If user creation fails
-        """
+        """Create a new user account and return user data."""
         # Check if user already exists
         statement = select(User).where(
             or_(User.email == user_data.email, User.username == user_data.username)
@@ -59,20 +47,7 @@ class AuthService:
 
     @staticmethod
     def authenticate_user(session: Session, email: str, password: str) -> User:
-        """Authenticate user with email and password.
-
-        Args:
-            session: Database session
-            email: User email
-            password: User password
-
-        Returns:
-            User: Authenticated user
-
-        Raises:
-            BadRequest: If credentials are invalid
-            InternalServerError: If authentication fails
-        """
+        """Authenticate user with email and password."""
         try:
             statement = select(User).where(User.email == email)
             user = session.exec(statement).first()

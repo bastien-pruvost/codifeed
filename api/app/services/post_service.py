@@ -15,16 +15,7 @@ class PostService:
         author: User,
         content: str,
     ) -> Post:
-        """Create a new post.
-
-        Args:
-            session: Database session
-            author: User object of the post author
-            content: Content of the post
-
-        Returns:
-            Post: Created post
-        """
+        """Create a new post."""
         if not author.id:
             raise ValueError("Author ID is required")
 
@@ -41,16 +32,7 @@ class PostService:
         author: User,
         pagination: PaginationQuery,
     ) -> Tuple[list[Post], PaginationMeta]:
-        """Get all posts for a specific user with pagination.
-
-        Args:
-            session: Database session
-            author: User object of the user whose posts to retrieve
-            pagination: Pagination parameters
-
-        Returns:
-            Tuple[list[PostPublic], PaginationMeta]: List of posts and pagination metadata
-        """
+        """Get all posts for a specific user with pagination."""
         if not author.id:
             raise ValueError("Author ID is required")
 
