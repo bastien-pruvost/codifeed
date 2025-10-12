@@ -32,13 +32,11 @@ function AppLayout() {
       <AppHeader currentUser={currentUser} />
 
       <Wrapper className="flex max-w-5xl flex-1 px-0 sm:px-0 md:pr-0 lg:pr-0">
-        <AppSidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]" />
+        <AppSidebar className="top-(--header-height) h-(--page-container-min-height)" />
 
         <SidebarInset className="overflow-hidden">
           <Outlet />
         </SidebarInset>
-
-        {/* <Sidebar variant="floating" side="right" /> */}
       </Wrapper>
     </SidebarProvider>
   )
