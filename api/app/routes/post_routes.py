@@ -1,11 +1,9 @@
-from time import sleep
-
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 
 from app.database import get_session
 from app.models import PaginationQuery, PostCreate, PostList, PostPublic
-from app.schemas import UsernamePath
+from app.schemas import PostIdPath, UsernamePath
 from app.services.post_service import PostService
 from app.services.user_service import UserService
 from app.utils.jwt import get_current_user_id, login_required
@@ -53,3 +51,17 @@ def get_user_posts(path: UsernamePath, query: PaginationQuery):
 
         post_list = PostList.model_validate({"data": posts, "meta": meta})
         return success_response(post_list.model_dump())
+
+
+@posts_router.delete(
+    "/posts/<uuid:post_id>",
+    responses={200: PostPublic},
+    description="Delete a post",
+)
+@login_required
+def delete_post(path: PostIdPath):
+    current_user_id = get_current_user_id()
+    with get_session() as session:
+        post = PostService.delete_post(session, path.post_id, current_user_id)
+        post_public = PostPublic.model_validate(post)
+        return success_response(post_public.model_dump())

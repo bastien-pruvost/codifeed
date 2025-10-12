@@ -65,6 +65,7 @@ export function useUnfollowUserMutation() {
           params: { path: { username } },
         }),
       ),
+    // Optimistic update
     onMutate: async (username) => {
       await queryClient.cancelQueries({
         queryKey: userQueries.detail(username).queryKey,

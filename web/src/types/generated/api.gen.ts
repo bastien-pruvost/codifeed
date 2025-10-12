@@ -111,7 +111,9 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                username: string;
+            };
             cookie?: never;
         };
         /** @description Get all posts for a user */
@@ -119,6 +121,25 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/posts/{post_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Delete a post */
+        delete: operations["posts_delete_post_posts__uuid_post_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -162,7 +183,9 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                username: string;
+            };
             cookie?: never;
         };
         /** @description Get a user detail by username */
@@ -180,7 +203,9 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                username: string;
+            };
             cookie?: never;
         };
         get?: never;
@@ -198,7 +223,9 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                username: string;
+            };
             cookie?: never;
         };
         /** @description List followers of a user (public lists) */
@@ -215,7 +242,9 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                username: string;
+            };
             cookie?: never;
         };
         /** @description List users that a user is following (public lists) */
@@ -312,8 +341,11 @@ export interface components {
              * @default null
              */
             createdAt: string | null;
-            /** Id */
-            id?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
             /**
              * Updatedat
              * @default null
@@ -890,6 +922,53 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PostList"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    posts_delete_post_posts__uuid_post_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostPublic"];
                 };
             };
             /** @description Unprocessable Content */

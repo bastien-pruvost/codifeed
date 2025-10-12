@@ -4,7 +4,6 @@ import { toast } from "sonner"
 import type { PostCreate } from "@/types/generated/api.gen"
 import { postQueries } from "@/features/posts/api/post-queries"
 import { api, getData } from "@/services/http-client"
-import { getErrorMessage } from "@/utils/errors"
 
 export function useCreatePostMutation() {
   const queryClient = useQueryClient()
@@ -16,8 +15,22 @@ export function useCreatePostMutation() {
       await queryClient.invalidateQueries({ queryKey: postQueries.lists() })
       toast.success("Post created successfully!")
     },
-    onError: (error) => {
-      toast.error(getErrorMessage(error))
+  })
+}
+
+export function useDeletePostMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (postId: string) =>
+      getData(
+        api.DELETE("/posts/{post_id}", {
+          params: { path: { post_id: postId } },
+        }),
+      ),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: postQueries.lists() })
+      toast.success("Post deleted successfully!")
     },
   })
 }

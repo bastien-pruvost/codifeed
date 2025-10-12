@@ -1,6 +1,8 @@
 from typing import Tuple
+from uuid import UUID
 
 from sqlmodel import Session, col
+from werkzeug.exceptions import Forbidden, NotFound
 
 from app.models import PaginationMeta, PaginationQuery, Post, User
 from app.utils.pagination import paginate_query
@@ -45,3 +47,18 @@ class PostService:
         posts, meta = paginate_query(session=session, statement=statement, pagination=pagination)
 
         return posts, meta
+
+    @staticmethod
+    def delete_post(session: Session, post_id: UUID, current_user_id: UUID) -> Post:
+        """Delete a post."""
+        post = session.get(Post, post_id)
+        if not post:
+            raise NotFound(description="Post not found")
+
+        if post.author_id != current_user_id:
+            raise Forbidden(description="You are not allowed to delete this post")
+
+        post.soft_delete()
+        session.commit()
+
+        return post
