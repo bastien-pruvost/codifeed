@@ -1,10 +1,10 @@
 import type { ComponentProps, ReactNode } from "react"
-import { Slot } from "@radix-ui/react-slot"
 import {
   createFormHook,
   createFormHookContexts,
   useStore,
 } from "@tanstack/react-form"
+import { Slot as SlotPrimitive } from "radix-ui"
 import { createContext, useContext, useId } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -107,11 +107,11 @@ function FormLabel({ className, ...props }: ComponentProps<typeof Label>) {
   )
 }
 
-function FormControl({ ...props }: ComponentProps<typeof Slot>) {
+function FormControl({ ...props }: ComponentProps<typeof SlotPrimitive.Slot>) {
   const { errors, fieldId, fieldDescriptionId, fieldMessageId } = useFormItem()
 
   return (
-    <Slot
+    <SlotPrimitive.Slot
       id={fieldId}
       data-slot="form-control"
       aria-invalid={errors.length > 0}

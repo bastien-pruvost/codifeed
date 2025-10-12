@@ -1,6 +1,6 @@
 import type { VariantProps } from "class-variance-authority"
 import type { ComponentProps } from "react"
-import { Slot } from "@radix-ui/react-slot"
+import { Slot as SlotPrimitive } from "radix-ui"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/utils/classnames"
@@ -36,7 +36,7 @@ export function InlineLink({
   className,
   ...props
 }: InlineLinkProps) {
-  const Comp = asChild ? Slot : "a"
+  const Comp = asChild ? SlotPrimitive.Slot : "a"
   return (
     <Comp
       data-slot="inline-link"
