@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react"
 import { Link } from "@tanstack/react-router"
-import { MoreHorizontalIcon, TrashIcon } from "lucide-react"
+import { HeartIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react"
 
 import type { PostPublic } from "@/types/generated/api.gen"
 import { Button } from "@/components/ui/button"
@@ -24,7 +24,11 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { P } from "@/components/ui/typography"
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
-import { useDeletePostMutation } from "@/features/posts/api/post-mutations"
+import {
+  useDeletePostMutation,
+  useLikePostMutation,
+  useUnlikePostMutation,
+} from "@/features/posts/api/post-mutations"
 import { UserAvatar } from "@/features/users/components/user-avatar"
 import { useRelativeTimeText } from "@/hooks/use-relative-time"
 import { cn } from "@/utils/classnames"
@@ -71,7 +75,26 @@ interface PostListItemProps extends ComponentProps<"div"> {
 
 export function PostListItem({ post, className, ...props }: PostListItemProps) {
   const currentUser = useCurrentUser()
+  const likePost = useLikePostMutation()
+  const unlikePost = useUnlikePostMutation()
+
   const isOwnPost = currentUser.id === post.author.id
+
+  // Optimistic updated like status
+  const isLiked =
+    likePost.isPending && likePost.variables === post.id
+      ? true
+      : unlikePost.isPending && unlikePost.variables === post.id
+        ? false
+        : post.isLiked
+
+  // Optimistic updated likes count
+  const likesCount =
+    likePost.isPending && likePost.variables === post.id
+      ? post.likesCount + 1
+      : unlikePost.isPending && unlikePost.variables === post.id
+        ? post.likesCount - 1
+        : post.likesCount
 
   return (
     <div className={cn("py-4 first:pt-0 last:pb-0", className)} {...props}>
@@ -98,6 +121,25 @@ export function PostListItem({ post, className, ...props }: PostListItemProps) {
       <P className="mt-4 ml-13 break-words whitespace-pre-wrap">
         {post.content}
       </P>
+
+      <div className="mt-4 ml-13 flex items-center gap-2">
+        <Button
+          variant="ghost"
+          aria-label={isLiked ? "Unlike post" : "Like post"}
+          onClick={() =>
+            isLiked ? unlikePost.mutate(post.id) : likePost.mutate(post.id)
+          }
+          className={cn("hover:text-rose-600", isLiked && "text-rose-600")}
+        >
+          <HeartIcon
+            fill={isLiked ? "currentColor" : "none"}
+            className="size-5"
+          />
+          <span className="text-sm font-normal text-muted-foreground">
+            {likesCount}
+          </span>
+        </Button>
+      </div>
     </div>
   )
 }

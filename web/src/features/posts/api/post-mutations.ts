@@ -34,3 +34,35 @@ export function useDeletePostMutation() {
     },
   })
 }
+
+export function useLikePostMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (postId: string) =>
+      getData(
+        api.POST("/posts/{post_id}/like", {
+          params: { path: { post_id: postId } },
+        }),
+      ),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: postQueries.lists() })
+    },
+  })
+}
+
+export function useUnlikePostMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (postId: string) =>
+      getData(
+        api.DELETE("/posts/{post_id}/like", {
+          params: { path: { post_id: postId } },
+        }),
+      ),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: postQueries.lists() })
+    },
+  })
+}
