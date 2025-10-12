@@ -8,19 +8,23 @@ This module contains API-specific schemas that do NOT represent business entitie
 
 from uuid import UUID
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from app.models import ApiBaseModel, PaginationQuery
 
 # ------ Path Parameters ------
 
 
-class UserIdPath(ApiBaseModel):
+class UserIdPath(BaseModel):
     user_id: UUID
 
 
-class UsernamePath(ApiBaseModel):
+class UsernamePath(BaseModel):
     username: str
+
+
+class PostIdPath(BaseModel):
+    post_id: UUID
 
 
 # ------ Query Parameters ------

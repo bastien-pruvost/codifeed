@@ -284,7 +284,8 @@ class Post(PostBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=
     )
 
 
-class PostPublic(PostBase, TimestampsMixin, IdMixin):
+class PostPublic(PostBase, TimestampsMixin):
+    id: UUID
     author: UserPublic
 
 

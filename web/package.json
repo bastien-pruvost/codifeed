@@ -22,7 +22,7 @@
     "lint": "eslint --fix",
     "typecheck": "tsc",
     "check": "prettier --write . && eslint --fix && tsc",
-    "openapi-ts": "openapi-typescript http://localhost:8000/openapi/openapi.json -o ./src/types/generated/api.gen.ts --root-types --root-types-no-schema-prefix",
+    "openapi-ts": "openapi-typescript http://localhost:8000/openapi/openapi.json -o ./src/types/generated/api.gen.ts --root-types --root-types-no-schema-prefix --generate-path-params",
     "openapi-ts:watch": "chokidar '../api/**/*.py' -c 'pnpm run openapi-ts' --initial"
   },
   "dependencies": {
