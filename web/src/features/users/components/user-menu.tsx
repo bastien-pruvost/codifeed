@@ -21,18 +21,14 @@ export function UserMenu({ user }: { user: UserPublic }) {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-auto w-fit hover:bg-transparent"
-        >
+        <Button variant="ghost" className="px-2!">
           <UserAvatar user={user} />
           <div className="hidden text-sm font-medium md:block">{user.name}</div>
           <ChevronDownIcon className="hidden size-4 md:block" />
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuLabel>
           <div className="text-sm font-medium">{user.name}</div>
           <div className="mt-1 text-xs text-muted-foreground">
@@ -45,7 +41,7 @@ export function UserMenu({ user }: { user: UserPublic }) {
         <DropdownMenuItem asChild>
           <Link to="/$username" params={{ username: user.username }}>
             <UserIcon />
-            Your profile
+            Profile
           </Link>
         </DropdownMenuItem>
 
