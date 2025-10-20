@@ -1,8 +1,8 @@
 import type { VariantProps } from "class-variance-authority"
 import type { ComponentProps, CSSProperties } from "react"
-import { Slot as SlotPrimitive } from "radix-ui"
 import { cva } from "class-variance-authority"
 import { MenuIcon } from "lucide-react"
+import { Slot as SlotPrimitive } from "radix-ui"
 import {
   createContext,
   useCallback,

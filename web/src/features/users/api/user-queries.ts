@@ -113,7 +113,7 @@ function getCurrentUser() {
   )
 }
 
-type SearchUsersOptions = {
+interface SearchUsersOptions {
   q: string
   page: number
   itemsPerPage: number
@@ -129,7 +129,7 @@ function searchUsers({ q, page, itemsPerPage, signal }: SearchUsersOptions) {
   )
 }
 
-type GetUserFollowersOptions = {
+interface GetUserFollowersOptions {
   username: string
   page: number
   itemsPerPage: number
@@ -147,7 +147,7 @@ function getUserFollowers({
   )
 }
 
-type GetUserFollowingOptions = {
+interface GetUserFollowingOptions {
   username: string
   page: number
   itemsPerPage: number
@@ -165,7 +165,7 @@ function getUserFollowing({
   )
 }
 
-type GetUserDetailOptions = {
+interface GetUserDetailOptions {
   username: string
 }
 

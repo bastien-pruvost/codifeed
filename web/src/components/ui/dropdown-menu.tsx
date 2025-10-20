@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react"
-import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
+import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 
 import { cn } from "@/utils/classnames"
 
