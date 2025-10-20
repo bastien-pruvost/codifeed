@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
+import { postQueries } from "@/features/posts/api/post-queries"
 import { userQueries } from "@/features/users/api/user-queries"
 import { api, getData } from "@/services/http-client"
 
@@ -46,6 +47,9 @@ export function useFollowUserMutation() {
       }
     },
     onSettled: async (_data, _error) => {
+      void queryClient.invalidateQueries({
+        queryKey: postQueries.feed(),
+      })
       return Promise.all([
         queryClient.invalidateQueries({
           queryKey: userQueries.details(),
@@ -101,6 +105,9 @@ export function useUnfollowUserMutation() {
       }
     },
     onSettled: async (_data, _error) => {
+      void queryClient.invalidateQueries({
+        queryKey: postQueries.feed(),
+      })
       return Promise.all([
         queryClient.invalidateQueries({
           queryKey: userQueries.details(),

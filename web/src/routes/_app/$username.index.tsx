@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_app/$username/")({
       userQueries.detail(params.username),
     )
     void context.queryClient.ensureInfiniteQueryData(
-      postQueries.userInfinite({
+      postQueries.byUserInfinite({
         username: params.username,
         itemsPerPage: 20,
       }),
@@ -71,7 +71,7 @@ function UserProfilePage() {
     isFetchingNextPage,
     isLoading,
   } = useInfiniteQuery(
-    postQueries.userInfinite({
+    postQueries.byUserInfinite({
       username,
       itemsPerPage: 20,
     }),

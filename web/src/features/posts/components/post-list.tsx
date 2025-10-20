@@ -122,7 +122,7 @@ export function PostListItem({ post, className, ...props }: PostListItemProps) {
         {post.content}
       </P>
 
-      <div className="mt-4 ml-13 flex items-center gap-2">
+      <div className="mt-4 ml-11 flex items-center gap-2">
         <Button
           variant="ghost"
           aria-label={isLiked ? "Unlike post" : "Like post"}

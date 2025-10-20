@@ -30,7 +30,6 @@ def create_post(body: PostCreate):
             content=body.content,
         )
 
-        # Enrich with likes info
         enriched = PostService._annotate_likes_for_posts(
             session=session,
             current_user_id=current_user_id,
@@ -73,7 +72,6 @@ def delete_post(path: PostIdPath):
     with get_session() as session:
         post = PostService.delete_post(session, path.post_id, current_user_id)
 
-        # Enrich with likes info
         enriched = PostService._annotate_likes_for_posts(
             session=session,
             current_user_id=current_user_id,
@@ -107,3 +105,22 @@ def unlike_post(path: PostIdPath):
     with get_session() as session:
         post_public = PostService.unlike_post(session, path.post_id, current_user_id)
         return success_response(post_public.model_dump())
+
+
+@posts_router.get(
+    "/posts/feed",
+    responses={200: PostList},
+    description="Get feed posts from followed users",
+)
+@login_required
+def get_feed_posts(query: PaginationQuery):
+    current_user_id = get_current_user_id()
+    with get_session() as session:
+        posts, meta = PostService.get_feed_posts(
+            session=session,
+            current_user_id=current_user_id,
+            pagination=query,
+        )
+
+        post_list = PostList.model_validate({"data": posts, "meta": meta})
+        return success_response(post_list.model_dump())

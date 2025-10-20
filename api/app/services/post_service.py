@@ -2,7 +2,7 @@ from typing import Tuple
 from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, col, func, select
+from sqlmodel import Session, col, func, or_, select
 from werkzeug.exceptions import Forbidden, NotFound
 
 from app.models import (
@@ -12,6 +12,7 @@ from app.models import (
     PostLike,
     PostPublic,
     User,
+    UserFollow,
     UserPublic,
 )
 from app.utils.pagination import paginate_query
@@ -191,3 +192,32 @@ class PostService:
         enriched = PostService._annotate_likes_for_posts(session, user_id, [post])
 
         return enriched[0]
+
+    @staticmethod
+    def get_feed_posts(
+        session: Session,
+        current_user_id: UUID,
+        pagination: PaginationQuery,
+    ) -> Tuple[list[PostPublic], PaginationMeta]:
+        """Get feed posts from users followed by the current user."""
+        statement = (
+            Post.select_active()
+            .outerjoin(
+                UserFollow,
+                col(UserFollow.following_id) == col(Post.author_id),
+            )
+            .where(
+                or_(
+                    UserFollow.follower_id == current_user_id,
+                    Post.author_id == current_user_id,
+                )
+            )
+            .order_by(col(Post.created_at).desc())
+        )
+
+        posts, meta = paginate_query(session=session, statement=statement, pagination=pagination)
+        enriched = PostService._annotate_likes_for_posts(
+            session=session, current_user_id=current_user_id, posts=posts
+        )
+
+        return enriched, meta
