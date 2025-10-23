@@ -1,84 +1,50 @@
-# 🚀 Codifeed
+# Codifeed
 
 **A modern, type-safe social network built for developers**
 
-[![Tech Stack](https://img.shields.io/badge/Stack-Python%2BFlask%2BReact%2BTypeScript-blue)](#tech-stack)
-[![Type Safety](https://img.shields.io/badge/Type%20Safety-100%25-green)](#type-safety)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![CS50x](https://img.shields.io/badge/Harvard-CS50x%20Final%20Project-red)](https://cs50.harvard.edu/x/)
+#### Video Demo: <URL HERE>
 
----
+#### Description:
 
-## 🎯 About
-
-Codifeed is an **open-source social network designed specifically for developers**. Built as the capstone project for Harvard's CS50x course, it demonstrates how to create a **production-ready, type-safe full-stack application** using React, TypeScript and Flask (Python).
+Codifeed is an **open-source social network designed specifically for developers**. Built as the capstone project for Harvard's CS50x course, it demonstrates how to create a **production-ready, type-safe full-stack application** using React (TypeScript) and Flask (Python).
 
 This project showcases **complete type safety** between a Python backend and TypeScript frontend through OpenAPI specifications, advanced security patterns, and professional-grade architecture suitable for scaling.
 
-### 🎯 Project Goals
-
-- **CS50x Validation**: Demonstrate mastery of full-stack development concepts
-- **Type Safety**: Achieve 100% type safety between Python backend and TypeScript frontend
-- **Best Practices**: Showcase modern web development patterns and security practices
-- **Open Source**: Provide a reference implementation for the community
-
 ---
 
-## ✨ Product Features
+## ✨ Features Overview
 
 ### 🔐 Authentication & Security
 
 - **JWT Authentication** - Secure registration and login system
 - **Password Security** - Argon2 password hashing and validation
-- **OAuth Integration** - Optional GitHub and Google authentication
 - **Session Management** - Automatic token refresh and secure logout
 
 ### 👤 Developer Profiles
 
 - **Personal Profiles** - View your own and other developers' profiles
-- **Profile Customization** - Upload profile pictures, write bios, and showcase skills
-- **Tech Stack Badges** - Display expertise with technology tags (React, Python, etc.)
 - **Developer Identity** - Clean, professional profile layout for the dev community
 
 ### 📝 Posts & Content Creation
 
-- **Rich Text Posts** - Create and edit posts with full Markdown support
-- **Code Snippets** - Share code with syntax highlighting and copy-to-clipboard functionality
-- **Image Uploads** - Attach images to posts for tutorials and showcases
-- **Post Management** - Edit and delete your own posts with version control
+- **Text Posts** - Create and edit posts with text content
+- **Post Management** - Delete your own posts
 
 ### 💫 Social Interactions
 
-- **Engagement System** - Like, comment, and repost functionality
+- **Engagement System** - Like posts
 - **Follow Network** - Follow/unfollow other developers to build your network
-- **Interaction Counts** - Display likes, comments, and repost metrics
-- **Community Building** - Foster connections within the developer community
 
 ### 🌐 Feed & Discovery
 
-- **Dual Feed System** - Switch between "Explore" (global) and "Following" (curated) feeds
-- **Smart Filtering** - Filter posts by technology tags or specific users
-- **Search Functionality** - Find users and posts by keywords, tags, or content
-- **Trending Content** - Discover popular posts and active developers
-
-### 🔔 Notifications & Updates
-
-- **Real-time Notifications** - Get notified of new followers, likes, and comments
-- **Notification Center** - Dedicated page and dropdown for managing notifications
-- **Activity Tracking** - Stay updated on community interactions and engagement
+- **Feed System** - See posts from users you follow
+- **Search Functionality** - Find users by name or username
 
 ### 🎨 User Experience
 
 - **Mobile-First Design** - Responsive layout optimized for all devices
-- **Developer-Focused UI** - Clean, minimal interface designed for developers
 - **Performance Optimized** - Fast loading with modern React patterns
 - **Accessibility** - WCAG compliant design for inclusive user experience
-
-### ⚙️ Admin Tools _(Optional)_
-
-- **Content Moderation** - Tools for managing reported content and community standards
-- **Usage Analytics** - Insights into user engagement and platform growth
-- **User Management** - Administrative controls for user accounts and permissions
 
 ---
 
@@ -88,24 +54,22 @@ This project showcases **complete type safety** between a Python backend and Typ
 
 - **JWT Authentication** - Secure cookie-based authentication with auto-refresh
 - **CSRF Protection** - Complete CSRF protection with double-submit cookie pattern
-- **Rate Limiting** - API rate limiting to prevent abuse
-- **Input Validation** - Comprehensive input validation using Pydantic models
-- **SQL Injection Protection** - SQLModel ORM with parameterized queries
+- **Input Validation** - Comprehensive input validation using Pydantic models and Zod schemas
+- **SQL Injection Protection** - SQLModel ORM with safe queries
 
 ### 🎯 Complete Type Safety
 
-- **OpenAPI Integration** - Automatic API documentation and client generation
-- **Generated Types** - TypeScript types auto-generated from Python models
-- **Runtime Validation** - Request/response validation at runtime
+- **OpenAPI Integration** - Automatic API documentation and client generation with Flask-OpenAPI3 and openapi-typescript
+- **Generated Types** - TypeScript types auto-generated from OpenAPI specification
+- **Runtime Validation** - Request/response validation at runtime using Zod schemas
 - **End-to-End Type Safety** - From database to UI components
 
 ### 🚀 Developer Experience
 
 - **Hot Reload** - Instant development feedback with Vite and Flask dev server
-- **Code Quality** - Automated linting, formatting, and type checking
+- **Code Quality** - Automated linting, formatting, and type checking with Ruff, Pyright, ESLint and Prettier
 - **Database Migrations** - Alembic migrations with version control
 - **API Documentation** - Interactive Swagger UI for API exploration
-- **Test Coverage** - Comprehensive test suite with coverage reporting
 
 ---
 
@@ -133,22 +97,20 @@ This project showcases **complete type safety** between a Python backend and Typ
 ### Database & Storage
 
 - **[PostgreSQL](https://www.postgresql.org/)** - Reliable relational database
-- **[Neon](https://neon.tech/)** - Serverless PostgreSQL hosting
-- **[Cloudflare R2](https://www.cloudflare.com/products/r2/)** - Object storage for media files
 
 ### Hosting & Deployment
 
 - **[Vercel](https://vercel.com/)** - Frontend hosting with global CDN
 - **[Railway](https://railway.app/)** - Backend API hosting with automatic deployments
-- **[GitHub Actions](https://github.com/features/actions)** - CI/CD pipeline for testing and deployment
+- **[Neon](https://neon.tech/)** - Serverless PostgreSQL hosting
 
 ### Development Tools
 
+- **[Poetry](https://python-poetry.org/)** - Python dependency management
 - **[Ruff](https://docs.astral.sh/ruff/)** - Lightning-fast Python linter and formatter
 - **[Pyright](https://github.com/microsoft/pyright)** - Static type checker for Python
 - **[ESLint](https://eslint.org/)** - TypeScript/React linting
 - **[Prettier](https://prettier.io/)** - Code formatting
-- **[Poetry](https://python-poetry.org/)** - Python dependency management
 
 ---
 
@@ -158,7 +120,7 @@ One of the key features of Codifeed is **complete type safety** between the back
 
 ```mermaid
 graph LR
-    A[Python Models] --> B[Pydantic Schemas]
+    A[SQLModel Models] --> B[Pydantic Schemas]
     B --> C[OpenAPI Schema]
     C --> D[TypeScript Types]
     D --> E[React Components]
@@ -192,7 +154,7 @@ This ensures that any changes to the backend API are immediately reflected in th
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/codifeed.git
+git clone https://github.com/bastien-pruvost/codifeed.git
 cd codifeed
 ```
 
@@ -224,7 +186,7 @@ The application will be available at:
 
 - **Frontend**: http://localhost:3000
 - **API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/swagger
+- **API Documentation**: http://localhost:8000/openapi/swagger
 
 ---
 

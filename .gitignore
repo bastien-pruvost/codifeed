@@ -1,11 +1,14 @@
 # IDE
 .idea/
-# .vscode/
+.vscode/
 .cursor/
+AGENTS.md
 *.swp
 *.swo
 
-AGENTS.md
+# Environment
+*.local
+.env.local
 
 # Logs
 *.log
@@ -25,7 +28,3 @@ htmlcov/
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# Environment
-*.local
-.env.local
