@@ -75,4 +75,31 @@ def create_app():
     # Initialize database
     init_db()
 
+    # Seed fake data after database initialization
+    _seed_fake_data_if_needed()
+
     return app
+
+
+def _seed_fake_data_if_needed():
+    """Seed fake data if needed (runs in both dev and prod)."""
+    import os
+
+    # Always seed in development, or if explicitly enabled in production
+    should_seed = (
+        os.getenv("FLASK_ENV") == "development"
+        or os.getenv("FLASK_DEBUG") == "1"
+        or os.getenv("SEED_FAKE_DATA", "").lower() in ("1", "true", "yes")
+    )
+
+    if should_seed:
+        try:
+            from scripts.ensure_fake_data import main as ensure_fake_data
+
+            print("🌱 Seeding fake data...")
+            ensure_fake_data()
+            print("✅ Fake data seeding completed")
+        except Exception as e:
+            print(f"⚠️  Fake data seeding failed: {e}")
+            # Don't crash the app if seeding fails
+            pass

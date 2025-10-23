@@ -24,6 +24,7 @@ RUN poetry install --no-root
 ENV WEB_CONCURRENCY=1 \
     GUNICORN_THREADS=2 \
     GUNICORN_TIMEOUT=60 \
-    GUNICORN_KEEP_ALIVE=10
+    GUNICORN_KEEP_ALIVE=10 \
+    SEED_FAKE_DATA=true
 
 CMD ["sh", "-c", "poetry run alembic upgrade head && exec poetry run gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers ${WEB_CONCURRENCY:-1} --threads ${GUNICORN_THREADS:-2} --timeout ${GUNICORN_TIMEOUT:-60} --keep-alive ${GUNICORN_KEEP_ALIVE:-10} --preload"]

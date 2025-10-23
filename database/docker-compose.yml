@@ -1,4 +1,3 @@
-# database/docker-compose.yml
 services:
   postgres:
     image: postgres:17
