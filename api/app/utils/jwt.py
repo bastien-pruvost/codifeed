@@ -13,16 +13,6 @@ from flask_jwt_extended import (
 )
 from werkzeug.exceptions import Unauthorized
 
-# @jwt_manager.user_lookup_loader
-# def user_lookup_loader(_jwt_header, jwt_payload) -> User:
-#     user_id = jwt_payload["sub"]
-#     with get_session() as session:
-#         query = select(User).options(selectinload("*")).where(User.id == user_id)
-#         user = session.exec(query).one_or_none()
-#     if not user:
-#         raise Unauthorized("User not found")
-#     return user
-
 
 def login_required(func) -> Callable:
     """Decorator to check if the user is logged in with a valid access token"""

@@ -182,14 +182,12 @@ class UserService:
         session: Session, current_user_id: UUID, user_ids: list[UUID]
     ) -> tuple[set[UUID], set[UUID]]:
         """Get follow relationships between current user and list of users."""
-        # Which listed users are followed by current user?
         following_ids_statement = select(UserFollow.following_id).where(
             UserFollow.follower_id == current_user_id,
             col(UserFollow.following_id).in_(user_ids),
         )
         following_ids = set(session.exec(following_ids_statement).all())
 
-        # Which listed users follow the current user?
         followed_by_ids_statement = select(UserFollow.follower_id).where(
             UserFollow.following_id == current_user_id,
             col(UserFollow.follower_id).in_(user_ids),
@@ -204,7 +202,7 @@ class UserService:
         current_user_id: UUID,
         users: list[User],
     ) -> list[UserPublic]:
-        """Return UserPublic list enriched with follow flags relative to current user."""
+        """Return a UserPublic list enriched with follow flags relative to current user."""
         if not users:
             return []
 

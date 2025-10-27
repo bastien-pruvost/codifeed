@@ -58,7 +58,6 @@ class PostService:
         session: Session, current_user_id: UUID, post_ids: list[UUID]
     ) -> tuple[dict[UUID, int], set[UUID]]:
         """Get likes count and liked status for a list of posts."""
-        # Get likes count for each post
         likes_count_statement = (
             select(PostLike.post_id, func.count("*").label("count"))
             .where(col(PostLike.post_id).in_(post_ids))
@@ -67,7 +66,6 @@ class PostService:
         likes_count_results = session.exec(likes_count_statement).all()
         likes_count_map = {post_id: count for post_id, count in likes_count_results}
 
-        # Check which posts are liked by current user
         liked_post_ids_statement = select(PostLike.post_id).where(
             PostLike.user_id == current_user_id,
             col(PostLike.post_id).in_(post_ids),
@@ -102,7 +100,6 @@ class PostService:
             likes_count = likes_count_map.get(post.id, 0)
             is_liked = bool(post.id in liked_post_ids)
 
-            # Convert author to UserPublic
             author_public = UserPublic.model_validate(post.author)
 
             result.append(
@@ -160,7 +157,6 @@ class PostService:
 
         session.refresh(post)
 
-        # Enrich and return with likes_count and is_liked
         enriched = PostService._annotate_likes_for_posts(
             session=session,
             current_user_id=user_id,

@@ -20,7 +20,7 @@ function LandingPage() {
         <Wrapper className="flex flex-col items-center justify-center gap-12 lg:flex-row">
           <div className="grow basis-2/3">
             <Badge className="rounded-full border-none bg-gradient-to-br from-primary via-primary/60 via-70% to-primary py-1">
-              v0.1.0 - Work in progress
+              v0.1.0
             </Badge>
             <h1 className="mt-6 max-w-2xl text-4xl font-bold sm:text-5xl xl:text-6xl">
               The social network for developers

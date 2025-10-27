@@ -14,7 +14,6 @@ class AuthService:
     @staticmethod
     def create_user(session: Session, user_data: UserCreate) -> User:
         """Create a new user account and return user data."""
-        # Check if user already exists
         statement = select(User).where(
             or_(User.email == user_data.email, User.username == user_data.username)
         )
@@ -26,7 +25,6 @@ class AuthService:
         if existing_user and existing_user.username == user_data.username:
             raise BadRequest(description="A user with this username already exists")
 
-        # Create user with empty profile
         profile = Profile()
         user = User.model_validate(
             user_data,
@@ -47,7 +45,7 @@ class AuthService:
 
     @staticmethod
     def authenticate_user(session: Session, email: str, password: str) -> User:
-        """Authenticate user with email and password."""
+        """Authenticate a user with email and password."""
         try:
             statement = select(User).where(User.email == email)
             user = session.exec(statement).first()

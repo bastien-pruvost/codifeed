@@ -36,7 +36,6 @@ def ensure_users(fixtures: Iterable[dict]) -> None:
                 avatar=avatar,
             )
 
-            # Assign fields/relationships after construction for type-checker friendliness
             user.hashed_password = hash_password(fake_user_password)
             user.profile = Profile(**profile_data)
 
@@ -50,11 +49,7 @@ def ensure_users(fixtures: Iterable[dict]) -> None:
 
 
 def ensure_posts(fixtures: Iterable[dict]) -> None:
-    """Insert demo posts (and their likes) if they don't already exist.
-
-    Idempotency: a post is considered the same if (author, content) matches.
-    Likes idempotency: composite primary key (user_id, post_id) prevents duplicates.
-    """
+    """Insert demo posts (and their likes) if they don't already exist."""
     posts_created = 0
     posts_skipped = 0
     likes_created = 0
@@ -86,12 +81,10 @@ def ensure_posts(fixtures: Iterable[dict]) -> None:
                     post.created_at = created_at
                 session.add(post)
                 posts_created += 1
-                # Flush to get post id for likes creation without full commit
                 session.flush()
             else:
                 posts_skipped += 1
 
-            # Handle inline likes for this post (list of usernames)
             like_usernames = list(item.get("likes", []) or [])
             for like_username in like_usernames:
                 liker = session.exec(
@@ -116,19 +109,16 @@ def ensure_posts(fixtures: Iterable[dict]) -> None:
         if posts_created or likes_created:
             session.commit()
 
+    print(f"Posts seed complete. posts_created={posts_created} posts_skipped={posts_skipped} ")
     print(
-        "Posts and likes seed complete. "
-        f"posts_created={posts_created} posts_skipped={posts_skipped} "
+        "Likes seed complete. "
         f"likes_created={likes_created} likes_skipped={likes_skipped} "
         f"likes_missing_refs={likes_missing_refs}"
     )
 
 
 def ensure_follows(fixtures: Iterable[dict]) -> None:
-    """Insert follow relationships if they don't already exist.
-
-    Idempotency: composite primary key (follower_id, following_id) prevents duplicates.
-    """
+    """Insert follow relationships if they don't already exist."""
     created_count = 0
     skipped_count = 0
     missing_refs = 0
@@ -142,7 +132,6 @@ def ensure_follows(fixtures: Iterable[dict]) -> None:
                 skipped_count += 1
                 continue
 
-            # Skip self-follows
             if follower_username == following_username:
                 skipped_count += 1
                 continue
@@ -176,9 +165,6 @@ def ensure_follows(fixtures: Iterable[dict]) -> None:
         "Follows seed complete. "
         f"created={created_count} skipped={skipped_count} missing_refs={missing_refs}"
     )
-
-
-# Note: Likes are created inside ensure_posts based on POSTS_FIXTURES["likes"].
 
 
 def main() -> None:
