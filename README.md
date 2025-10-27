@@ -1,14 +1,12 @@
 # Codifeed
 
-**A modern, type-safe social network built for developers**
-
-#### Video Demo: <URL HERE>
+#### Video Demo: https://youtu.be/OHI-lwpT_b8
 
 #### Description:
 
-Codifeed is an **open-source social network designed specifically for developers**. Built as the capstone project for Harvard's CS50x course, it demonstrates how to create a **production-ready, type-safe full-stack application** using React (TypeScript) and Flask (Python).
+Codifeed is a modern and open-source social network designed specifically for developers. Built as the capstone project for Harvard's CS50x course, it demonstrates how to create a type-safe full-stack application using React (TypeScript) and Flask (Python).
 
-This project showcases **complete type safety** between a Python backend and TypeScript frontend through OpenAPI specifications, advanced security patterns, and professional-grade architecture suitable for scaling.
+This project showcases complete type safety between a Python backend and TypeScript frontend through OpenAPI specifications, advanced security patterns, and professional-grade architecture suitable for scaling.
 
 ---
 
@@ -116,19 +114,7 @@ This project showcases **complete type safety** between a Python backend and Typ
 
 ## 🔗 Type Safety Architecture
 
-One of the key features of Codifeed is **complete type safety** between the backend and frontend:
-
-```mermaid
-graph LR
-    A[SQLModel Models] --> B[Pydantic Schemas]
-    B --> C[OpenAPI Schema]
-    C --> D[TypeScript Types]
-    D --> E[React Components]
-
-    F[API Routes] --> C
-    C --> G[Swagger UI]
-    C --> H[API Client]
-```
+One of the key features of Codifeed is **complete type safety** between the backend and frontend.
 
 ### How it works:
 
@@ -158,7 +144,16 @@ git clone https://github.com/bastien-pruvost/codifeed.git
 cd codifeed
 ```
 
-### 2. Backend Setup
+### 2. Environment Setup
+
+Copy example environment files and fill required values.
+
+```bash
+cp api/.env.example api/.env.local
+cp web/.env.example web/.env.local
+```
+
+### 3. Backend Setup
 
 ```bash
 cd api
@@ -166,7 +161,9 @@ poetry install
 poetry run python dev.py
 ```
 
-### 3. Frontend Setup
+### 4. Frontend Setup
+
+> Note: Ensure the API from the previous step is running before generating types.
 
 ```bash
 cd web
@@ -175,12 +172,22 @@ pnpm run openapi-ts  # Generate types from API
 pnpm run dev
 ```
 
-### 4. Database Setup
+### 5. Database Setup (optional)
+
+Option A: Start a local PostgreSQL instance
+
+```bash
+docker compose -f database/docker-compose.yml up -d
+```
+
+Option B: Apply Alembic migrations
 
 ```bash
 cd api
 poetry run alembic upgrade head
 ```
+
+Note: For local development, tables are also created automatically at app startup via SQLModel. Migrations are recommended for team/production environments.
 
 The application will be available at:
 
@@ -196,16 +203,18 @@ The application will be available at:
 codifeed/
 ├── api/                         # Flask REST API
 │   ├── app/
-│   │   ├── config.py            # Application configuration
-│   │   ├── database/            # Database engine, session & initialization
 │   │   ├── middlewares/         # Custom middleware (auto-refresh, exceptions)
-│   │   ├── models/              # SQLModel database models by domain
 │   │   ├── routes/              # API route handlers by domain
 │   │   ├── services/            # Business logic layer
-│   │   └── utils/               # Utility functions (hashing, JWT, logging)
-│   │   └── __init__.py          # Flask app factory
-│   │   └── config.py            # Configuration file
+│   │   ├── utils/               # Utility functions (hashing, JWT, logging)
+│   │   ├── __init__.py          # Flask app factory
+│   │   ├── config.py            # Configuration file
+│   │   ├── database.py          # Database engine, session & initialization
+│   │   ├── models.py            # SQLModel database models by domain
+│   │   └── schemas.py           # Pydantic schemas for request/response validation
+|   ├── fixtures/                # Fixtures for fake data
 │   ├── migrations/              # Alembic database migrations
+│   ├── scripts/                 # Scripts
 │   ├── dev.py                   # Development server entry point
 │   ├── wsgi.py                  # Production WSGI entry point
 │   ├── Dockerfile               # Container configuration
@@ -221,23 +230,24 @@ codifeed/
 │   │   ├── features/            # Feature-based modules with
 │   │   │   └── [feature]/       # Feature directory
 │   │   │       ├── api/         # Queries & mutations
+│   │   │       ├── components/  # Feature components
 │   │   │       ├── assets/      # Feature assets
 │   │   │       ├── hooks/       # Custom hooks
 │   │   │       └── services/    # Feature logic
 │   │   ├── hooks/               # Global custom hooks
 │   │   ├── routes/              # TanStack Router file-based routing
-│   │   │   ├── _authenticated/  # Protected routes
-│   │   │   └── _unauthenticated/# Public routes
+│   │   │   ├── _app/            # Protected routes
+│   │   │   ├── _public/         # Public routes
+│   │   │   └── __root.tsx       # Root route
 │   │   ├── services/            # Global services (HTTP client, storage)
 │   │   ├── styles/              # Global CSS styles
 │   │   ├── types/
 │   │   │   └── generated/       # Auto-generated API types from OpenAPI
 │   │   └── utils/               # Utility functions
 │   ├── package.json             # Node.js dependencies
-│   ├── vite.config.js           # Vite bundler configuration
-│   └── vercel.json              # Vercel deployment configuration
+│   └── vite.config.js           # Vite bundler configuration
 │
-└── database/                    # Database scripts and docker setup
+└── database/                    # Database docker setup
 ```
 
 ---
@@ -251,62 +261,6 @@ The application is designed for cloud-native deployment:
 - **Frontend** → Vercel (Automatic deployments from `main` branch)
 - **Backend** → Railway (Docker-based deployment)
 - **Database** → Neon PostgreSQL (Serverless, auto-scaling)
-- **Storage** → Cloudflare R2 (Global object storage)
-
-### Environment Variables
-
-Required environment variables for production:
-
-```bash
-# Backend (.env)
-DATABASE_URL="postgresql://..."
-JWT_SECRET_KEY="your-secret-key"
-SECRET_KEY="your-flask-secret"
-CORS_ORIGINS="https://yourapp.vercel.app"
-
-# Frontend (.env.local)
-VITE_API_URL="https://yourapi.railway.app"
-```
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! This project serves as a learning resource for developers interested in modern full-stack development.
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make your changes with full type safety
-4. Run tests: `pnpm test` (frontend) and `poetry run pytest` (backend)
-5. Submit a pull request
-
-### Code Standards
-
-- **Type Safety**: All code must be fully typed
-- **Testing**: New features require tests
-- **Documentation**: Update docs for API changes
-- **Security**: Follow OWASP security guidelines
-
----
-
-## 📚 Learning Resources
-
-This project demonstrates concepts from:
-
-- **Harvard CS50x** - Computer Science fundamentals
-- **Full-Stack Development** - End-to-end application development
-- **Type Safety** - Advanced TypeScript and Python typing
-- **API Design** - RESTful API design with OpenAPI
-- **Security** - Web application security best practices
-- **DevOps** - Modern deployment and CI/CD practices
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -315,13 +269,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Harvard CS50x** for providing excellent computer science education
 - **Open Source Community** for the amazing tools and libraries
 - **Developer Community** for inspiration and feedback
-
----
-
-<div align="center">
-
-**Built with ❤️ for the developer community**
-
-[🌟 Star this project](../../stargazers) • [🐛 Report Bug](../../issues) • [💡 Request Feature](../../issues)
-
-</div>
