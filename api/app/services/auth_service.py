@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from argon2 import exceptions as argon_exceptions
 from sqlmodel import Session, or_, select
 from werkzeug.exceptions import BadRequest, InternalServerError

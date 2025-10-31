@@ -1,4 +1,3 @@
-from typing import Tuple
 from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
@@ -235,7 +234,7 @@ class UserService:
         current_user_id: UUID,
         username: str,
         pagination: PaginationQuery,
-    ) -> Tuple[list[UserPublic], PaginationMeta]:
+    ) -> tuple[list[UserPublic], PaginationMeta]:
         """List followers (active users) of a target user with pagination."""
         target = UserService.get_by_username(session, username)
 
@@ -257,7 +256,7 @@ class UserService:
         current_user_id: UUID,
         username: str,
         pagination: PaginationQuery,
-    ) -> Tuple[list[UserPublic], PaginationMeta]:
+    ) -> tuple[list[UserPublic], PaginationMeta]:
         """List users (active) that the target user is following with pagination."""
         target = UserService.get_by_username(session, username)
 
@@ -279,7 +278,7 @@ class UserService:
         current_user_id: UUID,
         query: str,
         pagination: PaginationQuery,
-    ) -> Tuple[list[UserPublic], PaginationMeta]:
+    ) -> tuple[list[UserPublic], PaginationMeta]:
         """Search users by name/username, ordered by a relevance score."""
         search_term = query.strip()
         if not search_term:
