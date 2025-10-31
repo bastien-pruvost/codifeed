@@ -1,4 +1,3 @@
-from typing import Tuple
 from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
@@ -13,7 +12,6 @@ from app.models import (
     PostPublic,
     User,
     UserFollow,
-    UserPublic,
 )
 from app.utils.pagination import paginate_query
 
@@ -53,66 +51,12 @@ class PostService:
 
         return post
 
-    @staticmethod
-    def _get_likes_info(
-        session: Session, current_user_id: UUID, post_ids: list[UUID]
-    ) -> tuple[dict[UUID, int], set[UUID]]:
-        """Get likes count and liked status for a list of posts."""
-        likes_count_statement = (
-            select(PostLike.post_id, func.count("*").label("count"))
-            .where(col(PostLike.post_id).in_(post_ids))
-            .group_by(col(PostLike.post_id))
-        )
-        likes_count_results = session.exec(likes_count_statement).all()
-        likes_count_map = {post_id: count for post_id, count in likes_count_results}
-
-        liked_post_ids_statement = select(PostLike.post_id).where(
-            PostLike.user_id == current_user_id,
-            col(PostLike.post_id).in_(post_ids),
-        )
-        liked_post_ids = set(session.exec(liked_post_ids_statement).all())
-
-        return likes_count_map, liked_post_ids
-
-    @staticmethod
-    def _annotate_likes_for_posts(
-        session: Session,
-        current_user_id: UUID,
-        posts: list[Post],
-    ) -> list[PostPublic]:
-        """Return PostPublic list enriched with likes count and is_liked flags."""
-        if not posts:
-            return []
-
-        post_ids = [p.id for p in posts if p.id is not None]
-        if not post_ids:
-            return [PostPublic.model_validate(p) for p in posts]
-
-        likes_count_map, liked_post_ids = PostService._get_likes_info(
-            session, current_user_id, post_ids
-        )
-
-        result: list[PostPublic] = []
-        for post in posts:
-            if post.id is None:
-                continue
-
-            likes_count = likes_count_map.get(post.id, 0)
-            is_liked = bool(post.id in liked_post_ids)
-
-            author_public = UserPublic.model_validate(post.author)
-
-            result.append(
-                PostPublic.model_validate(post).model_copy(
-                    update={
-                        "likes_count": int(likes_count),
-                        "is_liked": is_liked,
-                        "author": author_public,
-                    }
-                )
-            )
-
-        return result
+    # @staticmethod
+    # def _build_likes_for_posts_statement(
+    #     base_statement: SelectOfScalar[Post],
+    #     current_user_id: UUID,
+    # ):
+    #     """Return a select statement enriched with likes count and is_liked flags."""
 
     @staticmethod
     def get_user_posts(
@@ -120,23 +64,35 @@ class PostService:
         current_user_id: UUID,
         author: User,
         pagination: PaginationQuery,
-    ) -> Tuple[list[PostPublic], PaginationMeta]:
+    ) -> tuple[list[PostPublic], PaginationMeta]:
         """Get all posts for a specific user with pagination."""
         if not author.id:
             raise ValueError("Author ID is required")
 
         statement = (
-            Post.select_active()
-            .where(Post.author_id == author.id)
+            select(
+                Post,
+                func.count(col(PostLike.user_id)).label("likes_count"),
+                func.coalesce(func.bool_or(PostLike.user_id == current_user_id), False).label(
+                    "is_liked"
+                ),
+            )
+            .outerjoin(PostLike, col(PostLike.post_id) == col(Post.id))
+            .where(col(Post.author_id) == author.id, col(Post.deleted_at).is_(None))
+            .group_by(col(Post.id))
             .order_by(col(Post.created_at).desc())
         )
-
         posts, meta = paginate_query(session=session, statement=statement, pagination=pagination)
-        enriched = PostService._annotate_likes_for_posts(
-            session=session, current_user_id=current_user_id, posts=posts
-        )
-
-        return enriched, meta
+        posts_with_likes = [
+            PostPublic.model_validate(post).model_copy(
+                update={
+                    "likes_count": likes_count,
+                    "is_liked": is_liked,
+                }
+            )
+            for post, likes_count, is_liked in posts
+        ]
+        return posts_with_likes, meta
 
     @staticmethod
     def like_post(session: Session, post_id: UUID, user_id: UUID) -> PostPublic:
@@ -157,12 +113,14 @@ class PostService:
 
         session.refresh(post)
 
-        enriched = PostService._annotate_likes_for_posts(
-            session=session,
-            current_user_id=user_id,
-            posts=[post],
-        )
-        return enriched[0]
+        post_public = PostPublic.model_validate(post)
+
+        # enriched = PostService._annotate_likes_for_posts(
+        #     session=session,
+        #     current_user_id=user_id,
+        #     posts=[post],
+        # )
+        return post_public
 
     @staticmethod
     def unlike_post(session: Session, post_id: UUID, user_id: UUID) -> PostPublic:
@@ -185,35 +143,46 @@ class PostService:
 
         session.refresh(post)
 
-        enriched = PostService._annotate_likes_for_posts(session, user_id, [post])
+        post_public = PostPublic.model_validate(post)
 
-        return enriched[0]
+        return post_public
 
     @staticmethod
     def get_feed_posts(
         session: Session,
         current_user_id: UUID,
         pagination: PaginationQuery,
-    ) -> Tuple[list[PostPublic], PaginationMeta]:
+    ) -> tuple[list[PostPublic], PaginationMeta]:
         """Get feed posts from users followed by the current user."""
         statement = (
-            Post.select_active()
-            .outerjoin(
-                UserFollow,
-                col(UserFollow.following_id) == col(Post.author_id),
+            select(
+                Post,
+                func.count(col(PostLike.user_id)).label("likes_count"),
+                func.coalesce(func.bool_or(PostLike.user_id == current_user_id), False).label(
+                    "is_liked"
+                ),
             )
+            .outerjoin(PostLike, col(PostLike.post_id) == col(Post.id))
+            .outerjoin(UserFollow, col(UserFollow.following_id) == col(Post.author_id))
             .where(
                 or_(
                     UserFollow.follower_id == current_user_id,
-                    Post.author_id == current_user_id,
-                )
+                    col(Post.author_id) == current_user_id,
+                ),
+                col(Post.deleted_at).is_(None),
             )
+            .group_by(col(Post.id))
             .order_by(col(Post.created_at).desc())
         )
 
         posts, meta = paginate_query(session=session, statement=statement, pagination=pagination)
-        enriched = PostService._annotate_likes_for_posts(
-            session=session, current_user_id=current_user_id, posts=posts
-        )
-
-        return enriched, meta
+        posts_with_likes = [
+            PostPublic.model_validate(post).model_copy(
+                update={
+                    "likes_count": likes_count,
+                    "is_liked": is_liked,
+                }
+            )
+            for post, likes_count, is_liked in posts
+        ]
+        return posts_with_likes, meta

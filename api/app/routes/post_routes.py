@@ -30,13 +30,7 @@ def create_post(body: PostCreate):
             content=body.content,
         )
 
-        enriched = PostService._annotate_likes_for_posts(
-            session=session,
-            current_user_id=current_user_id,
-            posts=[post],
-        )
-
-        return success_response(enriched[0].model_dump())
+        return success_response(post.model_dump())
 
 
 @posts_router.get(
@@ -72,13 +66,7 @@ def delete_post(path: PostIdPath):
     with get_session() as session:
         post = PostService.delete_post(session, path.post_id, current_user_id)
 
-        enriched = PostService._annotate_likes_for_posts(
-            session=session,
-            current_user_id=current_user_id,
-            posts=[post],
-        )
-
-        return success_response(enriched[0].model_dump())
+        return success_response(post.model_dump())
 
 
 @posts_router.post(
