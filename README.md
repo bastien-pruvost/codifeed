@@ -1,44 +1,53 @@
 # Codifeed
 
-#### Video Demo: https://youtu.be/OHI-lwpT_b8
-
-#### Description:
-
-Codifeed is a modern and open-source social network designed specifically for developers. Built as the capstone project for Harvard's CS50x course, it demonstrates how to create a type-safe full-stack application using React (TypeScript) and Flask (Python).
-
-This project showcases complete type safety between a Python backend and TypeScript frontend through OpenAPI specifications, advanced security patterns, and professional-grade architecture suitable for scaling.
+**A modern, open-source, social network**
 
 ---
 
-## ✨ Features Overview
+## 📖 About the Project
 
-### 🔐 Authentication & Security
+Codifeed is a modern and open-source social network. Built as the capstone project for Harvard's CS50x course, it demonstrates how to create a type-safe full-stack application using React (TypeScript) and Flask (Python).
+
+This project showcases complete type safety between a Python backend and TypeScript frontend through OpenAPI specifications, advanced security patterns, and professional-grade architecture suitable for scaling.
+
+### Project Goals
+
+- **CS50x Validation**: Demonstrate mastery of full-stack development concepts
+- **Type Safety**: Achieve 100% type safety between Python backend and TypeScript frontend
+- **Best Practices**: Showcase modern web development patterns and security practices
+- **Open Source**: Provide a reference implementation for the community
+
+---
+
+## ✨ Features
+
+### Authentication & Security
 
 - **JWT Authentication** - Secure registration and login system
 - **Password Security** - Argon2 password hashing and validation
 - **Session Management** - Automatic token refresh and secure logout
 
-### 👤 Developer Profiles
+### Developer Profiles
 
 - **Personal Profiles** - View your own and other developers' profiles
 - **Developer Identity** - Clean, professional profile layout for the dev community
 
-### 📝 Posts & Content Creation
+### Posts & Content Creation
 
 - **Text Posts** - Create and edit posts with text content
 - **Post Management** - Delete your own posts
 
-### 💫 Social Interactions
+### Social Interactions
 
 - **Engagement System** - Like posts
 - **Follow Network** - Follow/unfollow other developers to build your network
 
-### 🌐 Feed & Discovery
+### Feed & Discovery
 
 - **Feed System** - See posts from users you follow
 - **Search Functionality** - Find users by name or username
 
-### 🎨 User Experience
+### User Experience
 
 - **Mobile-First Design** - Responsive layout optimized for all devices
 - **Performance Optimized** - Fast loading with modern React patterns
@@ -46,23 +55,23 @@ This project showcases complete type safety between a Python backend and TypeScr
 
 ---
 
-## 🏗️ Infrastructure Features
+## 🏗️ Infrastructure
 
-### 🔒 Enterprise-Grade Security
+### Enterprise-Grade Security
 
 - **JWT Authentication** - Secure cookie-based authentication with auto-refresh
 - **CSRF Protection** - Complete CSRF protection with double-submit cookie pattern
 - **Input Validation** - Comprehensive input validation using Pydantic models and Zod schemas
 - **SQL Injection Protection** - SQLModel ORM with safe queries
 
-### 🎯 Complete Type Safety
+### Complete Type Safety
 
 - **OpenAPI Integration** - Automatic API documentation and client generation with Flask-OpenAPI3 and openapi-typescript
 - **Generated Types** - TypeScript types auto-generated from OpenAPI specification
 - **Runtime Validation** - Request/response validation at runtime using Zod schemas
 - **End-to-End Type Safety** - From database to UI components
 
-### 🚀 Developer Experience
+### Developer Experience
 
 - **Hot Reload** - Instant development feedback with Vite and Flask dev server
 - **Code Quality** - Automated linting, formatting, and type checking with Ruff, Pyright, ESLint and Prettier
@@ -90,7 +99,6 @@ This project showcases complete type safety between a Python backend and TypeScr
 - **[SQLModel](https://sqlmodel.tiangolo.com/)** - Modern ORM with Pydantic integration
 - **[Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/)** - JWT authentication for Flask
 - **[Alembic](https://alembic.sqlalchemy.org/)** - Database migration tool
-- **[Argon2](https://argon2-cffi.readthedocs.io/)** - Secure password hashing
 
 ### Database & Storage
 
@@ -112,7 +120,7 @@ This project showcases complete type safety between a Python backend and TypeScr
 
 ---
 
-## 🔗 Type Safety Architecture
+## 🔗 Type Safety
 
 One of the key features of Codifeed is **complete type safety** between the backend and frontend.
 
@@ -140,7 +148,7 @@ This ensures that any changes to the backend API are immediately reflected in th
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/bastien-pruvost/codifeed.git
+git clone https://github.com/bastien-limbour/codifeed.git
 cd codifeed
 ```
 
@@ -261,6 +269,33 @@ The application is designed for cloud-native deployment:
 - **Frontend** → Vercel (Automatic deployments from `main` branch)
 - **Backend** → Railway (Docker-based deployment)
 - **Database** → Neon PostgreSQL (Serverless, auto-scaling)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! This project serves as a learning resource for developers interested in modern full-stack development.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes with full type safety
+4. Run tests: `pnpm test` (frontend) and `poetry run pytest` (backend)
+5. Submit a pull request
+
+### Code Standards
+
+- **Type Safety**: All code must be fully typed
+- **Testing**: New features require tests
+- **Documentation**: Update docs for API changes
+- **Security**: Follow OWASP security guidelines
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
