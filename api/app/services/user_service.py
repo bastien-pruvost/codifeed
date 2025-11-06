@@ -1,7 +1,10 @@
+from typing import Tuple
 from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, case, col, func, or_, select
+from sqlalchemy.orm import aliased
+from sqlmodel import Session, and_, case, col, func, or_, select
+from sqlmodel.sql.expression import Select
 from werkzeug.exceptions import BadRequest, Forbidden, NotFound
 
 from app.models import (
@@ -65,61 +68,54 @@ class UserService:
         return User.model_validate(user)
 
     @staticmethod
+    def _select_users_with_follow_data(
+        current_user_id: UUID,
+    ) -> Select[Tuple[User, int, int, bool, bool]]:
+        """Select users with follow data."""
+        uf_followers = aliased(UserFollow)
+        uf_following = aliased(UserFollow)
+
+        return (
+            select(  # pyright: ignore[reportCallIssue]
+                User,
+                func.count(func.distinct(uf_followers.follower_id)).label("followers_count"),
+                func.count(func.distinct(uf_following.following_id)).label("following_count"),
+                func.coalesce(
+                    func.bool_or(uf_followers.follower_id == current_user_id), False
+                ).label("is_following"),
+                func.coalesce(
+                    func.bool_or(uf_following.following_id == current_user_id), False
+                ).label("is_followed_by"),
+            )
+            .join(uf_followers, uf_followers.following_id == col(User.id), isouter=True)
+            .join(uf_following, uf_following.follower_id == col(User.id), isouter=True)
+            .where(col(User.deleted_at).is_(None))
+            .group_by(col(User.id))
+        )
+
+    @staticmethod
     def get_detail_by_username(
         session: Session,
         current_user_id: UUID,
         username: str,
     ) -> UserDetail:
         """Get a user's detail by username."""
-        user = UserService.get_by_username(session, username)
 
-        followers_count_subquery = (
-            select(func.count("*"))
-            .select_from(UserFollow)
-            .join(User, col(User.id) == UserFollow.follower_id)
-            .where(UserFollow.following_id == user.id, col(User.deleted_at).is_(None))
-            .scalar_subquery()
-            .label("followers_count")
+        statement = UserService._select_users_with_follow_data(current_user_id).where(
+            col(User.username) == username
         )
 
-        following_count_subquery = (
-            select(func.count("*"))
-            .select_from(UserFollow)
-            .join(User, col(User.id) == UserFollow.following_id)
-            .where(UserFollow.follower_id == user.id, col(User.deleted_at).is_(None))
-            .scalar_subquery()
-            .label("following_count")
-        )
+        result = session.exec(statement).first()
+        if not result:
+            raise NotFound(description=f"User {username} not found")
 
-        is_following_subquery = (
-            select(1)
-            .select_from(UserFollow)
-            .where(UserFollow.follower_id == current_user_id, UserFollow.following_id == user.id)
-            .exists()
-            .label("is_following")
-        )
-        is_followed_by_subquery = (
-            select(1)
-            .select_from(UserFollow)
-            .where(UserFollow.follower_id == user.id, UserFollow.following_id == current_user_id)
-            .exists()
-            .label("is_followed_by")
-        )
+        user, followers_count, following_count, is_following, is_followed_by = result
 
-        stats_statement = select(
-            followers_count_subquery,
-            following_count_subquery,
-            is_following_subquery,
-            is_followed_by_subquery,
-        )
-
-        result = session.exec(stats_statement).first()
-
-        if result:
-            followers_count, following_count, is_following, is_followed_by = result
-        else:
-            followers_count = following_count = 0
-            is_following = is_followed_by = False
+        if user.deleted_at:
+            raise NotFound(
+                description=f"This account ({username}) has been deleted. "
+                "Please contact support if you believe this is an error."
+            )
 
         return UserDetail.model_validate(user).model_copy(
             update={
@@ -143,9 +139,9 @@ class UserService:
         if current_user_id == target.id:
             raise BadRequest(description="You cannot follow yourself")
 
-        link = UserFollow(follower_id=current_user_id, following_id=target.id)
+        follow = UserFollow(follower_id=current_user_id, following_id=target.id)
         try:
-            session.add(link)
+            session.add(follow)
             session.commit()
         except IntegrityError:
             session.rollback()
@@ -163,70 +159,19 @@ class UserService:
         if not target.id:
             raise NotFound(description="User not found")
 
-        link_statement = select(UserFollow).where(
+        follow = select(UserFollow).where(
             UserFollow.follower_id == current_user_id,
             UserFollow.following_id == target.id,
         )
-        link = session.exec(link_statement).first()
-        if not link:
+        follow = session.exec(follow).first()
+
+        if not follow:
             raise NotFound(description="You are not following this user")
 
-        session.delete(link)
+        session.delete(follow)
         session.commit()
 
         return UserService.get_detail_by_username(session, current_user_id, username)
-
-    @staticmethod
-    def _get_follow_relationships(
-        session: Session, current_user_id: UUID, user_ids: list[UUID]
-    ) -> tuple[set[UUID], set[UUID]]:
-        """Get follow relationships between current user and list of users."""
-        following_ids_statement = select(UserFollow.following_id).where(
-            UserFollow.follower_id == current_user_id,
-            col(UserFollow.following_id).in_(user_ids),
-        )
-        following_ids = set(session.exec(following_ids_statement).all())
-
-        followed_by_ids_statement = select(UserFollow.follower_id).where(
-            UserFollow.following_id == current_user_id,
-            col(UserFollow.follower_id).in_(user_ids),
-        )
-        followed_by_ids = set(session.exec(followed_by_ids_statement).all())
-
-        return following_ids, followed_by_ids
-
-    @staticmethod
-    def _annotate_follow_flags_for_users(
-        session: Session,
-        current_user_id: UUID,
-        users: list[User],
-    ) -> list[UserPublic]:
-        """Return a UserPublic list enriched with follow flags relative to current user."""
-        if not users:
-            return []
-
-        user_ids = [u.id for u in users if u.id is not None]
-        if not user_ids:
-            return [UserPublic.model_validate(u) for u in users]
-
-        following_ids, followed_by_ids = UserService._get_follow_relationships(
-            session, current_user_id, user_ids
-        )
-
-        result: list[UserPublic] = []
-        for user in users:
-            is_following = bool(user.id in following_ids)
-            is_followed_by = bool(user.id in followed_by_ids)
-            result.append(
-                UserPublic.model_validate(user).model_copy(
-                    update={
-                        "is_following": is_following,
-                        "is_followed_by": is_followed_by,
-                    }
-                )
-            )
-
-        return result
 
     @staticmethod
     def get_followers_by_username(
@@ -236,19 +181,37 @@ class UserService:
         pagination: PaginationQuery,
     ) -> tuple[list[UserPublic], PaginationMeta]:
         """List followers (active users) of a target user with pagination."""
-        target = UserService.get_by_username(session, username)
+
+        user_follow = aliased(UserFollow)
+        target_user = aliased(User)
 
         statement = (
-            User.select_active()
-            .join(UserFollow, col(User.id) == UserFollow.follower_id)
-            .where(UserFollow.following_id == target.id)
-            .order_by(col(UserFollow.created_at).desc(), col(User.username).asc())
+            UserService._select_users_with_follow_data(current_user_id)
+            .join(user_follow, col(user_follow.follower_id) == col(User.id))
+            .join(
+                target_user,
+                and_(
+                    col(target_user.id) == col(user_follow.following_id),
+                    col(target_user.username) == username,
+                ),
+            )
         )
-        users, meta = paginate_query(session=session, statement=statement, pagination=pagination)
-        enriched = UserService._annotate_follow_flags_for_users(
-            session=session, current_user_id=current_user_id, users=users
-        )
-        return enriched, meta
+
+        result, meta = paginate_query(session=session, statement=statement, pagination=pagination)
+
+        users = [
+            UserPublic.model_validate(user).model_copy(
+                update={
+                    "followers_count": followers_count,
+                    "following_count": following_count,
+                    "is_following": is_following,
+                    "is_followed_by": is_followed_by,
+                }
+            )
+            for user, followers_count, following_count, is_following, is_followed_by in result
+        ]
+
+        return users, meta
 
     @staticmethod
     def get_following_by_username(
@@ -258,19 +221,35 @@ class UserService:
         pagination: PaginationQuery,
     ) -> tuple[list[UserPublic], PaginationMeta]:
         """List users (active) that the target user is following with pagination."""
-        target = UserService.get_by_username(session, username)
+
+        user_follow = aliased(UserFollow)
+        target_user = aliased(User)
 
         statement = (
-            User.select_active()
-            .join(UserFollow, col(User.id) == UserFollow.following_id)
-            .where(UserFollow.follower_id == target.id)
-            .order_by(col(UserFollow.created_at).desc(), col(User.username).asc())
+            UserService._select_users_with_follow_data(current_user_id)
+            .join(user_follow, col(user_follow.following_id) == col(User.id))
+            .join(
+                target_user,
+                and_(
+                    col(target_user.id) == col(user_follow.follower_id),
+                    col(target_user.username) == username,
+                ),
+            )
         )
-        users, meta = paginate_query(session=session, statement=statement, pagination=pagination)
-        enriched = UserService._annotate_follow_flags_for_users(
-            session=session, current_user_id=current_user_id, users=users
-        )
-        return enriched, meta
+
+        result, meta = paginate_query(session=session, statement=statement, pagination=pagination)
+
+        users = [
+            UserPublic.model_validate(user).model_copy(
+                update={
+                    "is_following": is_following,
+                    "is_followed_by": is_followed_by,
+                }
+            )
+            for user, followers_count, following_count, is_following, is_followed_by in result
+        ]
+
+        return users, meta
 
     @staticmethod
     def search(
@@ -330,7 +309,7 @@ class UserService:
         ).label("relevance_score")
 
         statement = (
-            User.select_active()
+            UserService._select_users_with_follow_data(current_user_id)
             .where(
                 or_(
                     exact_username_condition,
@@ -345,7 +324,16 @@ class UserService:
         )
 
         users, meta = paginate_query(session=session, statement=statement, pagination=pagination)
-        enriched = UserService._annotate_follow_flags_for_users(
-            session=session, current_user_id=current_user_id, users=users
-        )
-        return enriched, meta
+        users = [
+            UserPublic.model_validate(user).model_copy(
+                update={
+                    "followers_count": followers_count,
+                    "following_count": following_count,
+                    "is_following": is_following,
+                    "is_followed_by": is_followed_by,
+                }
+            )
+            for user, followers_count, following_count, is_following, is_followed_by in users
+        ]
+
+        return users, meta

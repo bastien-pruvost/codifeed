@@ -82,7 +82,7 @@ class PostService:
             .group_by(col(Post.id))
             .order_by(col(Post.created_at).desc())
         )
-        posts, meta = paginate_query(session=session, statement=statement, pagination=pagination)
+        result, meta = paginate_query(session=session, statement=statement, pagination=pagination)
         posts_with_likes = [
             PostPublic.model_validate(post).model_copy(
                 update={
@@ -90,7 +90,7 @@ class PostService:
                     "is_liked": is_liked,
                 }
             )
-            for post, likes_count, is_liked in posts
+            for post, likes_count, is_liked in result
         ]
         return posts_with_likes, meta
 
@@ -115,11 +115,6 @@ class PostService:
 
         post_public = PostPublic.model_validate(post)
 
-        # enriched = PostService._annotate_likes_for_posts(
-        #     session=session,
-        #     current_user_id=user_id,
-        #     posts=[post],
-        # )
         return post_public
 
     @staticmethod
@@ -175,7 +170,7 @@ class PostService:
             .order_by(col(Post.created_at).desc())
         )
 
-        posts, meta = paginate_query(session=session, statement=statement, pagination=pagination)
+        result, meta = paginate_query(session=session, statement=statement, pagination=pagination)
         posts_with_likes = [
             PostPublic.model_validate(post).model_copy(
                 update={
@@ -183,6 +178,6 @@ class PostService:
                     "is_liked": is_liked,
                 }
             )
-            for post, likes_count, is_liked in posts
+            for post, likes_count, is_liked in result
         ]
         return posts_with_likes, meta

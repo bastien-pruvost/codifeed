@@ -209,14 +209,6 @@ class UserPublic(UserBase, TimestampsMixin):
     id: UUID
     is_following: bool = False
     is_followed_by: bool = False
-
-
-class UserList(PaginatedList[UserPublic]):
-    pass
-
-
-class UserDetail(UserPublic):
-    profile: "ProfileBase"
     followers_count: int = Field(
         default=0,
         ge=0,
@@ -225,6 +217,14 @@ class UserDetail(UserPublic):
         default=0,
         ge=0,
     )
+
+
+class UserList(PaginatedList[UserPublic]):
+    pass
+
+
+class UserDetail(UserPublic):
+    profile: "ProfileBase"
 
 
 class UserCreate(UserBase):
