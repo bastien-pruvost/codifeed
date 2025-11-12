@@ -124,7 +124,7 @@ This project showcases complete type safety between a Python backend and TypeScr
 
 One of the key features of Codifeed is **complete type safety** between the backend and frontend.
 
-### How it works:
+### How it works
 
 1. **Backend Models** - SQLModel defines database models with full type hints
 2. **Pydantic Validation** - Automatic request/response validation
@@ -199,15 +199,15 @@ Note: For local development, tables are also created automatically at app startu
 
 The application will be available at:
 
-- **Frontend**: http://localhost:3000
-- **API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/openapi/swagger
+- **Frontend**: <http://localhost:3000>
+- **API**: <http://localhost:8000>
+- **API Documentation**: <http://localhost:8000/openapi/swagger>
 
 ---
 
 ## 📁 Project Structure
 
-```
+```plaintext
 codifeed/
 ├── api/                         # Flask REST API
 │   ├── app/
