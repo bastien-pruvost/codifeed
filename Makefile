@@ -23,6 +23,7 @@ help: ## Show this help message
 	@echo "  dev                  Start both API and Frontend in development mode"
 	@echo "  dev-api              Start API development server"
 	@echo "  dev-web              Start Frontend development server"
+	@echo "  dev-db               Start Docker database development server"
 	@echo ""
 	@echo "$(GREEN)Build:$(RESET)"
 	@echo "  build                Build both API and Frontend"
@@ -99,6 +100,10 @@ dev-api: ## Start API development server
 dev-web: ## Start Frontend development server
 	@echo "$(BLUE)Starting Frontend development server...$(RESET)"
 	cd web && pnpm dev
+
+dev-db: ## Start database development server
+	@echo "$(BLUE)Starting database development server...$(RESET)"
+	cd database && docker-compose up -d
 
 # =============================================================================
 # Build

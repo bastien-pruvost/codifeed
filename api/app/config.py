@@ -66,9 +66,19 @@ class DevelopmentConfig(Config):
     JWT_COOKIE_HTTPONLY = True
 
 
+class TestingConfig(Config):
+    DEBUG = True
+    TESTING = True
+    JWT_COOKIE_SAMESITE = "Lax"
+    JWT_COOKIE_SECURE = False
+    JWT_COOKIE_HTTPONLY = True
+    JWT_COOKIE_CSRF_PROTECT = False  # Disable CSRF for easier testing
+
+
 def get_config():
     env = os.getenv("FLASK_ENV", "production")
     return {
         "development": DevelopmentConfig,
         "production": ProductionConfig,
+        "testing": TestingConfig,
     }.get(env, Config)
