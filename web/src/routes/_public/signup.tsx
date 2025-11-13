@@ -83,7 +83,7 @@ function SignupPage() {
             >
               <H1 className="text-center text-2xl">Create your account</H1>
               <P tone="muted" className="mt-2 text-center text-balance">
-                Join Codifeed and connect with developers
+                Join Codifeed and connect with the world
               </P>
 
               <div className="mt-8 flex flex-col gap-6">

@@ -23,13 +23,12 @@ function LandingPage() {
               v0.1.0
             </Badge>
             <h1 className="mt-6 max-w-2xl text-4xl font-bold sm:text-5xl xl:text-6xl">
-              The social network for developers
+              The open-source social network
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-pretty text-muted-foreground sm:text-xl">
-              Share your code, showcase your projects, and connect with other
-              developers. Build your professional network while learning from
-              the community. Join thousands of engineers already sharing their
-              journey.
+              Share your thoughts, showcase your interests, and connect with
+              other users. Build your network while engaging with the community.
+              Join thousands of users already sharing their journey.
             </p>
             <div className="mt-12 flex items-center gap-4">
               <Button asChild size="lg" variant="default">
