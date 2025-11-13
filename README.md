@@ -29,7 +29,7 @@ This project showcases complete type safety between a Python backend and TypeScr
 
 ### Developer Profiles
 
-- **Personal Profiles** - View your own and other developers' profiles
+- **Personal Profiles** - View your own and other user' profiles
 - **Developer Identity** - Clean, professional profile layout for the dev community
 
 ### Posts & Content Creation
@@ -40,7 +40,7 @@ This project showcases complete type safety between a Python backend and TypeScr
 ### Social Interactions
 
 - **Engagement System** - Like posts
-- **Follow Network** - Follow/unfollow other developers to build your network
+- **Follow Network** - Follow/unfollow other users to build your network
 
 ### Feed & Discovery
 
@@ -202,61 +202,6 @@ The application will be available at:
 - **Frontend**: <http://localhost:3000>
 - **API**: <http://localhost:8000>
 - **API Documentation**: <http://localhost:8000/openapi/swagger>
-
----
-
-## 📁 Project Structure
-
-```plaintext
-codifeed/
-├── api/                         # Flask REST API
-│   ├── app/
-│   │   ├── middlewares/         # Custom middleware (auto-refresh, exceptions)
-│   │   ├── routes/              # API route handlers by domain
-│   │   ├── services/            # Business logic layer
-│   │   ├── utils/               # Utility functions (hashing, JWT, logging)
-│   │   ├── __init__.py          # Flask app factory
-│   │   ├── config.py            # Configuration file
-│   │   ├── database.py          # Database engine, session & initialization
-│   │   ├── models.py            # SQLModel database models by domain
-│   │   └── schemas.py           # Pydantic schemas for request/response validation
-|   ├── fixtures/                # Fixtures for fake data
-│   ├── migrations/              # Alembic database migrations
-│   ├── scripts/                 # Scripts
-│   ├── dev.py                   # Development server entry point
-│   ├── wsgi.py                  # Production WSGI entry point
-│   ├── Dockerfile               # Container configuration
-│   ├── pyproject.toml           # Python dependencies & project config
-│   └── railway.json             # Railway deployment configuration
-│
-├── web/                         # React frontend
-│   ├── src/
-│   │   ├── assets/              # Static assets and images
-│   │   ├── components/
-│   │   │   ├── layout/          # Layout components (header, etc.)
-│   │   │   └── ui/              # Reusable UI components (shadcn/ui)
-│   │   ├── features/            # Feature-based modules with
-│   │   │   └── [feature]/       # Feature directory
-│   │   │       ├── api/         # Queries & mutations
-│   │   │       ├── components/  # Feature components
-│   │   │       ├── assets/      # Feature assets
-│   │   │       ├── hooks/       # Custom hooks
-│   │   │       └── services/    # Feature logic
-│   │   ├── hooks/               # Global custom hooks
-│   │   ├── routes/              # TanStack Router file-based routing
-│   │   │   ├── _app/            # Protected routes
-│   │   │   ├── _public/         # Public routes
-│   │   │   └── __root.tsx       # Root route
-│   │   ├── services/            # Global services (HTTP client, storage)
-│   │   ├── styles/              # Global CSS styles
-│   │   ├── types/
-│   │   │   └── generated/       # Auto-generated API types from OpenAPI
-│   │   └── utils/               # Utility functions
-│   ├── package.json             # Node.js dependencies
-│   └── vite.config.js           # Vite bundler configuration
-│
-└── database/                    # Database docker setup
-```
 
 ---
 
