@@ -1,6 +1,6 @@
 # Codifeed
 
-**A modern, open-source, social network**
+A modern, open-source, social network
 
 ---
 
@@ -27,10 +27,10 @@ This project showcases complete type safety between a Python backend and TypeScr
 - **Password Security** - Argon2 password hashing and validation
 - **Session Management** - Automatic token refresh and secure logout
 
-### Developer Profiles
+### User Profiles
 
 - **Personal Profiles** - View your own and other user' profiles
-- **Developer Identity** - Clean, professional profile layout for the dev community
+- **User Identity** - Clean, professional profile layout for the user community
 
 ### Posts & Content Creation
 
