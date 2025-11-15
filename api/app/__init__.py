@@ -86,11 +86,9 @@ def _seed_fake_data_if_needed():
     import os
 
     # Always seed in development, or if explicitly enabled in production
-    should_seed = (
-        os.getenv("FLASK_ENV") == "development"
-        or os.getenv("FLASK_DEBUG") == "1"
-        or os.getenv("SEED_FAKE_DATA", "").lower() in ("1", "true", "yes")
-    )
+    should_seed = os.getenv("FLASK_ENV") == "development" or os.getenv(
+        "SEED_FAKE_DATA", ""
+    ).lower() in ("1", "true", "yes")
 
     if should_seed:
         try:

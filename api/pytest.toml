@@ -1,0 +1,33 @@
+[pytest]
+# Pytest configuration for Codifeed API tests
+
+# Minimum Pytest version
+minversion = "9.0"
+
+# Test discovery patterns
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# Test paths
+testpaths = ["tests"]
+
+# Output options
+addopts = [
+    "-v",
+    "-ra",
+    # "-q",
+    # "--tb=short",
+    "--strict-markers",
+    # "--disable-warnings",
+    "--cov=app",
+    "--cov-report=html",
+]
+
+# Markers for organizing tests
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "auth: marks tests related to authentication",
+]

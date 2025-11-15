@@ -12,10 +12,6 @@ class Config:
     APP_VERSION = "1.0.0"
     APP_DESCRIPTION = "Flask REST API for Codifeed app."
 
-    # Database Config
-    DATABASE_URL = os.getenv("DATABASE_URL")
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
-
     # First User Config
     FIRST_ADMIN_NAME = os.getenv("FIRST_ADMIN_NAME")
     FIRST_ADMIN_USERNAME = os.getenv("FIRST_ADMIN_USERNAME")
@@ -56,14 +52,20 @@ class ProductionConfig(Config):
     JWT_COOKIE_SAMESITE = "Strict"
     JWT_COOKIE_SECURE = True
     JWT_COOKIE_HTTPONLY = True
+    JWT_COOKIE_CSRF_PROTECT = True
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
 
 class DevelopmentConfig(Config):
-    DEBUG = True
+    DEBUG = False
     TESTING = False
     JWT_COOKIE_SAMESITE = "Lax"
     JWT_COOKIE_SECURE = False
     JWT_COOKIE_HTTPONLY = True
+    JWT_COOKIE_CSRF_PROTECT = True
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
 
 class TestingConfig(Config):
@@ -73,6 +75,8 @@ class TestingConfig(Config):
     JWT_COOKIE_SECURE = False
     JWT_COOKIE_HTTPONLY = True
     JWT_COOKIE_CSRF_PROTECT = False  # Disable CSRF for easier testing
+    DATABASE_URL = os.getenv("TEST_DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = os.getenv("TEST_DATABASE_URL")
 
 
 def get_config():
