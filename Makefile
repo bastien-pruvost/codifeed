@@ -103,7 +103,7 @@ dev-web: ## Start Frontend development server
 
 dev-db: ## Start database development server
 	@echo "$(BLUE)Starting database development server...$(RESET)"
-	cd database && docker-compose up -d
+	cd database && docker compose up
 
 # =============================================================================
 # Build
