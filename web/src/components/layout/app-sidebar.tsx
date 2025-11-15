@@ -9,35 +9,38 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-
-const navData = {
-  projects: [
-    {
-      name: "Home",
-      url: "/home",
-      icon: HomeIcon,
-    },
-    // {
-    //   name: "Explore",
-    //   url: "/explore",
-    //   icon: TelescopeIcon,
-    // },
-    {
-      name: "My Profile",
-      url: "/me",
-      icon: UserIcon,
-    },
-  ],
-}
+import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+  const user = useCurrentUser()
+
+  const NAV_DATA = {
+    main: [
+      {
+        name: "Home",
+        url: "/home",
+        icon: HomeIcon,
+      },
+      // {
+      //   name: "Explore",
+      //   url: "/explore",
+      //   icon: TelescopeIcon,
+      // },
+      {
+        name: "My Profile",
+        url: `/${user.username}`,
+        icon: UserIcon,
+      },
+    ],
+  }
+
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarContent>
         <SidebarGroup className="p-2 group-data-[collapsible=icon]:hidden">
-          {/* <SidebarGroupLabel>Projects</SidebarGroupLabel> */}
+          {/* <SidebarGroupLabel>main</SidebarGroupLabel> */}
           <SidebarMenu>
-            {navData.projects.map((item) => (
+            {NAV_DATA.main.map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton
                   asChild
