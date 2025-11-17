@@ -5,6 +5,9 @@
   "devCommand": "pnpm run dev",
   "framework": "vite",
   "outputDirectory": "dist",
+  "git": {
+    "deploymentEnabled": false
+  },
   "ignoreCommand": "git diff HEAD^ HEAD --quiet -- ./",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "trailingSlash": false,
