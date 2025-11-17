@@ -9,7 +9,18 @@ from app.utils.password import hash_password
 from fixtures.fake_data_fixtures import FOLLOWS_FIXTURES, POSTS_FIXTURES, USERS_FIXTURES
 
 
-def ensure_users(fixtures: Iterable[dict]) -> None:
+def seed_fake_data_if_needed() -> None:
+    """Seed fake data if needed"""
+
+    if os.getenv("SEED_FAKE_DATA", "").lower() in ("1", "true", "yes"):
+        print("🌱 Seeding fake data...")
+        _ensure_users(USERS_FIXTURES)
+        _ensure_posts(POSTS_FIXTURES)
+        _ensure_follows(FOLLOWS_FIXTURES)
+        print("✅ Fake data seeding completed")
+
+
+def _ensure_users(fixtures: Iterable[dict]) -> None:
     """Insert users + profiles from fixtures if they don't already exist."""
     created_count = 0
     skipped_count = 0
@@ -48,7 +59,7 @@ def ensure_users(fixtures: Iterable[dict]) -> None:
     print(f"Users seed complete. created={created_count} skipped={skipped_count}")
 
 
-def ensure_posts(fixtures: Iterable[dict]) -> None:
+def _ensure_posts(fixtures: Iterable[dict]) -> None:
     """Insert demo posts (and their likes) if they don't already exist."""
     posts_created = 0
     posts_skipped = 0
@@ -117,7 +128,7 @@ def ensure_posts(fixtures: Iterable[dict]) -> None:
     )
 
 
-def ensure_follows(fixtures: Iterable[dict]) -> None:
+def _ensure_follows(fixtures: Iterable[dict]) -> None:
     """Insert follow relationships if they don't already exist."""
     created_count = 0
     skipped_count = 0
@@ -167,11 +178,11 @@ def ensure_follows(fixtures: Iterable[dict]) -> None:
     )
 
 
-def main() -> None:
-    ensure_users(USERS_FIXTURES)
-    ensure_posts(POSTS_FIXTURES)
-    ensure_follows(FOLLOWS_FIXTURES)
+# def main() -> None:
+#     ensure_users(USERS_FIXTURES)
+#     ensure_posts(POSTS_FIXTURES)
+#     ensure_follows(FOLLOWS_FIXTURES)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
