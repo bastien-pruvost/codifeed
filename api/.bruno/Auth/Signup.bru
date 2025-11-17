@@ -1,0 +1,21 @@
+meta {
+  name: Signup
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{API_URL}}/auth/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "test-1@example.com",
+    "password": "{{FAKE_USER_PASSWORD}}",
+    "name": "John Donald",
+    "username": "john_donald",
+    "testField": "Hello world"
+  }
+}

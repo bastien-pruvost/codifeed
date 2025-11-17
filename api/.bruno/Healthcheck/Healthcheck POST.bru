@@ -1,0 +1,22 @@
+meta {
+  name: Healthcheck POST
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{API_URL}}/healthcheck
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "example": "Test"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

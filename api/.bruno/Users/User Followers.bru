@@ -1,0 +1,15 @@
+meta {
+  name: User Followers
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{API_URL}}/users/:username/followers
+  body: none
+  auth: inherit
+}
+
+params:path {
+  username: john_donald
+}

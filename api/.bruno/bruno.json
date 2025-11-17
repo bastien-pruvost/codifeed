@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Codifeed",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

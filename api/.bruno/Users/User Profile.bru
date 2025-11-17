@@ -1,0 +1,15 @@
+meta {
+  name: User Profile
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{API_URL}}/users/:username
+  body: none
+  auth: inherit
+}
+
+params:path {
+  username: john_donald
+}

@@ -1,0 +1,20 @@
+meta {
+  name: User Posts
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{API_URL}}/posts/user/:username
+  body: none
+  auth: inherit
+}
+
+params:path {
+  username: john_donald
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

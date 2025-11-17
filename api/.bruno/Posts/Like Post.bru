@@ -1,0 +1,20 @@
+meta {
+  name: Like Post
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{API_URL}}/posts/:post_id/like
+  body: none
+  auth: inherit
+}
+
+params:path {
+  post_id: aace78ab-39fa-43cb-bc21-ef94cef623dc
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

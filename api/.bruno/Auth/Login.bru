@@ -1,0 +1,18 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{API_URL}}/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "test-1@example.com",
+    "password": "{{FAKE_USER_PASSWORD}}"
+  }
+}

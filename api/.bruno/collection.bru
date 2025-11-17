@@ -1,0 +1,58 @@
+script:pre-request {
+  // Get stored cookies
+  const cookies = bru.getVar("stored_cookies") || {};
+  const csrfAccessToken = bru.getVar("csrf_access_token");
+  const csrfRefreshToken = bru.getVar("csrf_refresh_token");
+  
+  // Add all stored cookies to the request
+  if (Object.keys(cookies).length > 0) {
+    const cookieHeader = Object.entries(cookies)
+      .map(([name, value]) => `${name}=${value}`)
+      .join("; ");
+    req.setHeader("Cookie", cookieHeader);
+  }
+  
+  // Check if this is a refresh request
+  const url = req.getUrl();
+  const isRefreshRequest = url.includes("/auth/refresh");
+  
+  // Set CSRF token headers based on request type
+  if (isRefreshRequest && csrfRefreshToken) {
+    // For refresh requests, use the refresh token
+    req.setHeader("X-CSRF-TOKEN", csrfRefreshToken);
+  } else if (csrfAccessToken) {
+    // For all other requests, use the access token
+    req.setHeader("X-CSRF-TOKEN", csrfAccessToken);
+  }
+}
+
+script:post-response {
+  // Get response headers
+  const headers = res.getHeaders();
+  const setCookieHeaders = headers["set-cookie"] || [];
+  
+  // Get existing stored cookies
+  const storedCookies = bru.getVar("stored_cookies") || {};
+  
+  // Process each Set-Cookie header
+  setCookieHeaders.forEach(cookieHeader => {
+    // Parse cookie name and value (simple parsing)
+    const [cookiePart] = cookieHeader.split(";");
+    const [name, value] = cookiePart.split("=").map(s => s.trim());
+    
+    if (name && value) {
+      // Store the cookie
+      storedCookies[name] = value;
+      
+      // Store CSRF tokens separately for easy access
+      if (name === "csrf_access_token") {
+        bru.setVar("csrf_access_token", value);
+      } else if (name === "csrf_refresh_token") {
+        bru.setVar("csrf_refresh_token", value);
+      }
+    }
+  });
+  
+  // Update stored cookies
+  bru.setVar("stored_cookies", storedCookies);
+}

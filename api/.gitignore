@@ -27,6 +27,5 @@ wheels/
 env/
 venv/
 ENV/
-.bruno/
 
 .ruff_cache/
