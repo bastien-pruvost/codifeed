@@ -73,14 +73,15 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          package_json_file: web/package.json
           run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: web/package.json
           cache: "pnpm"
+          cache-dependency-path: web/pnpm-lock.yaml
 
       - name: Install dependencies
         working-directory: ./web
@@ -132,12 +133,15 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
+          package_json_file: web/package.json
           run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
+          node-version-file: web/package.json
           cache: "pnpm"
+          cache-dependency-path: web/pnpm-lock.yaml
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -167,14 +171,15 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          package_json_file: web/package.json
           run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: web/package.json
           cache: "pnpm"
+          cache-dependency-path: web/pnpm-lock.yaml
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
