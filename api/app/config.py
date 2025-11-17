@@ -48,6 +48,7 @@ class Config:
 
 class ProductionConfig(Config):
     DEBUG = False
+    FLASK_DEBUG = False
     TESTING = False
     JWT_COOKIE_SAMESITE = "Strict"
     JWT_COOKIE_SECURE = True
@@ -59,6 +60,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = False
+    FLASK_DEBUG = True
     TESTING = False
     JWT_COOKIE_SAMESITE = "Lax"
     JWT_COOKIE_SECURE = False
@@ -70,6 +72,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     DEBUG = True
+    FLASK_DEBUG = True
     TESTING = True
     JWT_COOKIE_SAMESITE = "Lax"
     JWT_COOKIE_SECURE = False
