@@ -4,8 +4,9 @@
 *.swo
 
 # Environment
-*.local
+.env
 .env.local
+*.local
 
 # Logs
 *.log
