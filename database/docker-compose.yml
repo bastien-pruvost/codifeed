@@ -4,10 +4,8 @@ services:
     container_name: codifeed-postgres
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=codifeed
+    env_file:
+      - .env.local
     volumes:
       - codifeed_pg_data:/var/lib/postgresql/data
     healthcheck:
