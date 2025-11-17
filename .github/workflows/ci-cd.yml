@@ -1,0 +1,185 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  api-checks:
+    name: API Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Verify Docker
+        run: docker info
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('api/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install dependencies
+        working-directory: ./api
+        run: |
+          poetry install --no-interaction --no-ansi
+
+      - name: Run format check
+        working-directory: ./api
+        run: |
+          poetry run ruff format --check .
+
+      - name: Run lint check
+        working-directory: ./api
+        run: |
+          poetry run ruff lint .
+
+      - name: Run type check
+        working-directory: ./api
+        run: |
+          poetry run pyright .
+
+      - name: Run tests with coverage
+        working-directory: ./api
+        env:
+          FLASK_ENV: testing
+          SECRET_KEY: test-secret-key-for-ci
+          JWT_SECRET_KEY: test-jwt-secret-key-for-ci
+        run: |
+          poetry run pytest --cov --cov-report=xml --cov-report=term
+
+  web-checks:
+    name: Web Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: "pnpm"
+
+      - name: Install dependencies
+        working-directory: ./web
+        run: |
+          pnpm install --frozen-lockfile
+
+      - name: Run format check
+        working-directory: ./web
+        run: |
+          pnpm format:check
+
+      - name: Run lint check
+        working-directory: ./web
+        run: |
+          pnpm lint:check
+
+      - name: Run type check
+        working-directory: ./web
+        run: |
+          pnpm typecheck
+
+      # - name: Run tests
+      #   working-directory: ./web
+      #   run: |
+      #     pnpm test
+
+  # api-deploy-preview:
+  #   name: API Deploy Preview (Railway)
+  #   needs: api-checks
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 30
+
+  # api-deploy-production:
+  #   name: API Deploy Production (Railway)
+  #   needs: api-checks
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 30
+
+  web-deploy-preview:
+    name: Web Deploy Preview (Vercel)
+    needs: [api-checks, web-checks]
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: "pnpm"
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+
+  web-deploy-production:
+    name: Web Deploy Production (Vercel)
+    needs: [api-checks, web-checks]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: "pnpm"
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
