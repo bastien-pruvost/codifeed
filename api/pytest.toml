@@ -31,3 +31,8 @@ markers = [
     "unit: marks tests as unit tests",
     "auth: marks tests related to authentication",
 ]
+
+filterwarnings = [
+    "ignore::DeprecationWarning:testcontainers.*",
+    "ignore:The @wait_container_is_ready decorator is deprecated:DeprecationWarning",
+]

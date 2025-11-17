@@ -1,10 +1,6 @@
 """Pytest configuration and fixtures for integration tests."""
 
 import os
-
-# CRITICAL: Set FLASK_ENV before importing anything from app.*
-os.environ["FLASK_ENV"] = "testing"
-
 from collections.abc import Generator
 
 import pytest
@@ -13,12 +9,38 @@ from flask import Flask
 from flask.testing import FlaskClient
 from flask_openapi3.openapi import OpenAPI
 from sqlmodel import Session
+from testcontainers.core.container import LogMessageWaitStrategy
+from testcontainers.postgres import PostgresContainer
 
-from app import create_app
-from app.database import get_session
 from app.models import UserCreate
 from app.services.auth_service import AuthService
 from app.utils.jwt import create_tokens
+
+os.environ["FLASK_ENV"] = "testing"
+
+
+@pytest.fixture(scope="session")
+def postgres_container() -> Generator[PostgresContainer, None, None]:
+    """Start a PostgreSQL container for the test session.
+
+    This fixture automatically starts a PostgreSQL container using Testcontainers
+    and sets the TEST_DATABASE_URL environment variable to the container's connection URL.
+    The container is automatically cleaned up after all tests complete.
+    """
+
+    container = PostgresContainer("postgres:17", driver="psycopg2").waiting_for(
+        LogMessageWaitStrategy("database system is ready to accept connections")
+    )
+
+    with container:
+        os.environ["TEST_DATABASE_URL"] = container.get_connection_url()
+        yield container
+
+
+@pytest.fixture(scope="session")
+def db_url(postgres_container: PostgresContainer) -> str:
+    """Provide the test database URL for the test session."""
+    return postgres_container.get_connection_url()
 
 
 @pytest.fixture(scope="session")
@@ -28,23 +50,22 @@ def faker_instance() -> Faker:
 
 
 @pytest.fixture(scope="session")
-def app() -> Generator[OpenAPI, None, None]:
+def app(postgres_container: PostgresContainer) -> Generator[OpenAPI, None, None]:
     """Create and configure a Flask app instance for testing.
 
     This fixture is session-scoped because the app configuration doesn't change
     between tests. The database is already initialized with tables and extensions
     when create_app() calls init_db().
-    """
 
-    os.environ["FLASK_ENV"] = "testing"
+    Depends on postgres_container to ensure PostgreSQL is running before app creation.
+    """
+    from app import create_app
 
     app = create_app()
 
-    yield app
-
     # Provide app context for the entire test session
-    # with app.app_context():
-    #     yield app
+    with app.app_context():
+        yield app
 
 
 @pytest.fixture(scope="function")
@@ -61,6 +82,8 @@ def db_session() -> Generator[Session, None, None]:
     HTTP requests made via the client will use their own get_session() calls
     and commit independently.
     """
+    from app.database import get_session
+
     with get_session() as session:
         yield session
 
@@ -111,12 +134,12 @@ def auth_tokens_for_user(app: Flask):
 
     def _auth_tokens(user):
         """Generate access and refresh tokens for the given user."""
-        # with app.app_context():
-        access_token, refresh_token = create_tokens(user.id)
-        return {
-            "access_token_cookie": access_token,
-            "refresh_token_cookie": refresh_token,
-        }
+        with app.app_context():
+            access_token, refresh_token = create_tokens(user.id)
+            return {
+                "access_token_cookie": access_token,
+                "refresh_token_cookie": refresh_token,
+            }
 
     return _auth_tokens
 
