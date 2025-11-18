@@ -10,6 +10,21 @@ jobs:
     name: Code Check
     uses: ./.github/workflows/code-check.yml
 
+  api-deploy-production:
+    name: API Deploy Production (Railway)
+    needs: [code-check]
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Deploy API to Railway
+        run: railway up --service=${{ env.RAILWAY_SERVICE_ID }}
+
   web-deploy-production:
     name: Web Deploy Production (Vercel)
     needs: [code-check]
