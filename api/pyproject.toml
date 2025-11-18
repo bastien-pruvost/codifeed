@@ -24,6 +24,7 @@ dependencies = [
     "testcontainers[postgres] (>=4.13.3,<5.0.0)",
 ]
 
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
@@ -50,12 +51,10 @@ fixable = ["ALL"]
 select = ["E", "F", "B", "I", "W"]
 isort.known-first-party = ["app"]
 
-
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
-
 
 [tool.pyright]
 # Specify Python version
