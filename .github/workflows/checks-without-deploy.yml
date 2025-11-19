@@ -1,0 +1,18 @@
+name: Checks Without Deploy
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - preview
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    uses: ./.github/workflows/_detect-changes.yml
+
+  checks:
+    name: Checks
+    needs: [detect-changes]
+    if: ${{ needs.detect-changes.outputs.api == 'true' || needs.detect-changes.outputs.web == 'true' }}
+    uses: ./.github/workflows/_checks.yml

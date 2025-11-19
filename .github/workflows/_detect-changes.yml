@@ -1,0 +1,44 @@
+name: Detect Changes
+
+on:
+  workflow_call:
+    outputs:
+      api:
+        description: "Whether changes were detected in the api directory"
+        value: ${{ jobs.detect-changes.outputs.api }}
+      web:
+        description: "Whether changes were detected in the web directory"
+        value: ${{ jobs.detect-changes.outputs.web }}
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.api.outputs.changed }}
+      web: ${{ steps.web.outputs.changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - id: api
+        run: |
+          if git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ./api; then
+            echo "No changes in api directory, skipping deployment"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected in api directory, proceeding with deployment"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - id: web
+        run: |
+          if git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ./web; then
+            echo "No changes in web directory, skipping deployment"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected in web directory, proceeding with deployment"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
