@@ -2,9 +2,8 @@
 name = "codifeed-api"
 version = "0.1.0"
 description = "Codifeed API"
-authors = [
-    { name = "Bastien Limbour", email = "bastien.limbour.dev@gmail.com" },
-]
+authors = [{ name = "Bastien Limbour" }]
+license = "MIT"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "alembic (>=1.17.1,<2.0.0)",
