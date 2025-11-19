@@ -1,29 +1,36 @@
-# name: Deploy API Preview
+name: Deploy API Preview
 
-# on:
-#   push:
-#     branches-ignore:
-#       - main
-#     paths:
-#       - api/**
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - api/**
 
-# jobs:
-#   code-check:
-#     name: Code Check
-#     uses: ./.github/workflows/code-check.yml
+jobs:
+  code-check:
+    name: Code Check
+    uses: ./.github/workflows/code-check.yml
 
-#   deploy-api-preview:
-#     name: Deploy API Preview (Railway)
-#     needs: [code-check]
-#     runs-on: ubuntu-latest
-#     container: ghcr.io/railwayapp/cli:latest
-#     timeout-minutes: 30
-#     env:
-#       RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
-#       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v5
+  no-api-preview-for-now:
+    name: No API Preview for now
+    runs-on: ubuntu-latest
+    steps:
+      - name: No API Preview for now
+        run: echo "No API Preview for now"
 
-#       - name: Deploy API to Railway
-#         run: railway up --ci --service=${{ env.RAILWAY_SERVICE_ID }} --environment=preview
+  # deploy-api-preview:
+  #   name: Deploy API Preview (Railway)
+  #   needs: [code-check]
+  #   runs-on: ubuntu-latest
+  #   container: ghcr.io/railwayapp/cli:latest
+  #   timeout-minutes: 30
+  #   env:
+  #     RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+  #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v5
+
+  #     - name: Deploy API to Railway
+  #       run: railway up --ci --service=${{ env.RAILWAY_SERVICE_ID }} --environment=preview
