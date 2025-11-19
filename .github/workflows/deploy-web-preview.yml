@@ -1,17 +1,19 @@
-name: Deploy Preview
+name: Deploy Web Preview
 
 on:
   push:
     branches-ignore:
       - main
+    paths:
+      - web/**
 
 jobs:
   code-check:
     name: Code Check
     uses: ./.github/workflows/code-check.yml
 
-  web-deploy-preview:
-    name: Web Deploy Preview (Vercel)
+  deploy-web-preview:
+    name: Deploy Web Preview (Vercel)
     needs: [code-check]
     runs-on: ubuntu-latest
     timeout-minutes: 30

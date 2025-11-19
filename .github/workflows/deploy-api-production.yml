@@ -1,0 +1,29 @@
+name: Deploy API Production
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - api/**
+
+jobs:
+  code-check:
+    name: Code Check
+    uses: ./.github/workflows/code-check.yml
+
+  deploy-api-production:
+    name: Deploy API Production (Railway)
+    needs: [code-check]
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    timeout-minutes: 30
+    env:
+      RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Deploy API to Railway
+        run: railway up --ci --service=${{ env.RAILWAY_SERVICE_ID }} --environment=production
