@@ -10,53 +10,53 @@ jobs:
     name: Code Check
     uses: ./.github/workflows/code-check.yml
 
-  # api-deploy-production:
-  #   name: API Deploy Production (Railway)
-  #   needs: [code-check]
-  #   runs-on: ubuntu-latest
-  #   container: ghcr.io/railwayapp/cli:latest
-  #   env:
-  #     RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
-  #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v5
+  api-deploy-production:
+    name: API Deploy Production (Railway)
+    needs: [code-check]
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-  #     - name: Deploy API to Railway
-  #       run: railway up --service=${{ env.RAILWAY_SERVICE_ID }}
+      - name: Deploy API to Railway
+        run: railway up --service=${{ env.RAILWAY_SERVICE_ID }}
 
-  # web-deploy-production:
-  #   name: Web Deploy Production (Vercel)
-  #   needs: [code-check]
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 30
-  #   env:
-  #     VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  #     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v5
+  web-deploy-production:
+    name: Web Deploy Production (Vercel)
+    needs: [code-check]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-  #     - name: Setup pnpm
-  #       uses: pnpm/action-setup@v4
-  #       with:
-  #         package_json_file: web/package.json
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: web/package.json
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: web/package.json
-  #         cache: "pnpm"
-  #         cache-dependency-path: web/pnpm-lock.yaml
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: web/package.json
+          cache: "pnpm"
+          cache-dependency-path: web/pnpm-lock.yaml
 
-  #     - name: Install Vercel CLI
-  #       run: pnpm add --global vercel@latest
+      - name: Install Vercel CLI
+        run: pnpm add --global vercel@latest
 
-  #     - name: Pull Vercel Environment Information
-  #       run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-  #     - name: Build Project Artifacts
-  #       run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-  #     - name: Deploy Project Artifacts to Vercel
-  #       run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
