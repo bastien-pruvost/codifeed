@@ -6,18 +6,27 @@ from app.config import get_config
 
 config = get_config()
 
-engine = create_engine(config.DATABASE_URL, echo=False)
+_engine = None
+
+
+def get_engine():
+    """Get the engine for the database"""
+    global _engine
+    if _engine is None:
+        _engine = create_engine(config.DATABASE_URL, echo=False)
+    return _engine
 
 
 @contextmanager
 def get_session():
     """Get a session for the database"""
-    with Session(engine) as session:
+    with Session(get_engine()) as session:
         yield session
 
 
 def init_db():
     """Initialize the database and create all tables"""
+    engine = get_engine()
 
     with engine.begin() as conn:
         conn.exec_driver_sql("CREATE EXTENSION IF NOT EXISTS pg_trgm")

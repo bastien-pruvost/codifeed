@@ -80,7 +80,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: openapi-schema
-          path: api/openapi/openapi.json
+          path: api/openapi
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -99,18 +99,19 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
 
+      - name: Generate Types from OpenAPI
+        run: |
+          make openapi-ts
+
       - name: Run format check
-        working-directory: ./web
         run: |
           make format-check-web
 
       - name: Run lint check
-        working-directory: ./web
         run: |
           make lint-check-web
 
       - name: Run type check
-        working-directory: ./web
         run: |
           make typecheck-web
 

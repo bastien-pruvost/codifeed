@@ -24,8 +24,8 @@
     "typecheck": "tsc",
     "check": "pnpm run format:check && pnpm run lint:check && pnpm run typecheck",
     "openapi-json": "cd ../ && make openapi-json",
-    "openapi-ts": "pnpm run openapi-json && openapi-typescript ../api/openapi/openapi.json -o ./src/types/generated/api.gen.ts --root-types --root-types-no-schema-prefix --generate-path-params",
-    "openapi-ts:watch": "chokidar '../api/**/*.py' -c 'pnpm run openapi-ts' --initial"
+    "openapi-ts": "openapi-typescript ../api/openapi/openapi.json -o ./src/types/generated/api.gen.ts --root-types --root-types-no-schema-prefix --generate-path-params",
+    "openapi-ts:watch": "chokidar '../api/**/*.py' -c 'cd ../ && make openapi-json && pnpm run openapi-ts' --initial"
   },
   "dependencies": {
     "@mantine/hooks": "^8.3.8",
