@@ -18,6 +18,7 @@ jobs:
 
   deploy-api-production:
     name: Deploy API Production (Railway)
+    environment: Production
     needs: [detect-changes, checks]
     if: ${{ needs.detect-changes.outputs.api == 'true' }}
     runs-on: ubuntu-latest
@@ -35,6 +36,7 @@ jobs:
 
   deploy-web-production:
     name: Deploy Web Production (Vercel)
+    environment: Production
     needs: [detect-changes, checks]
     if: ${{ needs.detect-changes.outputs.web == 'true' }}
     runs-on: ubuntu-latest

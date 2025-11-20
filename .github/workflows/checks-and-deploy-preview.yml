@@ -18,6 +18,7 @@ jobs:
 
   deploy-api-preview:
     name: Deploy API Preview (Railway)
+    environment: Preview
     needs: [detect-changes, checks]
     if: ${{ needs.detect-changes.outputs.api == 'true' }}
     runs-on: ubuntu-latest
@@ -35,6 +36,7 @@ jobs:
 
   deploy-web-preview:
     name: Deploy Web Preview (Vercel)
+    environment: Preview
     needs: [detect-changes, checks]
     if: ${{ needs.detect-changes.outputs.web == 'true' }}
     runs-on: ubuntu-latest
