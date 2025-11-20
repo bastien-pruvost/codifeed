@@ -34,41 +34,53 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Install dependencies
-        working-directory: ./api
         run: |
-          poetry install --no-interaction --no-ansi
+          make install-api
 
       - name: Run format check
-        working-directory: ./api
         run: |
-          poetry run ruff format --check .
+          make format-check-api
 
       - name: Run lint check
-        working-directory: ./api
         run: |
-          poetry run ruff check .
+          make lint-check-api
 
       - name: Run type check
-        working-directory: ./api
         run: |
-          poetry run pyright .
+          make typecheck-api
 
-      - name: Run tests with coverage
-        working-directory: ./api
+      - name: Run tests
         env:
           FLASK_ENV: testing
           SECRET_KEY: test-secret-key-for-ci
           JWT_SECRET_KEY: test-jwt-secret-key-for-ci
         run: |
-          poetry run pytest --cov --cov-report=xml --cov-report=term
+          make test-api
+
+      - name: Generate OpenAPI schema
+        run: |
+          make openapi-json
+
+      - name: Upload OpenAPI schema artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-schema
+          path: api/openapi/openapi.json
 
   check-web:
     name: Check Web
+    needs: check-api
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+
+      - name: Download OpenAPI schema artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: openapi-schema
+          path: api/openapi
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -87,20 +99,21 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
 
-      - name: Run format check
-        working-directory: ./web
+      - name: Generate Types from OpenAPI
         run: |
-          pnpm format:check
+          make openapi-ts
+
+      - name: Run format check
+        run: |
+          make format-check-web
 
       - name: Run lint check
-        working-directory: ./web
         run: |
-          pnpm lint:check
+          make lint-check-web
 
       - name: Run type check
-        working-directory: ./web
         run: |
-          pnpm typecheck
+          make typecheck-web
 
       # - name: Run tests
       #   working-directory: ./web

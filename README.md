@@ -185,7 +185,7 @@ pnpm run dev
 Option A: Start a local PostgreSQL instance
 
 ```bash
-docker compose -f database/docker-compose.yml up -d
+docker compose -f database/docker-compose.yml up
 ```
 
 Option B: Apply Alembic migrations

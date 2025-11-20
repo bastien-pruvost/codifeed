@@ -15,8 +15,8 @@ jobs:
     name: Detect Changes
     runs-on: ubuntu-latest
     outputs:
-      api: ${{ steps.api.outputs.changed }}
-      web: ${{ steps.web.outputs.changed }}
+      api: ${{ steps.api.outputs.should_deploy }}
+      web: ${{ steps.web.outputs.should_deploy }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -24,21 +24,33 @@ jobs:
           fetch-depth: 0
 
       - id: api
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ./api; then
-            echo "No changes in api directory, skipping deployment"
-            echo "changed=false" >> $GITHUB_OUTPUT
+          LAST_RUN_STATUS=$(gh run list --workflow="${{ github.workflow }}" --branch="${{ github.ref_name }}" --limit=2 --json conclusion --jq '.[1].conclusion // "none"')
+          if [[ "$LAST_RUN_STATUS" != "success" ]]; then
+            echo "Previous workflow did not succeed, forcing deployment"
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          elif git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ./api; then
+              echo "No changes in api directory, skipping deployment"
+              echo "should_deploy=false" >> $GITHUB_OUTPUT
           else
             echo "Changes detected in api directory, proceeding with deployment"
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
           fi
 
       - id: web
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ./web; then
+          LAST_RUN_STATUS=$(gh run list --workflow="${{ github.workflow }}" --branch="${{ github.ref_name }}" --limit=2 --json conclusion --jq '.[1].conclusion // "none"')
+          if [[ "$LAST_RUN_STATUS" != "success" ]]; then
+            echo "Previous workflow did not succeed, forcing deployment"
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          elif git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ./web; then
             echo "No changes in web directory, skipping deployment"
-            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
           else
             echo "Changes detected in web directory, proceeding with deployment"
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
           fi

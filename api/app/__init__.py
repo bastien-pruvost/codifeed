@@ -1,3 +1,5 @@
+import os
+
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_openapi3.models.info import Info
@@ -17,6 +19,7 @@ def create_app():
     from app.routes.post_routes import posts_router
     from app.routes.user_routes import users_router
     from app.utils.logging import configure_logging
+    from app.utils.response import validation_error_response
     from scripts.seed_default_admin import seed_default_admin_if_needed
     from scripts.seed_fake_data import seed_fake_data_if_needed
 
@@ -51,7 +54,7 @@ def create_app():
         __name__,
         info=app_info,
         security_schemes=app_security_schemes,
-        # validation_error_model=ValidationErrorItem,
+        validation_error_callback=validation_error_response,
     )
 
     app.config.from_object(config)
@@ -74,13 +77,14 @@ def create_app():
     app.register_api(posts_router)
     app.register_api(users_router)
 
-    # Initialize database
-    init_db()
+    if os.getenv("SKIP_DB_INIT", "").lower() not in ("1", "true", "yes"):
+        # Initialize database
+        init_db()
 
-    # Seed fake data if seeding is enabled in environment variables
-    seed_fake_data_if_needed()
+        # Seed fake data if seeding is enabled in environment variables
+        seed_fake_data_if_needed()
 
-    # Seed default admin user if needed
-    seed_default_admin_if_needed()
+        # Seed default admin user if needed
+        seed_default_admin_if_needed()
 
     return app

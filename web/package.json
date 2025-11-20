@@ -23,9 +23,9 @@
     "lint:fix": "eslint --fix",
     "typecheck": "tsc",
     "check": "pnpm run format:check && pnpm run lint:check && pnpm run typecheck",
-    "fix": "pnpm run format:fix && pnpm run lint:fix",
-    "openapi-ts": "openapi-typescript http://localhost:8000/openapi/openapi.json -o ./src/types/generated/api.gen.ts --root-types --root-types-no-schema-prefix --generate-path-params",
-    "openapi-ts:watch": "chokidar '../api/**/*.py' -c 'pnpm run openapi-ts' --initial"
+    "openapi-json": "cd ../ && make openapi-json",
+    "openapi-ts": "openapi-typescript ../api/openapi/openapi.json -o ./src/types/generated/api.gen.ts --root-types --root-types-no-schema-prefix --generate-path-params",
+    "openapi-ts:watch": "chokidar '../api/**/*.py' -c 'cd ../ && make openapi-json && pnpm run openapi-ts' --initial"
   },
   "dependencies": {
     "@mantine/hooks": "^8.3.8",

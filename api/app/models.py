@@ -8,11 +8,12 @@ This module contains all domain-related models:
 - Infrastructure models (PaginatedList, PaginationQuery, etc.)
 """
 
+import re
 from datetime import date, datetime, timezone
 from typing import Any, Generic, TypeVar
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, field_validator
 from pydantic.alias_generators import to_camel
 from sqlmodel import TIMESTAMP, Field, Index, Relationship, SQLModel, col, func, select
 
@@ -137,20 +138,19 @@ class PaginatedList(ApiBaseModel, Generic[T]):
 
 
 class UserBase(ApiBaseModel):
-    email: str = Field(
-        unique=True,
-        index=True,
-        min_length=1,
-        max_length=255,
+    name: str = Field(
+        min_length=2,
+        max_length=50,
     )
     username: str = Field(
         unique=True,
         index=True,
-        min_length=1,
-        max_length=255,
+        min_length=3,
+        max_length=50,
     )
-    name: str = Field(
-        min_length=1,
+    email: EmailStr = Field(
+        unique=True,
+        index=True,
         max_length=255,
     )
     avatar: str | None = Field(
@@ -158,10 +158,21 @@ class UserBase(ApiBaseModel):
         max_length=255,
     )
 
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, v: str) -> str:
+        if not re.match(r"^[A-Za-z0-9_-]+$", v):
+            raise ValueError(
+                "Username must contain only letters, numbers, hyphens, and underscores"
+            )
+        if not re.match(r"^[A-Za-z]", v):
+            raise ValueError("Username must start with a letter")
+        return v
+
 
 class User(UserBase, SoftDeleteMixin, TimestampsMixin, IdMixin, SQLModel, table=True):
     hashed_password: str = Field(
-        min_length=1,
+        min_length=8,
         max_length=255,
     )
 
@@ -229,9 +240,23 @@ class UserDetail(UserPublic):
 
 class UserCreate(UserBase):
     password: str = Field(
-        min_length=1,
+        min_length=8,
         max_length=255,
     )
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        """Validate password strength requirements"""
+        if not re.search(r"[A-Z]", v):
+            raise ValueError("Password must contain at least one uppercase letter")
+        if not re.search(r"[a-z]", v):
+            raise ValueError("Password must contain at least one lowercase letter")
+        if not re.search(r"[0-9]", v):
+            raise ValueError("Password must contain at least one number")
+        if not re.search(r"[^A-Za-z0-9]", v):
+            raise ValueError("Password must contain at least one special character")
+        return v
 
 
 # ------ Profile (User Profile) ------
