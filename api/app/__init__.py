@@ -1,3 +1,5 @@
+import os
+
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_openapi3.models.info import Info
@@ -74,13 +76,14 @@ def create_app():
     app.register_api(posts_router)
     app.register_api(users_router)
 
-    # Initialize database
-    init_db()
+    if os.getenv("SKIP_DB_INIT", "").lower() not in ("1", "true", "yes"):
+        # Initialize database
+        init_db()
 
-    # Seed fake data if seeding is enabled in environment variables
-    seed_fake_data_if_needed()
+        # Seed fake data if seeding is enabled in environment variables
+        seed_fake_data_if_needed()
 
-    # Seed default admin user if needed
-    seed_default_admin_if_needed()
+        # Seed default admin user if needed
+        seed_default_admin_if_needed()
 
     return app
