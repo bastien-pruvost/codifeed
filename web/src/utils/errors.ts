@@ -1,4 +1,4 @@
-import type { ErrorResponse } from "@/types/generated/api.gen"
+import type { ErrorDetails, ErrorResponse } from "@/types/generated/api.gen"
 
 // Define possible API error response types
 export type ApiErrorData = ErrorResponse | string | null
@@ -27,30 +27,41 @@ export class ApiError extends Error {
 
   // Helper method to get a user-friendly error message
   getUserMessage(): string {
-    const trimmedMessage = this.message.trim()
     const fallbackMessage =
-      trimmedMessage.length > 0 ? trimmedMessage : this.getDefaultMessage()
+      this.message.trim().length > 0
+        ? this.message.trim()
+        : this.getDefaultMessage()
 
     if (!this.data) {
       return fallbackMessage
     }
 
-    // Handle responses with a message field
+    if (typeof this.data === "string") {
+      return this.data.trim().length > 0 ? this.data.trim() : fallbackMessage
+    }
+
     if (
-      typeof this.data === "object" &&
-      "message" in this.data &&
-      typeof this.data.message === "string" &&
-      this.data.message.trim().length > 0
+      this.data.details &&
+      this.data.details.length > 0 &&
+      this.data.message
     ) {
+      const errors = this.formatValidationErrors(this.data.details)
+      return `${this.data.message}\n${errors}`
+    }
+
+    if (this.data.message) {
       return this.data.message
     }
 
-    // Handle plain text responses
-    if (typeof this.data === "string" && this.data.trim().length > 0) {
-      return this.data
-    }
-
     return fallbackMessage
+  }
+
+  private formatValidationErrors(errors: ErrorDetails[]): string {
+    if (errors.length === 0) return ""
+
+    return errors
+      .map((error) => `• ${error.loc.join("→")}: ${error.msg}`)
+      .join("\n")
   }
 
   private getDefaultMessage(): string {
@@ -79,19 +90,6 @@ export class ApiError extends Error {
         return `Request failed with status ${this.status}`
     }
   }
-
-  // // Helper method to check if this is a validation error
-  // isValidationError(): boolean {
-  //   return this.status === 422
-  // }
-
-  // // Helper method to get validation errors if available
-  // getValidationErrors(): ValidationErrorModel[] {
-  //   if (this.isValidationError() && Array.isArray(this.data)) {
-  //     return this.data
-  //   }
-  //   return []
-  // }
 }
 
 // Helper function to extract meaningful error messages with type safety

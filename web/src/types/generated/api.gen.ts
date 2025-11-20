@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Create a new user account */
+        post: operations["auth_signup_auth_signup_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -15,23 +32,6 @@ export interface paths {
         put?: never;
         /** @description Login a user with email and password */
         post: operations["auth_login_auth_login_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Logout a user by clearing cookies */
-        post: operations["auth_logout_auth_logout_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -55,7 +55,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/signup": {
+    "/auth/logout": {
         parameters: {
             query?: never;
             header?: never;
@@ -64,8 +64,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Create a new user account */
-        post: operations["auth_signup_auth_signup_post"];
+        /** @description Logout a user by clearing cookies */
+        post: operations["auth_logout_auth_logout_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -101,23 +101,6 @@ export interface paths {
         put?: never;
         /** @description Create a new post */
         post: operations["posts_create_post_posts_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/posts/feed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Get feed posts from followed users */
-        get: operations["posts_get_feed_posts_posts_feed_get"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -182,6 +165,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/posts/feed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get feed posts from followed users */
+        get: operations["posts_get_feed_posts_posts_feed_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/me": {
         parameters: {
             query?: never;
@@ -191,23 +191,6 @@ export interface paths {
         };
         /** @description Get the current user */
         get: operations["user_get_current_user_route_users_me_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/users/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Search users by name or username with pagination */
-        get: operations["user_search_users_route_users_search_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -231,6 +214,23 @@ export interface paths {
         post?: never;
         /** @description Delete a user by username */
         delete: operations["user_delete_user_route_users__string_username__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Search users by name or username with pagination */
+        get: operations["user_search_users_route_users_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -298,16 +298,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /**
-         * ApiBaseModel
-         * @description Base model to be used for all API models (Converts snake_case to camelCase)
-         */
-        ApiBaseModel: Record<string, never>;
-        /**
-         * ErrorResponse
-         * @description Standard error response format
-         */
-        ErrorResponse: {
+        /** ErrorResponseWithDefaultDetailsNone */
+        ErrorResponseWithDefaultDetailsNone: {
+            /**
+             * Message
+             * @description Main error message
+             */
+            message: string;
             /**
              * Code
              * @description Error code for programmatic handling
@@ -319,17 +316,117 @@ export interface components {
              * @description Detailed validation errors
              * @default null
              */
-            details: components["schemas"]["ValidationErrorItem"][] | null;
+            details: components["schemas"]["ErrorDetails"][] | null;
+        };
+        /** ErrorDetails */
+        ErrorDetails: {
+            /** Type */
+            type: string;
+            /** Loc */
+            loc: (number | string)[];
+            /** Msg */
+            msg: string;
+            /** Input */
+            input: unknown;
+            /** Ctx */
+            ctx?: {
+                [key: string]: unknown;
+            };
+            /** Url */
+            url?: string;
+        };
+        /**
+         * ErrorResponse
+         * @description Standard error response format
+         */
+        ErrorResponse: {
             /**
              * Message
              * @description Main error message
              */
             message: string;
+            /**
+             * Code
+             * @description Error code for programmatic handling
+             * @default null
+             */
+            code: string | null;
+            /**
+             * Details
+             * @description Detailed validation errors
+             */
+            details: components["schemas"]["ErrorDetails"][] | null;
         };
-        /** HealthcheckResponse */
-        HealthcheckResponse: {
-            /** Status */
-            status: string;
+        /** UserPublic */
+        UserPublic: {
+            /**
+             * Createdat
+             * @default null
+             */
+            createdAt: string | null;
+            /**
+             * Updatedat
+             * @default null
+             */
+            updatedAt: string | null;
+            /** Name */
+            name: string;
+            /** Username */
+            username: string;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /**
+             * Avatar
+             * @default null
+             */
+            avatar: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Isfollowing
+             * @default false
+             */
+            isFollowing: boolean;
+            /**
+             * Isfollowedby
+             * @default false
+             */
+            isFollowedBy: boolean;
+            /**
+             * Followerscount
+             * @default 0
+             */
+            followersCount: number;
+            /**
+             * Followingcount
+             * @default 0
+             */
+            followingCount: number;
+        };
+        /** UserCreate */
+        UserCreate: {
+            /** Name */
+            name: string;
+            /** Username */
+            username: string;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /**
+             * Avatar
+             * @default null
+             */
+            avatar: string | null;
+            /** Password */
+            password: string;
         };
         /** LoginCredentials */
         LoginCredentials: {
@@ -338,24 +435,46 @@ export interface components {
             /** Password */
             password: string;
         };
-        /** PaginationMeta */
-        PaginationMeta: {
-            /** Hasmore */
-            hasMore: boolean;
+        /**
+         * ApiBaseModel
+         * @description Base model to be used for all API models (Converts snake_case to camelCase)
+         */
+        ApiBaseModel: Record<string, never>;
+        /** HealthcheckResponse */
+        HealthcheckResponse: {
+            /** Status */
+            status: string;
+        };
+        /** PostPublic */
+        PostPublic: {
             /**
-             * Itemsperpage
-             * @description Number of items per page
-             * @default 24
+             * Createdat
+             * @default null
              */
-            itemsPerPage: number;
+            createdAt: string | null;
             /**
-             * Page
-             * @description Page number
-             * @default 1
+             * Updatedat
+             * @default null
              */
-            page: number;
-            /** Totalcount */
-            totalCount: number;
+            updatedAt: string | null;
+            /** Content */
+            content: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            author: components["schemas"]["UserPublic"];
+            /**
+             * Likescount
+             * @default 0
+             */
+            likesCount: number;
+            /**
+             * Isliked
+             * @default false
+             */
+            isLiked: boolean;
         };
         /** PostCreate */
         PostCreate: {
@@ -368,90 +487,66 @@ export interface components {
             data: components["schemas"]["PostPublic"][];
             meta: components["schemas"]["PaginationMeta"];
         };
-        /** PostPublic */
-        PostPublic: {
-            author: components["schemas"]["UserPublic"];
-            /** Content */
-            content: string;
+        /** PaginationMeta */
+        PaginationMeta: {
+            /**
+             * Page
+             * @description Page number
+             * @default 1
+             */
+            page: number;
+            /**
+             * Itemsperpage
+             * @description Number of items per page
+             * @default 24
+             */
+            itemsPerPage: number;
+            /** Totalcount */
+            totalCount: number;
+            /** Hasmore */
+            hasMore: boolean;
+        };
+        /** UserDetail */
+        UserDetail: {
             /**
              * Createdat
              * @default null
              */
             createdAt: string | null;
+            /**
+             * Updatedat
+             * @default null
+             */
+            updatedAt: string | null;
+            /** Name */
+            name: string;
+            /** Username */
+            username: string;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /**
+             * Avatar
+             * @default null
+             */
+            avatar: string | null;
             /**
              * Id
              * Format: uuid
              */
             id: string;
             /**
-             * Isliked
+             * Isfollowing
              * @default false
              */
-            isLiked: boolean;
+            isFollowing: boolean;
             /**
-             * Likescount
-             * @default 0
+             * Isfollowedby
+             * @default false
              */
-            likesCount: number;
-            /**
-             * Updatedat
-             * @default null
-             */
-            updatedAt: string | null;
-        };
-        /** ProfileBase */
-        ProfileBase: {
-            /**
-             * Bio
-             * @default null
-             */
-            bio: string | null;
-            /**
-             * Birthdate
-             * @default null
-             */
-            birthdate: string | null;
-            /**
-             * Location
-             * @default null
-             */
-            location: string | null;
-            /**
-             * Website
-             * @default null
-             */
-            website: string | null;
-        };
-        /** UserCreate */
-        UserCreate: {
-            /**
-             * Avatar
-             * @default null
-             */
-            avatar: string | null;
-            /** Email */
-            email: string;
-            /** Name */
-            name: string;
-            /** Password */
-            password: string;
-            /** Username */
-            username: string;
-        };
-        /** UserDetail */
-        UserDetail: {
-            /**
-             * Avatar
-             * @default null
-             */
-            avatar: string | null;
-            /**
-             * Createdat
-             * @default null
-             */
-            createdAt: string | null;
-            /** Email */
-            email: string;
+            isFollowedBy: boolean;
             /**
              * Followerscount
              * @default 0
@@ -462,31 +557,30 @@ export interface components {
              * @default 0
              */
             followingCount: number;
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Isfollowedby
-             * @default false
-             */
-            isFollowedBy: boolean;
-            /**
-             * Isfollowing
-             * @default false
-             */
-            isFollowing: boolean;
-            /** Name */
-            name: string;
             profile: components["schemas"]["ProfileBase"];
+        };
+        /** ProfileBase */
+        ProfileBase: {
             /**
-             * Updatedat
+             * Bio
              * @default null
              */
-            updatedAt: string | null;
-            /** Username */
-            username: string;
+            bio: string | null;
+            /**
+             * Location
+             * @default null
+             */
+            location: string | null;
+            /**
+             * Website
+             * @default null
+             */
+            website: string | null;
+            /**
+             * Birthdate
+             * @default null
+             */
+            birthdate: string | null;
         };
         /** UserList */
         UserList: {
@@ -494,106 +588,42 @@ export interface components {
             data: components["schemas"]["UserPublic"][];
             meta: components["schemas"]["PaginationMeta"];
         };
-        /** UserPublic */
-        UserPublic: {
-            /**
-             * Avatar
-             * @default null
-             */
-            avatar: string | null;
-            /**
-             * Createdat
-             * @default null
-             */
-            createdAt: string | null;
-            /** Email */
-            email: string;
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Isfollowedby
-             * @default false
-             */
-            isFollowedBy: boolean;
-            /**
-             * Isfollowing
-             * @default false
-             */
-            isFollowing: boolean;
-            /** Name */
-            name: string;
-            /**
-             * Updatedat
-             * @default null
-             */
-            updatedAt: string | null;
-            /** Username */
-            username: string;
-        };
-        /**
-         * ValidationErrorItem
-         * @description Validation error item matching Pydantic v2 format - used for all validation errors
-         */
-        ValidationErrorItem: {
-            /**
-             * Input
-             * @description Input value that caused the error
-             * @default null
-             */
-            input: unknown | null;
-            /**
-             * Loc
-             * @description Location of the error (field path)
-             */
-            loc: string[];
-            /**
-             * Msg
-             * @description Human-readable error message
-             */
-            msg: string;
-            /**
-             * Type
-             * @description Error type (e.g., 'missing', 'string_too_short')
-             */
-            type: string;
-            /**
-             * Url
-             * @description URL to Pydantic error documentation
-             * @default null
-             */
-            url: string | null;
-        };
         /** ValidationErrorModel */
         ValidationErrorModel: {
             /**
+             * Error Type
+             * @description A computer-readable identifier of the error type.
+             */
+            type: string;
+            /**
+             * Location
+             * @description The error's location as a list.
+             */
+            loc: unknown[];
+            /**
+             * Message
+             * @description A human readable explanation of the error.
+             */
+            msg: string;
+            /**
+             * Input
+             * @description The input provided for validation.
+             */
+            input: unknown;
+            /**
+             * URL
+             * @description The URL to further information about the error.
+             * @default null
+             */
+            url: string | null;
+            /**
              * Error context
-             * @description an optional object which contains values required to render the error message.
+             * @description An optional object which contains values required to render the error message.
              * @default null
              */
             ctx: {
                 [key: string]: unknown;
             } | null;
-            /**
-             * Location
-             * @description the error's location as a list.
-             * @default null
-             */
-            loc: string[] | null;
-            /**
-             * Message
-             * @description a computer-readable identifier of the error type.
-             * @default null
-             */
-            msg: string | null;
-            /**
-             * Error Type
-             * @description a human readable explanation of the error.
-             * @default null
-             */
-            type_: string | null;
         };
     };
     responses: never;
@@ -602,162 +632,24 @@ export interface components {
     headers: never;
     pathItems: never;
 }
-export type ApiBaseModel = components['schemas']['ApiBaseModel'];
+export type ErrorResponseWithDefaultDetailsNone = components['schemas']['ErrorResponseWithDefaultDetailsNone'];
+export type ErrorDetails = components['schemas']['ErrorDetails'];
 export type ErrorResponse = components['schemas']['ErrorResponse'];
-export type HealthcheckResponse = components['schemas']['HealthcheckResponse'];
+export type UserPublic = components['schemas']['UserPublic'];
+export type UserCreate = components['schemas']['UserCreate'];
 export type LoginCredentials = components['schemas']['LoginCredentials'];
-export type PaginationMeta = components['schemas']['PaginationMeta'];
+export type ApiBaseModel = components['schemas']['ApiBaseModel'];
+export type HealthcheckResponse = components['schemas']['HealthcheckResponse'];
+export type PostPublic = components['schemas']['PostPublic'];
 export type PostCreate = components['schemas']['PostCreate'];
 export type PostList = components['schemas']['PostList'];
-export type PostPublic = components['schemas']['PostPublic'];
-export type ProfileBase = components['schemas']['ProfileBase'];
-export type UserCreate = components['schemas']['UserCreate'];
+export type PaginationMeta = components['schemas']['PaginationMeta'];
 export type UserDetail = components['schemas']['UserDetail'];
+export type ProfileBase = components['schemas']['ProfileBase'];
 export type UserList = components['schemas']['UserList'];
-export type UserPublic = components['schemas']['UserPublic'];
-export type ValidationErrorItem = components['schemas']['ValidationErrorItem'];
 export type ValidationErrorModel = components['schemas']['ValidationErrorModel'];
 export type $defs = Record<string, never>;
 export interface operations {
-    auth_login_auth_login_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginCredentials"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserPublic"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "4XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "5XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    auth_logout_auth_logout_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiBaseModel"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "4XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "5XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    auth_refresh_auth_refresh_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserPublic"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "4XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "5XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
     auth_signup_auth_signup_post: {
         parameters: {
             query?: never;
@@ -794,7 +686,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -802,7 +694,146 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+        };
+    };
+    auth_login_auth_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginCredentials"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserPublic"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+        };
+    };
+    auth_refresh_auth_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserPublic"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+        };
+    };
+    auth_logout_auth_logout_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiBaseModel"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -839,7 +870,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -847,7 +878,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -884,7 +915,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -892,7 +923,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -933,7 +964,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -941,57 +972,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    posts_get_feed_posts_posts_feed_get: {
-        parameters: {
-            query?: {
-                /** @description Page number */
-                page?: number;
-                /** @description Number of items per page */
-                itemsPerPage?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PostList"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "4XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "5XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1035,7 +1016,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1043,7 +1024,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1082,7 +1063,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1090,7 +1071,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1129,7 +1110,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1137,7 +1118,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1176,7 +1157,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1184,7 +1165,57 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+        };
+    };
+    posts_get_feed_posts_posts_feed_get: {
+        parameters: {
+            query?: {
+                /** @description Page number */
+                page?: number;
+                /** @description Number of items per page */
+                itemsPerPage?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostList"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1221,7 +1252,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1229,7 +1260,101 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+        };
+    };
+    user_get_user_detail_route_users__string_username__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserDetail"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+        };
+    };
+    user_delete_user_route_users__string_username__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserPublic"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
+                };
+            };
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1273,7 +1398,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1281,101 +1406,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    user_get_user_detail_route_users__string_username__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                username: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserDetail"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "4XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "5XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    user_delete_user_route_users__string_username__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                username: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserPublic"];
-                };
-            };
-            /** @description Unprocessable Content */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "4XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            "5XX": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1414,7 +1445,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1422,7 +1453,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1461,7 +1492,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1469,7 +1500,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1513,7 +1544,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1521,7 +1552,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };
@@ -1565,7 +1596,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
             "5XX": {
@@ -1573,7 +1604,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponseWithDefaultDetailsNone"];
                 };
             };
         };

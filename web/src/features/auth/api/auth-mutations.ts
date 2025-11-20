@@ -45,6 +45,9 @@ export function useSignupMutation() {
           ),
       })
     },
+    meta: {
+      disableDefaultGlobalError: true,
+    },
   })
 }
 
