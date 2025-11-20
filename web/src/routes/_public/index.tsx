@@ -19,7 +19,7 @@ function LandingPage() {
       <PageContainer className="flex items-center justify-center">
         <Wrapper className="flex flex-col items-center justify-center gap-12 lg:flex-row">
           <div className="grow basis-2/3">
-            <Badge className="rounded-full border-none bg-gradient-to-br from-primary via-primary/60 via-70% to-primary py-1">
+            <Badge className="rounded-full border-none bg-linear-to-r from-primary via-sky-600 via-80% to-primary py-1">
               v0.1.0
             </Badge>
             <h1 className="mt-6 max-w-2xl text-4xl font-bold sm:text-5xl xl:text-6xl">

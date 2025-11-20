@@ -13,37 +13,58 @@ import { H1, P } from "@/components/ui/typography"
 import { Wrapper } from "@/components/ui/wrapper"
 import { useSignupMutation } from "@/features/auth/api/auth-mutations"
 import signupImg from "@/features/auth/assets/signup-illustration.webp"
-import { getErrorMessage } from "@/utils/errors"
 
 const searchSchema = z.object({
   redirect: z.string().optional().catch(undefined),
 })
 
-const signupSchema = z.object({
-  email: z.email({
-    error: ({ input }) =>
-      input
-        ? "Enter a valid email address, like email@example.com"
-        : "Email is required",
-  }),
-  password: z.string().min(1, "Password is required"),
-  name: z.string().min(1, "Name is required"),
-  username: z.string().min(1, "Username is required"),
-  avatar: z.string().nullable(),
-})
-
-const defaultValues: z.input<typeof signupSchema> = {
-  email: "",
-  password: "",
-  name: "",
-  username: "",
-  avatar: null,
-}
-
 export const Route = createFileRoute("/_public/signup")({
   validateSearch: searchSchema,
   component: SignupPage,
 })
+
+const signupSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must not exceed 50 characters"),
+  username: z
+    .string()
+    .min(1, "Username is required")
+    .regex(
+      /^[A-Za-z0-9_-]+$/,
+      "Username must contain only letters, numbers, hyphens, and underscores",
+    )
+    .regex(/^[A-Za-z]/, "Username must start with a letter")
+    .min(3, "Username must be at least 3 characters")
+    .max(20, "Username must not exceed 20 characters"),
+  email: z
+    .email("Enter a valid email address, like email@example.com")
+    .min(1, "Email is required"),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .max(255, "Password must not exceed 255 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(
+      /[^A-Za-z0-9]/,
+      "Password must contain at least one special character",
+    ),
+  avatar: z.null(),
+})
+
+const defaultValues: z.input<typeof signupSchema> = {
+  name: "",
+  username: "",
+  email: "",
+  password: "",
+  avatar: null,
+}
 
 function SignupPage() {
   const router = useRouter()
@@ -102,7 +123,11 @@ function SignupPage() {
                 <form.AppField
                   name="password"
                   children={(field) => (
-                    <field.TextField label="Password" type="password" />
+                    <field.TextField
+                      label="Password"
+                      type="password"
+                      description="At least 8 characters with uppercase, lowercase, number, and special character"
+                    />
                   )}
                 />
 
@@ -114,7 +139,7 @@ function SignupPage() {
                   <Alert variant="destructive">
                     <AlertCircleIcon />
                     <AlertDescription>
-                      {getErrorMessage(signupMutation.error)}
+                      {signupMutation.error.getUserMessage()}
                     </AlertDescription>
                   </Alert>
                 )}
