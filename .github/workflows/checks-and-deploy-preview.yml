@@ -4,23 +4,37 @@ on:
   push:
     branches:
       - preview
+  workflow_dispatch:
+    inputs:
+      force_deploy_api:
+        description: "Whether to force deploy the api regardless of changes"
+        required: false
+        type: boolean
+        default: false
+      force_deploy_web:
+        description: "Whether to force deploy the web regardless of changes"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   detect-changes:
     name: Detect Changes
     uses: ./.github/workflows/_detect-changes.yml
-
+    with:
+      force_deploy_api: ${{ inputs.force_deploy_api || false }}
+      force_deploy_web: ${{ inputs.force_deploy_web || false }}
   checks:
     name: Checks
     needs: [detect-changes]
-    if: ${{ needs.detect-changes.outputs.api == 'true' || needs.detect-changes.outputs.web == 'true' }}
+    if: ${{ needs.detect-changes.outputs.should_deploy_api == 'true' || needs.detect-changes.outputs.should_deploy_web == 'true' }}
     uses: ./.github/workflows/_checks.yml
 
   deploy-api-preview:
     name: Deploy API Preview (Railway)
     environment: Preview
     needs: [detect-changes, checks]
-    if: ${{ needs.detect-changes.outputs.api == 'true' }}
+    if: ${{ needs.detect-changes.outputs.should_deploy_api == 'true' }}
     runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
     timeout-minutes: 30
@@ -38,7 +52,7 @@ jobs:
     name: Deploy Web Preview (Vercel)
     environment: Preview
     needs: [detect-changes, checks]
-    if: ${{ needs.detect-changes.outputs.web == 'true' }}
+    if: ${{ needs.detect-changes.outputs.should_deploy_web == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -67,7 +81,7 @@ jobs:
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
-        run: vercel build --target=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --target=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
