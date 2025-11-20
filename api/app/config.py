@@ -50,7 +50,7 @@ class ProductionConfig(Config):
     DEBUG = False
     FLASK_DEBUG = False
     TESTING = False
-    JWT_COOKIE_SAMESITE = "Strict"
+    JWT_COOKIE_SAMESITE = "None"
     JWT_COOKIE_SECURE = True
     JWT_COOKIE_HTTPONLY = True
     JWT_COOKIE_CSRF_PROTECT = True
