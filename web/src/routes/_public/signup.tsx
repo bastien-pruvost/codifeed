@@ -39,7 +39,7 @@ const signupSchema = z.object({
     )
     .regex(/^[A-Za-z]/, "Username must start with a letter")
     .min(3, "Username must be at least 3 characters")
-    .max(20, "Username must not exceed 20 characters"),
+    .max(50, "Username must not exceed 50 characters"),
   email: z
     .email("Enter a valid email address, like email@example.com")
     .min(1, "Email is required"),

@@ -146,7 +146,7 @@ class UserBase(ApiBaseModel):
         unique=True,
         index=True,
         min_length=3,
-        max_length=20,
+        max_length=50,
     )
     email: EmailStr = Field(
         unique=True,
