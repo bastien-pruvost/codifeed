@@ -2,8 +2,8 @@ name: Checks and Deploy Preview
 
 on:
   push:
-    branches:
-      - preview
+    branches-ignore:
+      - main
 
 jobs:
   detect-changes:
