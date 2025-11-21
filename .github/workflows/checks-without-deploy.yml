@@ -2,9 +2,8 @@ name: Checks Without Deploy
 
 on:
   push:
-    branches-ignore:
-      - main
-      - preview
+    branches:
+      - no-deploy/*
 
 jobs:
   detect-changes:
