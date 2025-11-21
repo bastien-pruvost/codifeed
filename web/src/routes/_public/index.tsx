@@ -23,7 +23,7 @@ function LandingPage() {
               v0.1.0
             </Badge>
             <h1 className="mt-6 max-w-2xl text-4xl font-bold sm:text-5xl xl:text-6xl">
-              The open-source social network (Preview 2)
+              The open-source social network (Preview Test 2)
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-pretty text-muted-foreground sm:text-xl">
               Share your thoughts, showcase your interests, and connect with
