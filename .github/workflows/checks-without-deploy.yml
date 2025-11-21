@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - no-deploy/*
+    # branches-ignore:
+    #   - main
+    #   - preview
 
 jobs:
   detect-changes:
@@ -13,5 +16,5 @@ jobs:
   checks:
     name: Checks
     needs: [detect-changes]
-    if: ${{ needs.detect-changes.outputs.api == 'true' || needs.detect-changes.outputs.web == 'true' }}
+    if: ${{ needs.detect-changes.outputs.should_deploy_api == 'true' || needs.detect-changes.outputs.should_deploy_web == 'true' }}
     uses: ./.github/workflows/_checks.yml
