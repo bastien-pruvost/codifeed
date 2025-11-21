@@ -2,21 +2,32 @@ name: Detect Changes
 
 on:
   workflow_call:
+    inputs:
+      force_deploy_api:
+        description: "Whether to force deploy the api regardless of changes"
+        required: false
+        type: boolean
+        default: false
+      force_deploy_web:
+        description: "Whether to force deploy the web regardless of changes"
+        required: false
+        type: boolean
+        default: false
     outputs:
-      api:
+      should_deploy_api:
         description: "Whether changes were detected in the api directory"
-        value: ${{ jobs.detect-changes.outputs.api }}
-      web:
+        value: ${{ jobs.detect-changes.outputs.should_deploy_api }}
+      should_deploy_web:
         description: "Whether changes were detected in the web directory"
-        value: ${{ jobs.detect-changes.outputs.web }}
+        value: ${{ jobs.detect-changes.outputs.should_deploy_web }}
 
 jobs:
   detect-changes:
     name: Detect Changes
     runs-on: ubuntu-latest
     outputs:
-      api: ${{ steps.api.outputs.should_deploy }}
-      web: ${{ steps.web.outputs.should_deploy }}
+      should_deploy_api: ${{ steps.api.outputs.should_deploy_api }}
+      should_deploy_web: ${{ steps.web.outputs.should_deploy_web }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -26,31 +37,65 @@ jobs:
       - id: api
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_DEPLOY_API: ${{ inputs.force_deploy_api }}
         run: |
-          LAST_RUN_STATUS=$(gh run list --workflow="${{ github.workflow }}" --branch="${{ github.ref_name }}" --limit=2 --json conclusion --jq '.[1].conclusion // "none"')
-          if [[ "$LAST_RUN_STATUS" != "success" ]]; then
-            echo "Previous workflow did not succeed, forcing deployment"
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          if [[ "$FORCE_DEPLOY_API" == "true" ]]; then
+            echo "Force deploying api, skipping checks"
+            echo "should_deploy_api=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          last_run_conclusion=$(
+            gh run list \
+              --workflow="${{ github.workflow }}" \
+              --branch="${{ github.ref_name }}" \
+              --status=completed \
+              --limit=1 \
+              --json conclusion \
+              --jq '.[0].conclusion // "none"'
+          )
+          echo "Last completed run conclusion: $last_run_conclusion"
+
+          if [[ "$last_run_conclusion" != "success" && "$last_run_conclusion" != "skipped" ]]; then
+            echo "Previous workflow did not succeed or does not exist, forcing deployment"
+            echo "should_deploy_api=true" >> $GITHUB_OUTPUT
           elif git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ./api; then
               echo "No changes in api directory, skipping deployment"
-              echo "should_deploy=false" >> $GITHUB_OUTPUT
+              echo "should_deploy_api=false" >> $GITHUB_OUTPUT
           else
             echo "Changes detected in api directory, proceeding with deployment"
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "should_deploy_api=true" >> $GITHUB_OUTPUT
           fi
 
       - id: web
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_DEPLOY_WEB: ${{ inputs.force_deploy_web }}
         run: |
-          LAST_RUN_STATUS=$(gh run list --workflow="${{ github.workflow }}" --branch="${{ github.ref_name }}" --limit=2 --json conclusion --jq '.[1].conclusion // "none"')
-          if [[ "$LAST_RUN_STATUS" != "success" ]]; then
-            echo "Previous workflow did not succeed, forcing deployment"
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          if [[ "$FORCE_DEPLOY_WEB" == "true" ]]; then
+            echo "Force deploying web, skipping checks"
+            echo "should_deploy_web=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          last_run_conclusion=$(
+            gh run list \
+              --workflow="${{ github.workflow }}" \
+              --branch="${{ github.ref_name }}" \
+              --status=completed \
+              --limit=1 \
+              --json conclusion \
+              --jq '.[0].conclusion // "none"'
+          )
+          echo "Last completed run conclusion: $last_run_conclusion"
+
+          if [[ "$last_run_conclusion" != "success" && "$last_run_conclusion" != "skipped" ]]; then
+            echo "Previous workflow did not succeed or does not exist, forcing deployment"
+            echo "should_deploy_web=true" >> $GITHUB_OUTPUT
           elif git diff --quiet ${{ github.event.before }} ${{ github.sha }} -- ./web; then
             echo "No changes in web directory, skipping deployment"
-            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "should_deploy_web=false" >> $GITHUB_OUTPUT
           else
             echo "Changes detected in web directory, proceeding with deployment"
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "should_deploy_web=true" >> $GITHUB_OUTPUT
           fi
