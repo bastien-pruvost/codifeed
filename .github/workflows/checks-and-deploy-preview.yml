@@ -2,10 +2,8 @@ name: Checks and Deploy Preview
 
 on:
   push:
-    branches-ignore:
-      - main
-    # branches:
-    #   - preview
+    branches:
+      - preview
   workflow_dispatch:
     inputs:
       force_deploy_api:
