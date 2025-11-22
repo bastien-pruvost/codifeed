@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import timedelta
 
 from dotenv import load_dotenv
@@ -24,7 +25,8 @@ class Config:
 
     # CORS Config
     CORS_ORIGINS = [
-        origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+        re.compile(origin.strip())
+        for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
     ]
     CORS_SUPPORTS_CREDENTIALS = True
     CORS_ALLOW_HEADERS = ["Content-Type", "Authorization", "X-CSRF-TOKEN"]
