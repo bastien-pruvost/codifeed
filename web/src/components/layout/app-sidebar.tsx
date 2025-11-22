@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react"
+import { Link } from "@tanstack/react-router"
 import { HomeIcon, UserIcon } from "lucide-react"
 
 import {
@@ -47,10 +48,10 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                   size="lg"
                   className="gap-3 text-base [&>svg]:size-5"
                 >
-                  <a href={item.url}>
+                  <Link to={item.url}>
                     <item.icon />
                     <span>{item.name}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
