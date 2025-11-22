@@ -68,6 +68,14 @@ const refreshTokenMiddleware: Middleware = {
     // Don't retry refresh endpoint itself to avoid infinite loops
     if (request.url.includes("/auth/refresh")) {
       setShouldBeAuthenticated(false)
+      window.location.href = "/login"
+      return response
+    }
+
+    // Don't retry logout endpoint to avoid infinite loops
+    if (request.url.includes("/auth/logout")) {
+      setShouldBeAuthenticated(false)
+      window.location.href = "/login"
       return response
     }
 
@@ -104,12 +112,15 @@ const refreshTokenMiddleware: Middleware = {
         throw new Error("Refresh failed")
       }
     } catch (error) {
-      console.error("Token refresh failed", error)
-      // Token refresh failed, logout user
-      await api.POST("/auth/logout").catch((error) => {
-        console.error("Logout failed", error)
-      })
+      console.warn("Token refresh failed", error)
+
+      // Token refresh failed, clear auth state
       setShouldBeAuthenticated(false)
+
+      // Attempt to logout on the server to clear cookies
+      api.POST("/auth/logout").catch((error) => {
+        console.warn("Logout failed", error)
+      })
       return response
     }
   },

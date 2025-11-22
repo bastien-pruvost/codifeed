@@ -18,7 +18,6 @@ export const Route = createFileRoute("/_app")({
         search: { redirect: location.href },
       })
     }
-
     return { currentUser }
   },
   component: AppLayout,

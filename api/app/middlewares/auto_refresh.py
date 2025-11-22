@@ -1,4 +1,3 @@
-from dotenv.main import logger
 from flask import Response
 from flask_jwt_extended import set_access_cookies, set_refresh_cookies
 
@@ -13,8 +12,9 @@ def auto_refresh_expiring_tokens(response: Response) -> Response:
             access_token, refresh_token = create_tokens(user_id)
             set_access_cookies(response, access_token)
             set_refresh_cookies(response, refresh_token)
-
     except Exception:
-        logger.error("Failed to auto-refresh tokens")
+        # Silently fail - if tokens can't be refreshed here,
+        # the frontend will handle it on the next request
+        pass
 
     return response

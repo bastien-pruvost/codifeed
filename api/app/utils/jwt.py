@@ -3,7 +3,6 @@ from functools import wraps
 from typing import Callable
 from uuid import UUID
 
-from dotenv.main import logger
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -22,7 +21,6 @@ def login_required(func) -> Callable:
         try:
             verify_jwt_in_request()
         except Exception as e:
-            logger.error(f"Error verifying JWT: Login required: {e}", exc_info=True)
             raise Unauthorized(description="Error verifying JWT: Login required") from e
         return func(*args, **kwargs)
 
