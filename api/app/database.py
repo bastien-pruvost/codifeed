@@ -13,7 +13,7 @@ def get_engine():
     """Get the engine for the database"""
     global _engine
     if _engine is None:
-        _engine = create_engine(config.DATABASE_URL, echo=False)
+        _engine = create_engine(config.DATABASE_URL, echo=False, pool_pre_ping=True)
     return _engine
 
 
